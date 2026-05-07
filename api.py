@@ -1,3 +1,4 @@
+import os
 import random
 from dataclasses import asdict
 
@@ -16,7 +17,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/bilder", StaticFiles(directory="bilder"), name="bilder")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BILDER_DIR = os.path.join(BASE_DIR, "bilder")
+
+app.mount("/bilder", StaticFiles(directory=BILDER_DIR), name="bilder")
 
 
 def get_db():
@@ -45,7 +49,7 @@ def roulette():
     rezept = random.choice(rezepte)
     daten = asdict(rezept)
 
-    daten["bild_url"] = f"https://rezeptroulette-2.onrender.com/bilder/{daten['bild']}"
+    daten["bild_url"] = f"/bilder/{daten['bild']}"
 
     return daten
 
