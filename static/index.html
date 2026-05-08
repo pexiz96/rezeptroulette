@@ -4,9 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Rezeptroulette</title>
+<link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#ff6b35">
+
 
   <style>
-
+    
+    
     
     * { box-sizing: border-box; }
 
@@ -19,7 +23,7 @@
     }
 
     header {
-      max-width: 900px;
+      max-width: 1100px;
       margin: auto;
       padding: 28px 22px;
       display: flex;
@@ -36,7 +40,7 @@
     main {
       max-width: 900px;
       margin: auto;
-      padding: 20px 22px 50px;
+      padding: 20px 22px 140px;
     }
 
     .hero {
@@ -92,7 +96,7 @@
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 380px));
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 18px;
       margin-top: 22px;
     }
@@ -104,6 +108,7 @@
       border-radius: 26px;
       overflow: hidden;
       box-shadow: 0 12px 34px rgba(90,40,15,0.1);
+      position: relative;
     }
 
     .card:hover {
@@ -136,6 +141,10 @@
       color: #7c4a2d;
       font-size: 14px;
       margin-bottom: 12px;
+      display: flex;
+flex-wrap: wrap;
+gap: 10px;
+align-items: center;
     }
 
     .placeholder {
@@ -156,13 +165,17 @@
     }
 
     .detail img {
-      width: 100%;
-      max-height: 360px;
-      object-fit: cover;
-    }
+  width: 100%;
+  height: 420px;
+  object-fit: cover;
+  display: block;
+}
 
     .detail-body {
       padding: 26px;
+      display: flex;
+flex-direction: column;
+gap: 18px;
     }
 
     .columns {
@@ -182,6 +195,7 @@
       padding: 12px 14px;
       border-radius: 14px;
       font-weight: 650;
+      box-shadow: 0 6px 18px rgba(90,40,15,0.06);
     }
 
     .steps {
@@ -194,6 +208,7 @@
       padding: 14px 16px;
       border-radius: 16px;
       line-height: 1.5;
+      box-shadow: 0 6px 18px rgba(90,40,15,0.06);
     }
 
     .filters {
@@ -226,6 +241,10 @@ select {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 10px;
+  position: absolute;
+top: 16px;
+right: 16px;
+z-index: 20;
 }
 
 .favorite-btn {
@@ -250,6 +269,266 @@ select {
   padding: 12px 16px;
   border-radius: 14px;
   box-shadow: 0 8px 22px rgba(90,40,15,0.08);
+}
+
+.week-image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 18px;
+  margin-bottom: 14px;
+}
+
+.week-title {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.week-empty {
+  color: #7c4a2d;
+  margin-bottom: 14px;
+}
+
+.shopping-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.shopping-item {
+  background: white;
+  padding: 14px 16px;
+  border-radius: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  box-shadow: 0 8px 22px rgba(90,40,15,0.08);
+  font-weight: 650;
+}
+
+.shopping-item input {
+  width: 18px;
+  height: 18px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  background: #fff0e6;
+  color: #d95d20;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.hero-stat {
+  background: white;
+  padding: 16px 18px;
+  border-radius: 18px;
+  min-width: 120px;
+  box-shadow: 0 8px 22px rgba(90,40,15,0.08);
+}
+
+.hero-stat strong {
+  display: block;
+  font-size: 26px;
+}
+
+.hero-stat span {
+  color: #7c4a2d;
+  font-size: 14px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  background: #fff0e6;
+  color: #d95d20;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.hero-stat {
+  background: white;
+  padding: 16px 18px;
+  border-radius: 18px;
+  min-width: 120px;
+  box-shadow: 0 8px 22px rgba(90,40,15,0.08);
+}
+
+.hero-stat strong {
+  display: block;
+  font-size: 26px;
+}
+
+.hero-stat span {
+  color: #7c4a2d;
+  font-size: 14px;
+}
+
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #2d1b12;
+  color: white;
+  padding: 14px 18px;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: 0.25s ease;
+  z-index: 2000;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.card-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 28px;
+  font-weight: 900;
+}
+
+.logo {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+}
+
+.rescue-box textarea {
+  width: 100%;
+  min-height: 150px;
+  border: none;
+  border-radius: 22px;
+  padding: 18px;
+  font-size: 17px;
+  resize: vertical;
+  box-shadow: 0 8px 22px rgba(90,40,15,0.08);
+}
+
+.match-badge {
+  display: inline-block;
+  background: #fff0e6;
+  color: #d95d20;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.roulette-loader {
+  background: white;
+  border-radius: 28px;
+  padding: 40px 24px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(90,40,15,0.15);
+  margin-top: 22px;
+}
+
+.dice {
+  font-size: 64px;
+  animation: spinDice 0.6s infinite linear;
+}
+
+@keyframes spinDice {
+  from {
+    transform: rotate(0deg) scale(1);
+  }
+
+  to {
+    transform: rotate(360deg) scale(1.1);
+  }
+}
+.favorite-btn {
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.favorite-btn:active {
+  transform: scale(1.35);
+}
+
+.rating {
+  display: flex;
+  gap: 6px;
+  margin: 8px 0 16px;
+}
+
+.rating button {
+  background: #fff7ed;
+  padding: 8px 10px;
+  border-radius: 12px;
+  font-size: 22px;
+  box-shadow: none;
+}
+
+.rating button:hover {
+  transform: scale(1.12);
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+body.dark {
+  background: linear-gradient(135deg, #120b08, #2d1b12);
+  color: #fff7ed;
+}
+
+body.dark .hero,
+body.dark .card,
+body.dark .detail,
+body.dark .hero-stat,
+body.dark .shopping-item,
+body.dark .bottom-nav,
+body.dark .secondary,
+body.dark .filters input,
+body.dark .filters select {
+  background: #24140d;
+  color: #fff7ed;
+}
+
+body.dark .muted,
+body.dark .meta,
+body.dark .week-empty,
+body.dark .hero-stat span {
+  color: #d8b49c;
+}
+
+body.dark .ingredient,
+body.dark .step,
+body.dark select,
+body.dark .favorite-btn,
+body.dark .rating button {
+  background: #3a2115;
+  color: #fff7ed;
 }
 
 .hidden {
@@ -314,29 +593,58 @@ select {
 </head>
 
 <body>
+    <div id="toast" class="toast"></div>
     <nav class="bottom-nav">
   <button data-nav="home" onclick="showHome()">🏠<span>Home</span></button>
 <button data-nav="recipes" onclick="loadRecipes()">🍲<span>Rezepte</span></button>
+<button data-nav="favorites" onclick="loadFavorites()">❤️<span>Favoriten</span></button>
+<button data-nav="recent" onclick="loadRecentRecipes()">🕘<span>Zuletzt</span></button>
 <button data-nav="plan" onclick="loadWeeklyPlan()">📅<span>Plan</span></button>
 <button data-nav="list" onclick="loadShoppingList()">🛒<span>Liste</span></button>
+<button data-nav="rescue" onclick="loadFoodRescue()">♻️<span>Rescue</span></button>
 </nav>
   <header>
-    <div class="brand">🍽️ Rezeptroulette</div>
-    <button class="secondary" onclick="showHome()">Startseite</button>
+    <div class="brand">
+  <img src="/static/images/Rezeptroulette.png" alt="Logo" class="logo">
+  <span>Rezeptroulette</span>
+</div>
+    <div class="header-actions">
+  <button class="secondary" onclick="showHome()">Startseite</button>
+  <button class="secondary" onclick="toggleDarkMode()">🌙</button>
+</div>
   </header>
 
   <main>
     <section class="hero" id="home">
+      <div class="hero-badge">🍽️ Smarte Rezeptplanung</div>
       <h1>Was essen wir heute?</h1>
       <p class="muted">
         Ziehe ein zufälliges Rezept, stöbere durch alle Gerichte und sieh dir Zutaten und Anleitung direkt in der App an.
       </p>
+
+      <div class="hero-stats">
+  <div class="hero-stat">
+    <strong id="recipeCount">0</strong>
+    <span>Rezepte</span>
+  </div>
+
+  <div class="hero-stat">
+    <strong>∞</strong>
+    <span>Kombinationen</span>
+  </div>
+
+  <div class="hero-stat">
+    <strong>7</strong>
+    <span>Tage Planung</span>
+  </div>
+</div>
 
       <div class="buttons">
         <button class="primary" onclick="loadRoulette()">🎲 Rezept ziehen</button>
         <button class="secondary" onclick="loadRecipes()">🍲 Alle Rezepte</button>
         <button class="secondary" onclick="loadWeeklyPlan()">📅 Wochenplan</button>
         <button class="secondary" onclick="loadShoppingList()">🛒 Einkaufsliste</button>
+        <button class="secondary" onclick="loadFoodRescue()">♻️ Food Rescue</button>
       </div>
     </section>
 
@@ -344,8 +652,9 @@ select {
   </main>
 
   <script>
+    let ratings = JSON.parse(localStorage.getItem("ratings") || "{}");
+    let recentRecipes = JSON.parse(localStorage.getItem("recentRecipes") || "[]");
     let allRecipes = [];
-
     let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
 
     function imageUrl(recipe) {
@@ -447,7 +756,15 @@ return matchesSearch && matchesKitchen && matchesFavorite;
             <div class="meta">
               ${recipe.kueche || "Unbekannt"} · ${recipe.kochzeit || "?"} Min · ${recipe.schwierigkeit || "Einfach"}
             </div>
-            <button class="primary" onclick="showRecipe(${recipe.id})">Rezept ansehen</button>
+            <div class="card-actions">
+  <button class="primary" onclick="showRecipe(${recipe.id})">
+    Rezept ansehen
+  </button>
+
+  <button class="secondary" onclick="quickAddToPlan(${recipe.id})">
+    📅 Planen
+  </button>
+</div>
           </div>
         </div>
       `;
@@ -462,6 +779,7 @@ return matchesSearch && matchesKitchen && matchesFavorite;
       }
 
       const recipe = allRecipes.find(r => r.id === id);
+      saveRecentRecipe(recipe);
       if (!recipe) return;
 
       const img = imageUrl(recipe);
@@ -479,7 +797,11 @@ return matchesSearch && matchesKitchen && matchesFavorite;
           <div class="detail-body">
             <h1>${recipe.name}</h1>
             <div class="meta">
-              ${recipe.kueche || "Unbekannt"} · ${recipe.portionen || "?"} Portionen · ${recipe.kochzeit || "?"} Min · ${recipe.schwierigkeit || "Einfach"}
+                ${ratingStars(recipe.id)}
+             <span>🌍 ${recipe.kueche || "Unbekannt"}</span>
+<span>🍽️ ${recipe.portionen || "?"} Portionen</span>
+<span>⏱️ ${recipe.kochzeit || "?"} Min</span>
+<span>🔥 ${recipe.schwierigkeit || "Einfach"}</span>
             </div>
 
             <div class="columns">
@@ -508,25 +830,55 @@ return matchesSearch && matchesKitchen && matchesFavorite;
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    async function loadRoulette() {
-      hideHome();
+ async function loadRoulette() {
+  hideHome();
 
-      const content = document.getElementById("content");
-      content.innerHTML = "<p>Rezept wird gezogen...</p>";
+  const content = document.getElementById("content");
+  content.innerHTML = `
+    <button class="secondary" onclick="showHome()">← Zurück</button>
+    <h2>🎲 Rezept-Roulette</h2>
+    <div class="roulette-loader" id="rouletteLoader">
+      <div class="dice">🎲</div>
+      <p>Roulette dreht...</p>
+    </div>
+  `;
 
-      const response = await fetch("/roulette");
-      const recipe = await response.json();
+  if (!allRecipes.length) {
+    const response = await fetch("/rezepte");
+    allRecipes = await response.json();
+  }
 
-      allRecipes = [recipe];
+  const loader = document.getElementById("rouletteLoader");
 
-      content.innerHTML = `
-        <button class="secondary" onclick="showHome()">← Zurück</button>
-        <h2>Dein Zufallsrezept</h2>
-        <div class="grid">
-          ${recipeCard(recipe)}
-        </div>
-      `;
-    }
+  let counter = 0;
+  const interval = setInterval(() => {
+    const randomRecipe = allRecipes[Math.floor(Math.random() * allRecipes.length)];
+    loader.innerHTML = `
+      <div class="dice">🎲</div>
+      <p>${randomRecipe.name}</p>
+    `;
+    counter++;
+  }, 120);
+
+  setTimeout(async () => {
+    clearInterval(interval);
+
+    const response = await fetch("/roulette");
+    const recipe = await response.json();
+
+    allRecipes = [recipe];
+
+    content.innerHTML = `
+      <button class="secondary" onclick="showHome()">← Zurück</button>
+      <h2>🎉 Dein Zufallsrezept</h2>
+      <div class="grid" id="recipeGrid">
+        ${recipeCard(recipe)}
+      </div>
+    `;
+
+    showToast("Rezept gezogen!");
+  }, 1800);
+}
 
    async function loadWeeklyPlan() {
     setActiveNav("plan");
@@ -556,27 +908,55 @@ return matchesSearch && matchesKitchen && matchesFavorite;
     <button class="secondary" onclick="showHome()">← Zurück</button>
 
     <h2>📅 Wochenplan</h2>
+    <div class="buttons">
+  <button class="primary" onclick="autoFillWeek()">
+    ✨ Woche automatisch planen
+  </button>
+
+  <button class="secondary" onclick="resetWeek()">
+    🗑️ Woche leeren
+  </button>
+</div>
 
     <div class="grid">
       ${days.map(day => {
-        const recipeId = plan[day];
-        const recipe = allRecipes.find(r => r.id === recipeId);
+        const planValue =
+  plan[day] ||
+  plan[day.toLowerCase()] ||
+  plan[day.toUpperCase()];
+
+const recipeId =
+  typeof planValue === "object" && planValue !== null
+    ? planValue.id
+    : Number(planValue);
+
+const recipe = allRecipes.find(r => Number(r.id) === Number(recipeId));
 
         return `
           <div class="card">
             <div class="card-body">
-              <h3>${day}</h3>
+              <h3>📅 ${day}</h3>
 
               ${
                 recipe
                   ? `
-                    <p><strong>${recipe.name}</strong></p>
+                    ${
+  imageUrl(recipe)
+    ? `<img class="week-image" src="${imageUrl(recipe)}" alt="${recipe.name}">`
+    : ""
+}
+
+<p class="week-title">${recipe.name}</p>
                     <button class="primary" onclick="showRecipe(${recipe.id})">
                       Rezept ansehen
                     </button>
+
+                    <button class="secondary" onclick="clearDay('${day}')">
+  ❌ Entfernen
+</button>
                   `
                   : `
-                    <p>Noch kein Rezept gewählt</p>
+                    <p class="week-empty">Noch kein Rezept gewählt</p>
                   `
               }
 
@@ -600,11 +980,22 @@ return matchesSearch && matchesKitchen && matchesFavorite;
 async function setDayRecipe(day, recipeId) {
   if (!recipeId) return;
 
-  await fetch(`/wochenplan/${day}/${recipeId}`, {
-    method: "POST"
-  });
+  const numericId = Number(recipeId);
 
-  loadWeeklyPlan();
+  const response = await fetch(
+    `/wochenplan/${encodeURIComponent(day)}/${numericId}`,
+    {
+      method: "POST"
+    }
+  );
+
+  if (!response.ok) {
+    showToast("Fehler beim Speichern");
+    return;
+  }
+
+  showToast("Zum Wochenplan hinzugefügt!");
+  await loadWeeklyPlan();
 }
 
    async function loadShoppingList() {
@@ -623,15 +1014,20 @@ async function setDayRecipe(day, recipeId) {
 
   const ingredients = [];
 
-  Object.values(plan).forEach(recipeId => {
-    if (!recipeId) return;
+Object.values(plan).forEach(entry => {
+  if (!entry) return;
 
-    const recipe = allRecipes.find(r => r.id === recipeId);
+  const recipeId =
+    typeof entry === "object"
+      ? Number(entry.id)
+      : Number(entry);
 
-    if (recipe?.zutaten) {
-      ingredients.push(...recipe.zutaten);
-    }
-  });
+  const recipe = allRecipes.find(r => Number(r.id) === recipeId);
+
+  if (recipe?.zutaten) {
+    ingredients.push(...recipe.zutaten);
+  }
+});
 
   const uniqueIngredients = [...new Set(ingredients)];
 
@@ -644,9 +1040,9 @@ async function setDayRecipe(day, recipeId) {
     ${
       uniqueIngredients.length
         ? `
-          <div class="ingredients">
+          <div class="shopping-list">
             ${uniqueIngredients.map(item => `
-              <label class="ingredient">
+              <label class="shopping-item">
   <input type="checkbox" />
   <span class="shopping-item-text">${item}</span>
 </label>
@@ -668,7 +1064,7 @@ function copyShoppingList() {
     .join("\n");
 
   navigator.clipboard.writeText(items);
-  alert("Einkaufsliste kopiert!");
+  showToast("Einkaufsliste kopiert!");
 }
 
 function setActiveNav(name) {
@@ -693,6 +1089,280 @@ function toggleFavorite(id) {
 
 function isFavorite(id) {
   return favorites.includes(id);
+}
+
+fetch("/rezepte")
+  .then(r => r.json())
+  .then(data => {
+    const el = document.getElementById("recipeCount");
+    if (el) el.textContent = data.length;
+  });
+
+  function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2200);
+}
+async function quickAddToPlan(recipeId) {
+  const day = prompt(
+    "Für welchen Tag?\n\nMontag, Dienstag, Mittwoch, Donnerstag, Freitag, Samstag oder Sonntag"
+  );
+
+  if (!day) return;
+
+  await fetch(`/wochenplan/${day}/${recipeId}`, {
+    method: "POST"
+  });
+
+  showToast("Zum Wochenplan hinzugefügt!");
+}
+
+async function clearDay(day) {
+  await fetch(`/wochenplan/clear/${day}`, {
+    method: "POST"
+  });
+
+  showToast("Rezept entfernt");
+  await loadWeeklyPlan();
+}
+
+function loadFoodRescue() {
+  setActiveNav("rescue");
+  hideHome();
+
+  const content = document.getElementById("content");
+
+  content.innerHTML = `
+    <button class="secondary" onclick="showHome()">← Zurück</button>
+
+    <h2>♻️ Food Rescue</h2>
+    <p class="muted">
+      Gib ein, was du zuhause hast. Die App schlägt passende Rezepte aus deiner Datenbank vor.
+    </p>
+
+    <div class="rescue-box">
+      <textarea id="rescueInput" placeholder="Zum Beispiel:
+Sahne
+Paprika
+Reis
+Eier
+Käse"></textarea>
+
+      <div class="buttons">
+        <button class="primary" onclick="findRescueRecipes()">Lebensmittel retten</button>
+      </div>
+    </div>
+
+    <div id="rescueResults"></div>
+  `;
+}
+
+async function findRescueRecipes() {
+  const input = document.getElementById("rescueInput").value;
+
+  const available = input
+    .split(/\n|,|;/)
+    .map(item => item.trim().toLowerCase())
+    .filter(Boolean);
+
+  if (!available.length) {
+    showToast("Bitte Zutaten eingeben.");
+    return;
+  }
+
+  if (!allRecipes.length) {
+    const response = await fetch("/rezepte");
+    allRecipes = await response.json();
+  }
+
+  const results = allRecipes.map(recipe => {
+    const ingredients = (recipe.zutaten || []).map(z => z.toLowerCase());
+
+    const matches = available.filter(item =>
+      ingredients.some(ingredient => ingredient.includes(item))
+    );
+
+    const score = matches.length;
+
+    return {
+      recipe,
+      matches,
+      score
+    };
+  })
+  .filter(result => result.score > 0)
+  .sort((a, b) => b.score - a.score)
+  .slice(0, 8);
+
+  const container = document.getElementById("rescueResults");
+
+  if (!results.length) {
+    container.innerHTML = `
+      <p class="muted">Keine passenden Rezepte gefunden.</p>
+    `;
+    return;
+  }
+
+  container.innerHTML = `
+    <h2>Passende Rezepte</h2>
+
+    <div class="grid">
+      ${results.map(result => `
+        <div class="card">
+          ${
+            imageUrl(result.recipe)
+              ? `<img src="${imageUrl(result.recipe)}" alt="${result.recipe.name}">`
+              : `<div class="placeholder">Kein Bild</div>`
+          }
+
+          <div class="card-body">
+            <span class="match-badge">${result.score} Treffer</span>
+            <h3>${result.recipe.name}</h3>
+
+            <div class="meta">
+              Passt zu: ${result.matches.join(", ")}
+            </div>
+
+            <div class="card-actions">
+              <button class="primary" onclick="showRecipe(${result.recipe.id})">
+                Rezept ansehen
+              </button>
+
+              <button class="secondary" onclick="quickAddToPlan(${result.recipe.id})">
+                📅 Planen
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+async function autoFillWeek() {
+  if (!allRecipes.length) {
+    const response = await fetch("/rezepte");
+    allRecipes = await response.json();
+  }
+
+  const days = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"];
+  const shuffled = [...allRecipes].sort(() => Math.random() - 0.5).slice(0, 7);
+
+  for (let i = 0; i < days.length; i++) {
+    await fetch(`/wochenplan/${days[i]}/${shuffled[i].id}`, {
+      method: "POST"
+    });
+  }
+
+  showToast("Woche automatisch geplant!");
+  await loadWeeklyPlan();
+}
+
+async function resetWeek() {
+  await fetch("/wochenplan/reset", {
+    method: "POST"
+  });
+
+  showToast("Wochenplan geleert!");
+  await loadWeeklyPlan();
+}
+
+async function loadFavorites() {
+  setActiveNav("favorites");
+  hideHome();
+
+  const content = document.getElementById("content");
+  content.innerHTML = "<p>Favoriten werden geladen...</p>";
+
+  if (!allRecipes.length) {
+    const response = await fetch("/rezepte");
+    allRecipes = await response.json();
+  }
+
+  const favoriteRecipes = allRecipes.filter(recipe => favorites.includes(recipe.id));
+
+  content.innerHTML = `
+    <button class="secondary" onclick="showHome()">← Zurück</button>
+    <h2>❤️ Deine Favoriten</h2>
+
+    ${
+      favoriteRecipes.length
+        ? `<div class="grid" id="recipeGrid">
+            ${favoriteRecipes.map(recipe => recipeCard(recipe)).join("")}
+          </div>`
+        : `<p class="muted">Du hast noch keine Favoriten gespeichert.</p>`
+    }
+  `;
+}
+
+function saveRecentRecipe(recipe) {
+  recentRecipes = recentRecipes.filter(r => r.id !== recipe.id);
+  recentRecipes.unshift({
+    id: recipe.id,
+    name: recipe.name,
+    bild: recipe.bild,
+    image: recipe.image,
+    kueche: recipe.kueche,
+    kochzeit: recipe.kochzeit,
+    schwierigkeit: recipe.schwierigkeit
+  });
+
+  recentRecipes = recentRecipes.slice(0, 6);
+  localStorage.setItem("recentRecipes", JSON.stringify(recentRecipes));
+}
+
+function setRating(recipeId, value) {
+  ratings[recipeId] = value;
+  localStorage.setItem("ratings", JSON.stringify(ratings));
+  showToast("Bewertung gespeichert!");
+  showRecipe(recipeId);
+}
+
+function ratingStars(recipeId) {
+  const current = ratings[recipeId] || 0;
+
+  return `
+    <div class="rating">
+      ${[1,2,3,4,5].map(star => `
+        <button onclick="setRating(${recipeId}, ${star})">
+          ${star <= current ? "⭐" : "☆"}
+        </button>
+      `).join("")}
+    </div>
+  `;
+}
+
+async function loadRecentRecipes() {
+  setActiveNav("recent");
+  hideHome();
+
+  const content = document.getElementById("content");
+
+  content.innerHTML = `
+    <button class="secondary" onclick="showHome()">← Zurück</button>
+    <h2>🕘 Zuletzt angesehen</h2>
+
+    ${
+      recentRecipes.length
+        ? `<div class="grid">
+            ${recentRecipes.map(recipe => recipeCard(recipe)).join("")}
+          </div>`
+        : `<p class="muted">Du hast noch keine Rezepte angesehen.</p>`
+    }
+  `;
+}
+
+function toggleDarkMode() {
+  document.body.classList.toggle("dark");
+  localStorage.setItem("darkMode", document.body.classList.contains("dark"));
+}
+
+if (localStorage.getItem("darkMode") === "true") {
+  document.body.classList.add("dark");
 }
   </script>
 </body>
