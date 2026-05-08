@@ -6,8 +6,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from database import Database
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 app.add_middleware(
     CORSMiddleware,
@@ -29,7 +32,7 @@ def get_db():
 
 @app.get("/")
 def home():
-    return {"message": "Rezeptroulette API läuft"}
+    return FileResponse("static/index.html")
 
 
 @app.get("/rezepte")
