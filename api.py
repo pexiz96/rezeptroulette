@@ -20,7 +20,7 @@ class RezeptCreate(BaseModel):
     kochzeit: int = 30
     schwierigkeit: str = "Einfach"
     tags: list[str] = Field(default_factory=list)
-zutaten: list[str] = Field(default_factory=list)
+    zutaten: list[str] = Field(default_factory=list)
     anleitung: str = "Keine Anleitung vorhanden."
 
 
