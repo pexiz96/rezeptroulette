@@ -59,7 +59,7 @@ def get_rezepte():
 def rezept_erstellen(daten: RezeptCreate):
     db = get_db()
 
-if not daten.name.strip():
+    if not daten.name.strip():
         return {"error": "Name fehlt"}
 
     rezept = Rezept(
