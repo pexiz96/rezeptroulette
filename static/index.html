@@ -17,14 +17,35 @@
 
   <style>
     *{box-sizing:border-box}
+
+    :root{
+      --bg-1:#fff7ed;
+      --bg-2:#ffe2cf;
+      --text:#2d1b12;
+      --muted:#7c4a2d;
+      --card:rgba(255,255,255,.86);
+      --white:#fff;
+      --orange:#ff6b35;
+      --amber:#ffb703;
+      --green:#067647;
+      --green-bg:#ecfdf3;
+      --shadow:0 20px 60px rgba(90,40,15,.14);
+      --shadow-soft:0 10px 30px rgba(90,40,15,.08);
+    }
+
+    html{scroll-behavior:smooth}
+
     body{
       margin:0;
       font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      background:linear-gradient(135deg,#fff7ed,#ffe2cf);
-      color:#2d1b12;
+      background:linear-gradient(135deg,var(--bg-1),var(--bg-2));
+      color:var(--text);
       min-height:100vh;
+      letter-spacing:-0.02em;
     }
+
     header,main{max-width:1100px;margin:auto}
+
     header{
       padding:24px 22px;
       display:flex;
@@ -32,19 +53,98 @@
       align-items:center;
       gap:16px;
     }
+
     main{padding:20px 22px 170px}
+
+    h1{
+      font-size:clamp(40px,6vw,68px);
+      margin:12px 0;
+      line-height:0.98;
+      font-weight:950;
+      letter-spacing:-0.05em;
+    }
+
+    h2{margin-top:28px}
+
+    button,input,select,textarea{font:inherit}
+
+    button{
+      border:none;
+      cursor:pointer;
+      border-radius:999px;
+      padding:14px 22px;
+      font-weight:850;
+      transition:.2s ease;
+    }
+
+    button:hover{transform:translateY(-2px)}
+    button:active{transform:scale(.97)}
+
+    input,select,textarea{
+      padding:14px 16px;
+      border:none;
+      border-radius:16px;
+      background:var(--white);
+      box-shadow:0 8px 22px rgba(90,40,15,.08);
+      color:var(--text);
+    }
+
+    textarea{width:100%;min-height:150px;resize:vertical}
+    select{width:100%;margin-top:14px;background:#fff7ed}
+
     .brand{display:flex;align-items:center;gap:14px;font-size:28px;font-weight:900}
     .logo{width:58px;height:58px;object-fit:contain;border-radius:50%}
     .header-actions{display:flex;gap:10px}
-    .hero,.panel,.detail,.card,.roulette-stage{
-      background:rgba(255,255,255,.82);
-      border-radius:32px;
-      box-shadow:0 20px 60px rgba(90,40,15,.14);
+
+    .primary{
+      color:white;
+      background:linear-gradient(135deg,var(--orange),var(--amber));
+      box-shadow:0 12px 30px rgba(255,107,53,.3);
     }
+
+    .secondary{
+      background:var(--white);
+      color:var(--text);
+      box-shadow:0 8px 22px rgba(90,40,15,.08);
+    }
+
+    .muted,.meta,.week-empty{color:var(--muted)}
+
+    .buttons,.card-actions,.filters,.hero-stats{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+    }
+
+    .buttons{margin-top:22px}
+
+    .hero,.panel,.detail,.card,.roulette-stage{
+      background:var(--card);
+      border-radius:32px;
+      box-shadow:var(--shadow);
+    }
+
     .hero{
-  padding:28px;
-  margin-bottom:18px;
-}
+      padding:30px;
+      margin-bottom:18px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero::before{
+      content:"";
+      position:absolute;
+      width:300px;
+      height:300px;
+      background:rgba(255,183,3,.12);
+      border-radius:50%;
+      top:-120px;
+      right:-100px;
+      pointer-events:none;
+    }
+
+    .hero > *{position:relative;z-index:1}
+
     .hero-badge,.badge,.winner-badge{
       display:inline-flex;
       background:#fff0e6;
@@ -53,72 +153,105 @@
       border-radius:999px;
       font-weight:850;
     }
-    h1{font-size:clamp(38px,6vw,66px);margin:12px 0;line-height:1}
-    h2{margin-top:28px}
-    .muted,.meta,.week-empty{color:#7c4a2d}
-    .buttons,.card-actions,.filters,.hero-stats{display:flex;flex-wrap:wrap;gap:12px}
-    .buttons{margin-top:22px}
-    button,input,select,textarea{font:inherit}
-    button{
-      border:none;
-      cursor:pointer;
-      border-radius:999px;
-      padding:14px 22px;
-      font-weight:850;
-      transition:.18s ease;
-    }
-    button:hover{transform:translateY(-2px)}
-    .primary{color:white;background:linear-gradient(135deg,#ff6b35,#ffb703);box-shadow:0 12px 30px rgba(255,107,53,.3)}
-    .secondary{background:white;color:#2d1b12;box-shadow:0 8px 22px rgba(90,40,15,.08)}
+
     .hero-stat{
-  background:white;
-  padding:18px 20px;
-  border-radius:22px;
-  min-width:130px;
-  box-shadow:0 10px 24px rgba(90,40,15,.08);
-}
+      background:var(--white);
+      padding:18px 20px;
+      border-radius:22px;
+      min-width:130px;
+      box-shadow:0 10px 24px rgba(90,40,15,.08);
+    }
+
     .hero-stat strong{display:block;font-size:26px}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-top:22px}
+    .big-cta{font-size:18px;padding:16px 28px}
+    .hero-buttons .secondary{opacity:.92}
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+      gap:20px;
+      margin-top:22px;
+    }
+
     .card{
       max-width:430px;
       overflow:hidden;
       position:relative;
-      transition:.18s ease;
+      transition:.25s ease;
+      border-radius:32px;
+      background:var(--white);
+      box-shadow:0 10px 30px rgba(90,40,15,.08),0 20px 60px rgba(90,40,15,.10);
+      cursor:pointer;
     }
-    .card:hover{transform:translateY(-6px);box-shadow:0 24px 50px rgba(90,40,15,.18)}
+
+    .card:hover{
+      transform:translateY(-8px) scale(1.01);
+      box-shadow:0 24px 50px rgba(90,40,15,.18);
+    }
+
     .card img{
-  width:100%;
-  height:260px;
-  object-fit:cover;
-  display:block;
-  transition:.3s ease;
-}
-.card:hover img{
-  transform:scale(1.04);
-}
+      width:100%;
+      height:260px;
+      object-fit:cover;
+      display:block;
+      transition:.3s ease;
+      filter:saturate(1.05) contrast(1.02);
+    }
+
+    .card:hover img{transform:scale(1.04)}
     .card-body{padding:18px}
     .card h3{margin:0 0 8px;font-size:22px}
-    .meta{font-size:14px;margin-bottom:12px;display:flex;gap:10px;flex-wrap:wrap}
-    .placeholder{height:180px;background:linear-gradient(135deg,#ff6b35,#ffb703);display:grid;place-items:center;color:white;font-weight:900}
+
+    .meta{
+      font-size:14px;
+      margin-bottom:12px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .placeholder{
+      height:180px;
+      background:linear-gradient(135deg,var(--orange),var(--amber));
+      display:grid;
+      place-items:center;
+      color:white;
+      font-weight:900;
+    }
+
     .favorite-row{position:absolute;top:16px;right:16px;z-index:10}
-    .favorite-btn{width:42px;height:42px;padding:0;border-radius:50%;background:#fff7ed;display:grid;place-items:center}
-    .favorite-btn:active{transform:scale(1.35)}
+
+    .favorite-btn{
+      width:42px;
+      height:42px;
+      padding:0;
+      border-radius:50%;
+      background:#fff7ed;
+      display:grid;
+      place-items:center;
+    }
+
+    .favorite-btn:active{transform:scale(1.25)}
+
     .filters{margin:18px 0}
-    input,select,textarea{
-      padding:14px 16px;
-      border:none;
-      border-radius:16px;
-      background:white;
+
+    .favorite-filter{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      background:var(--white);
+      padding:12px 16px;
+      border-radius:14px;
       box-shadow:0 8px 22px rgba(90,40,15,.08);
     }
-    textarea{width:100%;min-height:150px;resize:vertical}
-    select{width:100%;margin-top:14px;background:#fff7ed}
-    .favorite-filter{display:flex;align-items:center;gap:8px;background:white;padding:12px 16px;border-radius:14px;box-shadow:0 8px 22px rgba(90,40,15,.08)}
-    .detail{overflow:hidden;margin-top:22px;background:white}
+
+    .detail{overflow:hidden;margin-top:22px;background:var(--white)}
     .detail img{width:100%;height:420px;object-fit:cover}
     .detail-body{padding:26px;display:flex;flex-direction:column;gap:18px}
     .columns{display:grid;grid-template-columns:.8fr 1.2fr;gap:28px}
-    .ingredients,.steps,.shopping-list,.chips{display:grid;gap:12px}
+
+    .ingredients,.steps,.shopping-list,.chips{display:flex;flex-wrap:wrap;gap:12px}
+
     .ingredient,.step,.shopping-item,.chip{
       background:#fff7ed;
       padding:14px 16px;
@@ -126,59 +259,228 @@
       box-shadow:0 6px 18px rgba(90,40,15,.06);
       font-weight:650;
     }
+
+    .ingredients,.steps,.shopping-list{display:grid}
+
     .shopping-item{display:flex;gap:12px;align-items:center}
     .shopping-item:has(input:checked){opacity:.55;text-decoration:line-through}
+
     .week-image{width:100%;height:170px;object-fit:cover;border-radius:18px;margin-bottom:14px}
     .week-title{font-size:18px;font-weight:850}
-    .rating{display:flex;gap:6px}
+
+    .rating{display:flex;gap:6px;flex-wrap:wrap}
     .rating button{background:#fff7ed;padding:8px 10px;border-radius:12px;font-size:22px;box-shadow:none}
-    .toast{position:fixed;top:20px;right:20px;background:#2d1b12;color:white;padding:14px 18px;border-radius:16px;opacity:0;transform:translateY(-10px);transition:.25s;z-index:3000}
-    .toast.show{opacity:1;transform:translateY(0)}
-    .bottom-nav{
-      position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
-      width:calc(100% - 24px);max-width:760px;
-      background:rgba(255,255,255,.92);backdrop-filter:blur(16px);
-      border-radius:26px;display:flex;justify-content:space-around;
-      padding:10px;box-shadow:0 12px 40px rgba(90,40,15,.15);z-index:1000;overflow-x:auto;
+
+    .toast{
+      position:fixed;
+      top:20px;
+      right:20px;
+      background:var(--text);
+      color:white;
+      padding:14px 18px;
+      border-radius:16px;
+      opacity:0;
+      transform:translateY(-10px);
+      transition:.25s;
+      z-index:3000;
     }
-    .bottom-nav button{background:transparent;display:flex;flex-direction:column;gap:4px;align-items:center;color:#7c4a2d;font-size:13px;padding:8px 10px;min-width:72px;box-shadow:none}
-   .bottom-nav button.active{
-  background:linear-gradient(135deg,#ff6b35,#ffb703);
-  color:white;
-  transform:translateY(-4px);
-  box-shadow:0 12px 30px rgba(255,107,53,.28);
-}
-   
+
+    .toast.show{opacity:1;transform:translateY(0)}
+
+    .bottom-nav{
+      position:fixed;
+      bottom:18px;
+      left:50%;
+      transform:translateX(-50%);
+      width:calc(100% - 24px);
+      max-width:760px;
+      background:rgba(255,255,255,.92);
+      backdrop-filter:blur(22px);
+      border:1px solid rgba(255,255,255,.45);
+      border-radius:26px;
+      display:flex;
+      justify-content:space-around;
+      padding:10px;
+      box-shadow:0 12px 40px rgba(90,40,15,.15);
+      z-index:1000;
+      overflow-x:auto;
+    }
+
+    .bottom-nav button{
+      background:transparent;
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      align-items:center;
+      color:var(--muted);
+      font-size:13px;
+      padding:8px 10px;
+      min-width:72px;
+      box-shadow:none;
+      transition:.22s ease;
+    }
+
+    .bottom-nav button.active{
+      background:linear-gradient(135deg,var(--orange),var(--amber));
+      color:white;
+      transform:translateY(-4px);
+      box-shadow:0 12px 30px rgba(255,107,53,.28);
+    }
+
+    .home-sections{display:grid;gap:38px;margin-top:30px}
+
+    .section-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:16px;
+      margin-bottom:16px;
+    }
+
+    .section-head h2{margin:0;font-size:28px}
+
+    .recipe-slider{
+      display:flex;
+      gap:18px;
+      overflow-x:auto;
+      padding:4px 2px 12px;
+      scroll-snap-type:x mandatory;
+    }
+
+    .recipe-slider::-webkit-scrollbar{display:none}
+
+    .recipe-slider .card{
+      min-width:320px;
+      scroll-snap-align:start;
+      flex-shrink:0;
+    }
+
+    .smart-card{
+      background:linear-gradient(135deg,var(--orange),var(--amber));
+      color:white;
+      border-radius:32px;
+      padding:30px;
+      box-shadow:0 24px 60px rgba(255,107,53,.28);
+    }
+
+    .smart-card h2{margin:10px 0;font-size:34px}
+    .smart-card p{color:rgba(255,255,255,.92)}
+
+    .smart-tags{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0}
+
+    .smart-tags button{
+      border:none;
+      cursor:pointer;
+      transition:.2s ease;
+      background:rgba(255,255,255,.22);
+      color:white;
+      box-shadow:none;
+    }
+
+    .smart-tags button:hover{
+      transform:translateY(-2px);
+      background:rgba(255,255,255,.3);
+    }
+
+    .rescue-card,.empty-state{
+      background:var(--white);
+      border-radius:32px;
+      padding:30px;
+      box-shadow:var(--shadow-soft);
+    }
+
+    .rescue-chips{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
+
+    .rescue-chips span{
+      background:var(--green-bg);
+      color:var(--green);
+      padding:10px 14px;
+      border-radius:999px;
+      font-weight:850;
+    }
+
+    .loading-box{
+      background:var(--white);
+      border-radius:24px;
+      padding:40px;
+      text-align:center;
+      box-shadow:0 12px 30px rgba(90,40,15,.1);
+      margin-top:20px;
+    }
+
+    .error-box{
+      background:#fff0f0;
+      color:#b42318;
+      border:2px solid #fda29b;
+      border-radius:24px;
+      padding:24px;
+      margin-top:20px;
+      font-weight:700;
+    }
+
+    .skeleton-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:22px}
+
+    .skeleton-card{
+      height:320px;
+      border-radius:32px;
+      background:linear-gradient(90deg,#f7e7dc 25%,#fff7f2 50%,#f7e7dc 75%);
+      background-size:200% 100%;
+      animation:skeleton 1.4s infinite linear;
+    }
+
+    @keyframes skeleton{
+      0%{background-position:200% 0}
+      100%{background-position:-200% 0}
+    }
+
     .roulette-stage{padding:30px;overflow:hidden;position:relative;margin-top:18px}
     .roulette-track{display:flex;gap:18px;will-change:transform}
     .roulette-item{min-width:240px;background:#fff7ed;border-radius:22px;overflow:hidden;flex-shrink:0;box-shadow:0 8px 24px rgba(90,40,15,.08)}
     .roulette-item img{width:100%;height:160px;object-fit:cover}
     .roulette-item h3{padding:14px;margin:0;font-size:18px}
     .winner-result{margin-top:20px;display:flex;justify-content:center}
-    .winner-result .card{
-  max-width:430px;
-  overflow:hidden;
-  position:relative;
-  transition:.25s ease;
-  border-radius:32px;
-  background:white;
-  box-shadow:
-    0 10px 30px rgba(90,40,15,.08),
-    0 20px 60px rgba(90,40,15,.10);
-}
-
-
+    .winner-result .card{border:5px solid var(--amber);box-shadow:0 0 36px rgba(255,183,3,.65),0 24px 60px rgba(90,40,15,.22)}
     .winner-pop{animation:winnerPop .45s ease}
-    @keyframes winnerPop{0%{transform:scale(.9);opacity:0}70%{transform:scale(1.05);opacity:1}100%{transform:scale(1)}}
+
+    @keyframes winnerPop{
+      0%{transform:scale(.9);opacity:0}
+      70%{transform:scale(1.05);opacity:1}
+      100%{transform:scale(1)}
+    }
+
     .drawer{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:flex-end;z-index:2500}
     .drawer.show{display:flex}
     .drawer-content{background:white;width:100%;max-height:90vh;overflow:auto;border-radius:28px 28px 0 0;padding:24px}
     .cook-step{font-size:24px;line-height:1.5;background:#fff7ed;padding:24px;border-radius:24px}
     .hidden{display:none}
-    body.dark{background:linear-gradient(135deg,#120b08,#2d1b12);color:#fff7ed}
-    body.dark .hero,body.dark .card,body.dark .detail,body.dark .hero-stat,body.dark .shopping-item,body.dark .bottom-nav,body.dark .secondary,body.dark input,body.dark select,body.dark textarea,body.dark .roulette-stage,body.dark .drawer-content{background:#24140d;color:#fff7ed}
-    body.dark .muted,body.dark .meta,body.dark .week-empty,body.dark .hero-stat span{color:#d8b49c}
-    body.dark .ingredient,body.dark .step,body.dark .chip,body.dark .favorite-btn,body.dark .rating button,body.dark .roulette-item,.dark .cook-step{background:#3a2115;color:#fff7ed}
+
+    body.dark{
+      --bg-1:#120b08;
+      --bg-2:#2d1b12;
+      --text:#fff7ed;
+      --muted:#d8b49c;
+      --card:#24140d;
+      --white:#24140d;
+      background:linear-gradient(135deg,var(--bg-1),var(--bg-2));
+      color:var(--text);
+    }
+
+    body.dark .ingredient,
+    body.dark .step,
+    body.dark .chip,
+    body.dark .favorite-btn,
+    body.dark .rating button,
+    body.dark .roulette-item,
+    body.dark .cook-step,
+    body.dark select{
+      background:#3a2115;
+      color:#fff7ed;
+    }
+
+    body.dark .bottom-nav{background:rgba(36,20,13,.92);border-color:rgba(255,255,255,.08)}
+    body.dark .hero-badge{background:#3a2115;color:#ffb37f}
+    body.dark input,body.dark textarea{background:#24140d;color:#fff7ed}
+
     @media(max-width:760px){
       header{flex-direction:column;align-items:flex-start}
       .header-actions{width:100%;justify-content:space-between}
@@ -191,168 +493,17 @@
       .roulette-item img{height:120px}
     }
 
-    .loading-box {
-  background: white;
-  border-radius: 24px;
-  padding: 40px;
-  text-align: center;
-  box-shadow: 0 12px 30px rgba(90,40,15,0.1);
-  margin-top: 20px;
-}
-
-.error-box {
-  background: #fff0f0;
-  color: #b42318;
-  border: 2px solid #fda29b;
-  border-radius: 24px;
-  padding: 24px;
-  margin-top: 20px;
-  font-weight: 700;
-}
-
-.home-sections{
-  display:grid;
-  gap:38px;
-  margin-top:30px;
-}
-
-.section-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-end;
-  gap:16px;
-  margin-bottom:16px;
-}
-
-.section-head h2{
-  margin:0;
-  font-size:28px;
-}
-
-.preview-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-  gap:18px;
-}
-
-.smart-card{
-  background:linear-gradient(135deg,#ff6b35,#ffb703);
-  color:white;
-  border-radius:32px;
-  padding:30px;
-  box-shadow:0 24px 60px rgba(255,107,53,.28);
-}
-
-.smart-card h2{
-  margin:10px 0;
-  font-size:34px;
-}
-
-.smart-tags{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  margin:20px 0;
-}
-
-.smart-tags button{
-  border:none;
-  cursor:pointer;
-  transition:.2s ease;
-}
-
-.smart-tags button:hover{
-  transform:translateY(-2px);
-  background:rgba(255,255,255,.3);
-}
-
-.rescue-card{
-  background:white;
-  border-radius:32px;
-  padding:30px;
-  box-shadow:0 20px 60px rgba(90,40,15,.12);
-}
-
-.rescue-chips{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  margin:18px 0;
-}
-
-.rescue-chips span{
-  background:#ecfdf3;
-  color:#067647;
-  padding:10px 14px;
-  border-radius:999px;
-  font-weight:850;
-}
-
-.big-cta{
-  font-size:18px;
-  padding:16px 28px;
-}
-
-.hero{
-  padding:30px;
-}
-
-.hero-buttons .secondary{
-  opacity:.9;
-}
-
-.empty-state{
-  background:white;
-  padding:24px;
-  border-radius:28px;
-  color:#7c4a2d;
-  box-shadow:0 12px 30px rgba(90,40,15,.08);
-}
-
-body.dark .rescue-card,
-body.dark .empty-state{
-  background:#24140d;
-  color:#fff7ed;
-}
-
-.card{
-  cursor:pointer;
-}
-
-@media(max-width:520px){
-  .grid,
-  .preview-grid{
-    grid-template-columns:1fr;
-  }
-
-  .card{
-    max-width:none;
-  }
-
-  h1{
-    font-size:42px;
-  }
-
-  .hero-stats{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-  }
-
-  .hero-stat{
-    min-width:0;
-    padding:14px;
-  }
-
-  .hero-stat strong{
-    font-size:22px;
-  }
-
-  .section-head{
-    align-items:flex-start;
-    flex-direction:column;
-  }
-}
-
+    @media(max-width:520px){
+      .grid{grid-template-columns:1fr}
+      .card{max-width:none}
+      .recipe-slider .card{min-width:84vw}
+      h1{font-size:42px}
+      .hero-stats{display:grid;grid-template-columns:repeat(3,1fr)}
+      .hero-stat{min-width:0;padding:14px}
+      .hero-stat strong{font-size:22px}
+      .section-head{align-items:flex-start;flex-direction:column}
+      .bottom-nav{justify-content:flex-start}
+    }
   </style>
 </head>
 
@@ -386,25 +537,23 @@ body.dark .empty-state{
       <h1>Was essen wir heute?</h1>
       <p class="muted">Ziehe ein zufälliges Rezept, plane deine Woche, rette Lebensmittel und sammle Favoriten.</p>
 
+      <div class="chips">
+        <div class="chip">⚡ Schnell</div>
+        <div class="chip">🥦 Vegetarisch</div>
+        <div class="chip">🍝 Pasta</div>
+        <div class="chip">🔥 Einfach</div>
+      </div>
+
       <div class="hero-stats">
         <div class="hero-stat"><strong id="recipeCount">0</strong><span>Rezepte</span></div>
         <div class="hero-stat"><strong id="favoriteCount">0</strong><span>Favoriten</span></div>
         <div class="hero-stat"><strong>7</strong><span>Tage Planung</span></div>
       </div>
 
-   <div class="buttons hero-buttons">
-  <button class="primary big-cta" onclick="loadRoulette()">
-    🎲 Rezept ziehen
-  </button>
-
-  <button class="secondary" onclick="loadRecipes()">
-    🍲 Alle Rezepte
-  </button>
-
-  <button class="secondary" onclick="loadCreateRecipe()">
-    ➕ Rezept hinzufügen
-  </button>
-</div>
+      <div class="buttons hero-buttons">
+        <button class="primary big-cta" onclick="loadRoulette()">🎲 Rezept ziehen</button>
+        <button class="secondary" onclick="loadRecipes()">🍲 Alle Rezepte</button>
+        <button class="secondary" onclick="loadCreateRecipe()">➕ Rezept hinzufügen</button>
       </div>
     </section>
 
@@ -425,7 +574,7 @@ body.dark .empty-state{
 
   <script>
     let allRecipes = [];
-    let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+    let favorites = JSON.parse(localStorage.getItem("favorites") || "[]").map(Number);
     let ratings = JSON.parse(localStorage.getItem("ratings") || "{}");
     let recentRecipes = JSON.parse(localStorage.getItem("recentRecipes") || "[]");
     let pantry = JSON.parse(localStorage.getItem("pantry") || "[]");
@@ -439,216 +588,179 @@ body.dark .empty-state{
     }
 
     function showToast(msg){
-      const t=document.getElementById("toast");
-      t.textContent=msg;
+      const t = document.getElementById("toast");
+      t.textContent = msg;
       t.classList.add("show");
-      setTimeout(()=>t.classList.remove("show"),2200);
+      setTimeout(() => t.classList.remove("show"), 2200);
     }
 
     function setActiveNav(name){
-      document.querySelectorAll(".bottom-nav button").forEach(b=>b.classList.remove("active"));
-      const active=document.querySelector(`[data-nav="${name}"]`);
+      document.querySelectorAll(".bottom-nav button").forEach(b => b.classList.remove("active"));
+      const active = document.querySelector(`[data-nav="${name}"]`);
       if(active) active.classList.add("active");
     }
 
-    function showHome(){
-  setActiveNav("home");
-  document.getElementById("home").classList.remove("hidden");
-  updateStats();
-  renderHomeSections();
-  window.scrollTo({top:0,behavior:"smooth"});
-}
-
-    async function renderHomeSections(){
-  const c = document.getElementById("content");
-
-  try {
-    await ensureRecipesLoaded();
-
-    const recommended = allRecipes.slice(0,3);
-
-    c.innerHTML = `
-      <div class="home-sections">
-
-        <section>
-          <div class="section-head">
-            <div>
-              <h2>Heute empfohlen</h2>
-              <p class="muted">Schnelle Ideen für dein nächstes Lieblingsessen.</p>
-            </div>
-            <button class="secondary" onclick="loadRecipes()">Alle ansehen</button>
-          </div>
-
-          ${
-            recommended.length
-              ? `<div class="preview-grid">${recommended.map(recipeCard).join("")}</div>`
-              : `<div class="empty-state">Noch keine Rezepte geladen.</div>`
-          }
-        </section>
-
-        <section class="smart-card">
-          <div class="hero-badge" style="background:rgba(255,255,255,.22);color:white;">
-            ✨ Smart Roulette
-          </div>
-
-          <h2>Keine Idee? Lass die App entscheiden.</h2>
-
-          <p>
-            Smart Roulette schlägt dir ein Rezept vor, das du zuletzt noch nicht hattest.
-          </p>
-
-          <div class="smart-tags">
-  <button onclick="smartRouletteByTime(20)">
-    ⚡ Unter 20 Min
-  </button>
-
-  <button onclick="smartRouletteByDifficulty('Einfach')">
-    😌 Einfach
-  </button>
-
-  <button onclick="smartRouletteVeggie()">
-    🥦 Vegetarisch
-  </button>
-</div>
-
-<button class="secondary" onclick="smartRoulette()">
-  🎲 Komplett zufällig
-</button>
-        </section>
-
-        <section class="rescue-card">
-          <p class="hero-badge">♻️ Food Rescue</p>
-
-          <h2>Was ist noch im Kühlschrank?</h2>
-
-          <p class="muted">
-            Gib deine übrigen Zutaten ein und finde passende Rezepte.
-          </p>
-
-          <div class="rescue-chips">
-            <span>Tomaten</span>
-            <span>Käse</span>
-            <span>Reis</span>
-            <span>Paprika</span>
-          </div>
-
-          <button class="primary" onclick="loadFoodRescue()">
-            Lebensmittel retten
-          </button>
-        </section>
-
-      </div>
-    `;
-  } catch (error) {
-    c.innerHTML = "";
-  }
-}
-
-    function hideHome(){document.getElementById("home").classList.add("hidden")}
-
-    async function ensureRecipesLoaded() {
-  try {
-
-    if (!allRecipes.length) {
-      const response = await fetch("/rezepte");
-
-      if (!response.ok) {
-        throw new Error("Serverfehler");
-      }
-
-      allRecipes = await response.json();
+    function showSkeleton(target){
+      target.innerHTML = `
+        <div class="skeleton-grid">
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+        </div>
+      `;
     }
 
-    return allRecipes;
+    function showHome(){
+      setActiveNav("home");
+      document.getElementById("home").classList.remove("hidden");
+      updateStats();
+      renderHomeSections();
+      window.scrollTo({top:0,behavior:"smooth"});
+    }
 
-  } catch (error) {
+    function hideHome(){
+      document.getElementById("home").classList.add("hidden");
+    }
 
-    document.getElementById("content").innerHTML = `
-      <div class="error-box">
-        ❌ Rezepte konnten nicht geladen werden.
-        <br><br>
-        Bitte später erneut versuchen.
-      </div>
-    `;
-
-    throw error;
-  }
-}
+    async function ensureRecipesLoaded(){
+      try{
+        if(!allRecipes.length){
+          const response = await fetch("/rezepte");
+          if(!response.ok) throw new Error("Serverfehler");
+          allRecipes = await response.json();
+        }
+        updateStats();
+        return allRecipes;
+      }catch(error){
+        document.getElementById("content").innerHTML = `
+          <div class="error-box">
+            ❌ Rezepte konnten nicht geladen werden.<br><br>
+            Bitte später erneut versuchen.
+          </div>
+        `;
+        throw error;
+      }
+    }
 
     function updateStats(){
-      const rc=document.getElementById("recipeCount");
-      const fc=document.getElementById("favoriteCount");
-      if(rc) rc.textContent=allRecipes.length || 0;
-      if(fc) fc.textContent=favorites.length || 0;
+      const rc = document.getElementById("recipeCount");
+      const fc = document.getElementById("favoriteCount");
+      if(rc) rc.textContent = allRecipes.length || 0;
+      if(fc) fc.textContent = favorites.length || 0;
+    }
+
+    async function renderHomeSections(){
+      const c = document.getElementById("content");
+
+      try{
+        await ensureRecipesLoaded();
+        const recommended = allRecipes.slice(0,6);
+        const recentPreview = recentRecipes.slice(0,3);
+
+        c.innerHTML = `
+          <div class="home-sections">
+            <section>
+              <div class="section-head">
+                <div>
+                  <h2>Heute empfohlen</h2>
+                  <p class="muted">Schnelle Ideen für dein nächstes Lieblingsessen.</p>
+                </div>
+                <button class="secondary" onclick="loadRecipes()">Alle ansehen</button>
+              </div>
+
+              ${recommended.length
+                ? `<div class="recipe-slider">${recommended.map(recipeCard).join("")}</div>`
+                : `<div class="empty-state">Noch keine Rezepte geladen.</div>`}
+            </section>
+
+            <section class="smart-card">
+              <div class="hero-badge" style="background:rgba(255,255,255,.22);color:white;">✨ Smart Roulette</div>
+              <h2>Keine Idee? Lass die App entscheiden.</h2>
+              <p>Wähle eine Stimmung oder lass dich komplett überraschen.</p>
+
+              <div class="smart-tags">
+                <button onclick="smartRouletteByTime(20)">⚡ Unter 20 Min</button>
+                <button onclick="smartRouletteByDifficulty('Einfach')">😌 Einfach</button>
+                <button onclick="smartRouletteVeggie()">🥦 Vegetarisch</button>
+              </div>
+
+              <button class="secondary" onclick="smartRoulette()">🎲 Komplett zufällig</button>
+            </section>
+
+            <section class="rescue-card">
+              <p class="hero-badge">♻️ Food Rescue</p>
+              <h2>Was ist noch im Kühlschrank?</h2>
+              <p class="muted">Gib deine übrigen Zutaten ein und finde passende Rezepte.</p>
+
+              <div class="rescue-chips">
+                <span>Tomaten</span>
+                <span>Käse</span>
+                <span>Reis</span>
+                <span>Paprika</span>
+              </div>
+
+              <button class="primary" onclick="loadFoodRescue()">Lebensmittel retten</button>
+            </section>
+
+            <section>
+              <div class="section-head">
+                <div>
+                  <h2>Zuletzt angesehen</h2>
+                  <p class="muted">Schnell zurück zu deinen letzten Rezepten.</p>
+                </div>
+                <button class="secondary" onclick="loadRecentRecipes()">Öffnen</button>
+              </div>
+
+              ${recentPreview.length
+                ? `<div class="recipe-slider">${recentPreview.map(recipeCard).join("")}</div>`
+                : `<div class="empty-state">Noch keine Rezepte angesehen.</div>`}
+            </section>
+          </div>
+        `;
+      }catch(error){
+        c.innerHTML = "";
+      }
     }
 
     function recipeCard(recipe){
-  const img=imageUrl(recipe);
+      const img = imageUrl(recipe);
+      return `
+        <div class="card" onclick="showRecipe(${Number(recipe.id)})">
+          ${img ? `<img src="${img}" alt="${recipe.name}">` : `<div class="placeholder">Kein Bild</div>`}
 
-  return `
-    <div class="card" onclick="showRecipe(${recipe.id})">
+          <div class="favorite-row">
+            <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(${Number(recipe.id)})">
+              ${isFavorite(recipe.id) ? "❤️" : "🤍"}
+            </button>
+          </div>
 
-      ${img
-        ? `<img src="${img}" alt="${recipe.name}">`
-        : `<div class="placeholder">Kein Bild</div>`
-      }
-
-      <div class="favorite-row">
-        <button class="favorite-btn"
-          onclick="event.stopPropagation(); toggleFavorite(${recipe.id})">
-          ${isFavorite(recipe.id) ? "❤️" : "🤍"}
-        </button>
-      </div>
-
-      <div class="card-body">
-        <h3>${recipe.name}</h3>
-
-        <div class="meta">
-          ${recipe.kueche || "Unbekannt"} ·
-          ${recipe.kochzeit || "?"} Min ·
-          ${recipe.schwierigkeit || "Einfach"}
+          <div class="card-body">
+            <h3>${recipe.name}</h3>
+            <div class="meta">
+              ${recipe.kueche || "Unbekannt"} · ${recipe.kochzeit || "?"} Min · ${recipe.schwierigkeit || "Einfach"}
+            </div>
+            <div class="card-actions">
+              <button class="primary" onclick="event.stopPropagation(); showRecipe(${Number(recipe.id)})">Rezept ansehen</button>
+              <button class="secondary" onclick="event.stopPropagation(); quickAddToPlan(${Number(recipe.id)})">📅 Planen</button>
+              <button class="secondary" onclick="event.stopPropagation(); shareRecipe(${Number(recipe.id)})">📤 Teilen</button>
+            </div>
+          </div>
         </div>
-
-        <div class="card-actions">
-
-          <button class="primary"
-            onclick="event.stopPropagation(); showRecipe(${recipe.id})">
-            Rezept ansehen
-          </button>
-
-          <button class="secondary"
-            onclick="event.stopPropagation(); quickAddToPlan(${recipe.id})">
-            📅 Planen
-          </button>
-
-          <button class="secondary"
-            onclick="event.stopPropagation(); shareRecipe(${recipe.id})">
-            📤 Teilen
-          </button>
-
-        </div>
-      </div>
-    </div>
-  `;
-}
+      `;
+    }
 
     async function loadRecipes(){
       setActiveNav("recipes");
       hideHome();
-      const c=document.getElementById("content");
-      c.innerHTML = `
-  <div class="loading-box">
-    <h2>🍲 Rezepte werden geladen...</h2>
-    <p class="muted">Einen Moment, wir decken schon mal den Tisch.</p>
-  </div>
-`;
+      const c = document.getElementById("content");
+      showSkeleton(c);
       await ensureRecipesLoaded();
 
-      c.innerHTML=`
+      c.innerHTML = `
         <button class="secondary" onclick="showHome()">← Zurück</button>
         <h2>🍲 Alle Rezepte</h2>
         <div class="filters">
-          <input id="searchInput" placeholder="Rezept oder Zutat suchen..." oninput="renderRecipes()">
+          <input id="searchInput" placeholder="Wonach hast du Hunger? Pasta, Reis, Käse..." oninput="renderRecipes()">
           <label class="favorite-filter"><input type="checkbox" id="favoriteOnly" onchange="renderRecipes()"> Nur Favoriten</label>
           <select id="kitchenFilter" onchange="renderRecipes()"><option value="">Alle Küchen</option></select>
         </div>
@@ -659,62 +771,72 @@ body.dark .empty-state{
     }
 
     function fillKitchenFilter(){
-      const s=document.getElementById("kitchenFilter");
-      const kitchens=[...new Set(allRecipes.map(r=>r.kueche).filter(Boolean))].sort();
-      s.innerHTML=`<option value="">Alle Küchen</option>`+kitchens.map(k=>`<option value="${k}">${k}</option>`).join("");
+      const s = document.getElementById("kitchenFilter");
+      const kitchens = [...new Set(allRecipes.map(r => r.kueche).filter(Boolean))].sort();
+      s.innerHTML = `<option value="">Alle Küchen</option>` + kitchens.map(k => `<option value="${k}">${k}</option>`).join("");
     }
 
     function renderRecipes(){
-      const search=document.getElementById("searchInput")?.value.toLowerCase() || "";
-      const kitchen=document.getElementById("kitchenFilter")?.value || "";
-      const favoriteOnly=document.getElementById("favoriteOnly")?.checked;
-      const grid=document.getElementById("recipeGrid");
+      const search = document.getElementById("searchInput")?.value.toLowerCase() || "";
+      const kitchen = document.getElementById("kitchenFilter")?.value || "";
+      const favoriteOnly = document.getElementById("favoriteOnly")?.checked;
+      const grid = document.getElementById("recipeGrid");
       if(!grid) return;
 
-      const filtered=allRecipes.filter(r=>{
-        const ingredientText=(r.zutaten || []).join(" ").toLowerCase();
-        return (!search || r.name.toLowerCase().includes(search) || ingredientText.includes(search)) &&
-               (!kitchen || r.kueche===kitchen) &&
-               (!favoriteOnly || favorites.includes(r.id));
+      const filtered = allRecipes.filter(r => {
+        const ingredientText = (r.zutaten || []).join(" ").toLowerCase();
+        const tagText = (r.tags || []).join(" ").toLowerCase();
+        return (!search || r.name.toLowerCase().includes(search) || ingredientText.includes(search) || tagText.includes(search)) &&
+               (!kitchen || r.kueche === kitchen) &&
+               (!favoriteOnly || isFavorite(r.id));
       });
 
-      grid.innerHTML=filtered.length ? filtered.map(recipeCard).join("") : `<p>Keine Rezepte gefunden.</p>`;
+      grid.innerHTML = filtered.length
+        ? filtered.map(recipeCard).join("")
+        : `<div class="empty-state"><h2>Keine Rezepte gefunden</h2><p>Versuche einen anderen Suchbegriff.</p></div>`;
     }
 
     async function showRecipe(id){
       hideHome();
       await ensureRecipesLoaded();
-      const recipe=allRecipes.find(r=>Number(r.id)===Number(id));
+      const recipe = allRecipes.find(r => Number(r.id) === Number(id));
       if(!recipe) return;
-      saveRecentRecipe(recipe);
-      const img=imageUrl(recipe);
 
-      document.getElementById("content").innerHTML=`
+      saveRecentRecipe(recipe);
+      const img = imageUrl(recipe);
+
+      document.getElementById("content").innerHTML = `
         <button class="secondary" onclick="loadRecipes()">← Zurück zu allen Rezepten</button>
         <div class="detail">
           ${img ? `<img src="${img}" alt="${recipe.name}">` : `<div class="placeholder">Kein Bild</div>`}
           <div class="detail-body">
             <h1>${recipe.name}</h1>
+
+            ${(recipe.tags || []).length ? `<div class="chips">${recipe.tags.map(tag => `<div class="chip">${tag}</div>`).join("")}</div>` : ""}
+
             ${ratingStars(recipe.id)}
+
             <div class="meta">
               <span>🌍 ${recipe.kueche || "Unbekannt"}</span>
               <span>🍽️ ${recipe.portionen || "?"} Portionen</span>
               <span>⏱️ ${recipe.kochzeit || "?"} Min</span>
               <span>🔥 ${recipe.schwierigkeit || "Einfach"}</span>
             </div>
+
             <div class="buttons">
               <button class="primary" onclick="startCookMode(${recipe.id})">👨‍🍳 Kochmodus</button>
               <button class="secondary" onclick="quickAddToPlan(${recipe.id})">📅 Einplanen</button>
               <button class="secondary" onclick="shareRecipe(${recipe.id})">📤 Teilen</button>
             </div>
+
             <div class="columns">
               <div>
                 <h2>Zutaten</h2>
-                <div class="ingredients">${(recipe.zutaten || []).map(i=>`<div class="ingredient">✓ ${i}</div>`).join("")}</div>
+                <div class="ingredients">${(recipe.zutaten || []).map(i => `<div class="ingredient">✓ ${i}</div>`).join("")}</div>
               </div>
               <div>
                 <h2>Anleitung</h2>
-                <div class="steps">${(recipe.anleitung || "Keine Anleitung vorhanden.").split("\n").filter(Boolean).map(s=>`<div class="step">${s}</div>`).join("")}</div>
+                <div class="steps">${(recipe.anleitung || "Keine Anleitung vorhanden.").split("\n").filter(Boolean).map(s => `<div class="step">${s}</div>`).join("")}</div>
               </div>
             </div>
           </div>
@@ -726,18 +848,24 @@ body.dark .empty-state{
     async function loadRoulette(){
       setActiveNav("home");
       hideHome();
-      const c=document.getElementById("content");
+      const c = document.getElementById("content");
       await ensureRecipesLoaded();
-      const winner=allRecipes[Math.floor(Math.random()*allRecipes.length)];
-      const rouletteRecipes=[];
-      for(let i=0;i<22;i++) rouletteRecipes.push(allRecipes[Math.floor(Math.random()*allRecipes.length)]);
 
-      c.innerHTML=`
+      if(!allRecipes.length){
+        c.innerHTML = `<div class="empty-state">Keine Rezepte vorhanden.</div>`;
+        return;
+      }
+
+      const winner = allRecipes[Math.floor(Math.random() * allRecipes.length)];
+      const rouletteRecipes = [];
+      for(let i = 0; i < 22; i++) rouletteRecipes.push(allRecipes[Math.floor(Math.random() * allRecipes.length)]);
+
+      c.innerHTML = `
         <button class="secondary" onclick="showHome()">← Zurück</button>
         <h2>🎲 Rezept-Roulette</h2>
         <div class="roulette-stage">
           <div class="roulette-track" id="rouletteTrack">
-            ${rouletteRecipes.map(r=>`
+            ${rouletteRecipes.map(r => `
               <div class="roulette-item">
                 ${imageUrl(r) ? `<img src="${imageUrl(r)}" alt="${r.name}">` : `<div class="placeholder">Kein Bild</div>`}
                 <h3>${r.name}</h3>
@@ -747,109 +875,79 @@ body.dark .empty-state{
         </div>
       `;
 
-      const track=document.getElementById("rouletteTrack");
-      let pos=0,speed=48;
-      const spin=setInterval(()=>{
-        pos-=speed;
-        track.style.transform=`translateX(${pos}px)`;
-        speed*=.985;
-      if (speed < 1.2) {
-  clearInterval(spin);
+      const track = document.getElementById("rouletteTrack");
+      let pos = 0;
+      let speed = 48;
 
-  const result = document.createElement("div");
-  result.innerHTML = `
-    <h2 class="winner-title">🎉 Dein Treffer</h2>
+      const spin = setInterval(() => {
+        pos -= speed;
+        track.style.transform = `translateX(${pos}px)`;
+        speed *= .985;
 
-    <div class="winner-result winner-pop">
-      ${recipeCard(winner)}
-    </div>
-
-    <div class="buttons">
-      <button class="primary" onclick="loadRoulette()">🔁 Nochmal drehen</button>
-      <button class="secondary" onclick="showRecipe(${winner.id})">🍽️ Rezept ansehen</button>
-    </div>
-  `;
-
-  c.appendChild(result);
-  showToast("Rezept gezogen!");
-}
+        if(speed < 1.2){
+          clearInterval(spin);
+          const result = document.createElement("div");
+          result.innerHTML = `
+            <h2 class="winner-title">🎉 Dein Treffer</h2>
+            <div class="winner-result winner-pop">${recipeCard(winner)}</div>
+            <div class="buttons">
+              <button class="primary" onclick="loadRoulette()">🔁 Nochmal drehen</button>
+              <button class="secondary" onclick="showRecipe(${winner.id})">🍽️ Rezept ansehen</button>
+            </div>
+          `;
+          c.appendChild(result);
+          showToast("Rezept gezogen!");
+        }
       },16);
     }
 
     async function smartRoulette(){
       await ensureRecipesLoaded();
-      const pool=allRecipes.filter(r=>!recentRecipes.some(x=>Number(x.id)===Number(r.id)));
-      const source=pool.length ? pool : allRecipes;
-      const winner=source[Math.floor(Math.random()*source.length)];
+      const pool = allRecipes.filter(r => !recentRecipes.some(x => Number(x.id) === Number(r.id)));
+      const source = pool.length ? pool : allRecipes;
+      if(!source.length) return showToast("Keine Rezepte vorhanden.");
+      const winner = source[Math.floor(Math.random() * source.length)];
       showRecipe(winner.id);
       showToast("Smart Roulette hat gewählt!");
     }
+
     async function smartRouletteByTime(maxTime){
-  await ensureRecipesLoaded();
+      await ensureRecipesLoaded();
+      const filtered = allRecipes.filter(r => Number(r.kochzeit) <= maxTime);
+      if(!filtered.length) return showToast("Keine passenden Rezepte gefunden.");
+      const winner = filtered[Math.floor(Math.random() * filtered.length)];
+      showRecipe(winner.id);
+      showToast(`⚡ Rezept unter ${maxTime} Minuten gefunden!`);
+    }
 
-  const filtered = allRecipes.filter(r =>
-    Number(r.kochzeit) <= maxTime
-  );
+    async function smartRouletteByDifficulty(level){
+      await ensureRecipesLoaded();
+      const filtered = allRecipes.filter(r => (r.schwierigkeit || "").toLowerCase() === level.toLowerCase());
+      if(!filtered.length) return showToast("Keine passenden Rezepte gefunden.");
+      const winner = filtered[Math.floor(Math.random() * filtered.length)];
+      showRecipe(winner.id);
+      showToast(`😌 ${level}-Rezept gefunden!`);
+    }
 
-  if(!filtered.length){
-    showToast("Keine passenden Rezepte gefunden.");
-    return;
-  }
-
-  const winner = filtered[Math.floor(Math.random() * filtered.length)];
-
-  showRecipe(winner.id);
-  showToast(`⚡ Rezept unter ${maxTime} Minuten gefunden!`);
-}
-
-async function smartRouletteByDifficulty(level){
-  await ensureRecipesLoaded();
-
-  const filtered = allRecipes.filter(r =>
-    (r.schwierigkeit || "").toLowerCase() === level.toLowerCase()
-  );
-
-  if(!filtered.length){
-    showToast("Keine passenden Rezepte gefunden.");
-    return;
-  }
-
-  const winner = filtered[Math.floor(Math.random() * filtered.length)];
-
-  showRecipe(winner.id);
-  showToast(`😌 ${level}-Rezept gefunden!`);
-}
-
-async function smartRouletteVeggie(){
-  await ensureRecipesLoaded();
-
-  const filtered = allRecipes.filter(r =>
-    (r.tags || []).some(tag =>
-      tag.toLowerCase().includes("vegetar")
-    )
-  );
-
-  if(!filtered.length){
-    showToast("Keine vegetarischen Rezepte gefunden.");
-    return;
-  }
-
-  const winner = filtered[Math.floor(Math.random() * filtered.length)];
-
-  showRecipe(winner.id);
-  showToast("🥦 Vegetarisches Rezept gefunden!");
-}
+    async function smartRouletteVeggie(){
+      await ensureRecipesLoaded();
+      const filtered = allRecipes.filter(r => (r.tags || []).some(tag => tag.toLowerCase().includes("vegetar")));
+      if(!filtered.length) return showToast("Keine vegetarischen Rezepte gefunden.");
+      const winner = filtered[Math.floor(Math.random() * filtered.length)];
+      showRecipe(winner.id);
+      showToast("🥦 Vegetarisches Rezept gefunden!");
+    }
 
     async function loadWeeklyPlan(){
       setActiveNav("plan");
       hideHome();
-      const c=document.getElementById("content");
+      const c = document.getElementById("content");
       await ensureRecipesLoaded();
-      const r=await fetch("/wochenplan");
-      const plan=await r.json();
-      const days=["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"];
+      const r = await fetch("/wochenplan");
+      const plan = await r.json();
+      const days = ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"];
 
-      c.innerHTML=`
+      c.innerHTML = `
         <button class="secondary" onclick="showHome()">← Zurück</button>
         <h2>📅 Wochenplan</h2>
         <div class="buttons">
@@ -857,25 +955,25 @@ async function smartRouletteVeggie(){
           <button class="secondary" onclick="resetWeek()">🗑️ Woche leeren</button>
         </div>
         <div class="grid">
-          ${days.map(day=>{
-            const v=plan[day]||plan[day.toLowerCase()]||plan[day.toUpperCase()];
-            const id=typeof v==="object"&&v!==null ? v.id : Number(v);
-            const recipe=allRecipes.find(r=>Number(r.id)===Number(id));
+          ${days.map(day => {
+            const v = plan[day] || plan[day.toLowerCase()] || plan[day.toUpperCase()];
+            const id = typeof v === "object" && v !== null ? v.id : Number(v);
+            const recipe = allRecipes.find(r => Number(r.id) === Number(id));
             return `
-              <div class="card">
+              <div class="card" onclick="${recipe ? `showRecipe(${recipe.id})` : ""}">
                 <div class="card-body">
                   <h3>📅 ${day}</h3>
                   ${recipe ? `
                     ${imageUrl(recipe) ? `<img class="week-image" src="${imageUrl(recipe)}" alt="${recipe.name}">` : ""}
                     <p class="week-title">${recipe.name}</p>
                     <div class="card-actions">
-                      <button class="primary" onclick="showRecipe(${recipe.id})">Rezept ansehen</button>
-                      <button class="secondary" onclick="clearDay('${day}')">❌ Entfernen</button>
+                      <button class="primary" onclick="event.stopPropagation(); showRecipe(${recipe.id})">Rezept ansehen</button>
+                      <button class="secondary" onclick="event.stopPropagation(); clearDay('${day}')">❌ Entfernen</button>
                     </div>
                   ` : `<p class="week-empty">Noch kein Rezept gewählt</p>`}
-                  <select onchange="setDayRecipe('${day}',this.value)">
+                  <select onclick="event.stopPropagation()" onchange="setDayRecipe('${day}',this.value)">
                     <option value="">Rezept auswählen</option>
-                    ${allRecipes.map(r=>`<option value="${r.id}">${r.name}</option>`).join("")}
+                    ${allRecipes.map(r => `<option value="${r.id}">${r.name}</option>`).join("")}
                   </select>
                 </div>
               </div>`;
@@ -885,8 +983,8 @@ async function smartRouletteVeggie(){
 
     async function setDayRecipe(day,id){
       if(!id) return;
-      const r=await fetch(`/wochenplan/${encodeURIComponent(day)}/${Number(id)}`,{method:"POST"});
-      if(!r.ok){showToast("Fehler beim Speichern");return}
+      const r = await fetch(`/wochenplan/${encodeURIComponent(day)}/${Number(id)}`,{method:"POST"});
+      if(!r.ok) return showToast("Fehler beim Speichern");
       showToast("Zum Wochenplan hinzugefügt!");
       loadWeeklyPlan();
     }
@@ -899,9 +997,9 @@ async function smartRouletteVeggie(){
 
     async function autoFillWeek(){
       await ensureRecipesLoaded();
-      const days=["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"];
-      const shuffled=[...allRecipes].sort(()=>Math.random()-.5).slice(0,7);
-      for(let i=0;i<days.length;i++){
+      const days = ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"];
+      const shuffled = [...allRecipes].sort(() => Math.random() - .5).slice(0,7);
+      for(let i = 0; i < days.length && shuffled[i]; i++){
         await fetch(`/wochenplan/${encodeURIComponent(days[i])}/${shuffled[i].id}`,{method:"POST"});
       }
       showToast("Woche automatisch geplant!");
@@ -917,28 +1015,33 @@ async function smartRouletteVeggie(){
     async function loadShoppingList(){
       setActiveNav("list");
       hideHome();
-      const c=document.getElementById("content");
+      const c = document.getElementById("content");
       await ensureRecipesLoaded();
-      const r=await fetch("/wochenplan");
-      const plan=await r.json();
-      const ingredients=[];
-      Object.values(plan).forEach(entry=>{
+      const r = await fetch("/wochenplan");
+      const plan = await r.json();
+      const ingredients = [];
+
+      Object.values(plan).forEach(entry => {
         if(!entry) return;
-        const id=typeof entry==="object" ? Number(entry.id) : Number(entry);
-        const recipe=allRecipes.find(r=>Number(r.id)===id);
+        const id = typeof entry === "object" ? Number(entry.id) : Number(entry);
+        const recipe = allRecipes.find(r => Number(r.id) === id);
         if(recipe?.zutaten) ingredients.push(...recipe.zutaten);
       });
-      const unique=[...new Set(ingredients)];
-      c.innerHTML=`
+
+      const unique = [...new Set(ingredients)];
+      c.innerHTML = `
         <button class="secondary" onclick="showHome()">← Zurück</button>
         <h2>🛒 Einkaufsliste</h2>
         <button class="secondary" onclick="copyShoppingList()">Liste kopieren</button>
-        ${unique.length ? `<div class="shopping-list">${unique.map(i=>`<label class="shopping-item"><input type="checkbox"><span class="shopping-item-text">${i}</span></label>`).join("")}</div>` : `<p class="muted">Füge zuerst Rezepte zum Wochenplan hinzu.</p>`}`;
+        ${unique.length
+          ? `<div class="shopping-list">${unique.map(i => `<label class="shopping-item"><input type="checkbox"><span class="shopping-item-text">${i}</span></label>`).join("")}</div>`
+          : `<div class="empty-state"><h2>🛒 Noch keine Zutaten</h2><p>Füge zuerst Rezepte zum Wochenplan hinzu.</p><button class="primary" onclick="loadWeeklyPlan()">Zum Wochenplan</button></div>`}
+      `;
     }
 
     function copyShoppingList(){
-      const items=[...document.querySelectorAll(".shopping-item-text")].map(i=>i.textContent.trim()).join("\n");
-      if(!items){showToast("Keine Zutaten zum Kopieren.");return}
+      const items = [...document.querySelectorAll(".shopping-item-text")].map(i => i.textContent.trim()).join("\n");
+      if(!items) return showToast("Keine Zutaten zum Kopieren.");
       navigator.clipboard.writeText(items);
       showToast("Einkaufsliste kopiert!");
     }
@@ -946,8 +1049,8 @@ async function smartRouletteVeggie(){
     function loadFoodRescue(){
       setActiveNav("rescue");
       hideHome();
-      const c=document.getElementById("content");
-      c.innerHTML=`
+      const c = document.getElementById("content");
+      c.innerHTML = `
         <button class="secondary" onclick="showHome()">← Zurück</button>
         <h2>♻️ Food Rescue</h2>
         <p class="muted">Gib ein, was du zuhause hast. Die App findet passende Rezepte.</p>
@@ -956,115 +1059,124 @@ async function smartRouletteVeggie(){
           <button class="primary" onclick="findRescueRecipes()">Lebensmittel retten</button>
           <button class="secondary" onclick="savePantry()">Vorrat speichern</button>
         </div>
-        <div id="rescueResults"></div>`;
+        <div id="rescueResults"></div>
+      `;
     }
 
     function savePantry(){
-      pantry=document.getElementById("rescueInput").value.split(/\n|,|;/).map(x=>x.trim()).filter(Boolean);
+      pantry = document.getElementById("rescueInput").value.split(/\n|,|;/).map(x => x.trim()).filter(Boolean);
       localStorage.setItem("pantry",JSON.stringify(pantry));
       showToast("Vorrat gespeichert!");
     }
 
     async function findRescueRecipes(){
-      const input=document.getElementById("rescueInput").value;
-      const available=input.split(/\n|,|;/).map(x=>x.trim().toLowerCase()).filter(Boolean);
-      if(!available.length){showToast("Bitte Zutaten eingeben.");return}
+      const input = document.getElementById("rescueInput").value;
+      const available = input.split(/\n|,|;/).map(x => x.trim().toLowerCase()).filter(Boolean);
+      if(!available.length) return showToast("Bitte Zutaten eingeben.");
       await ensureRecipesLoaded();
 
-      const results=allRecipes.map(recipe=>{
-        const ingredients=(recipe.zutaten||[]).map(z=>z.toLowerCase());
-        const matches=available.filter(a=>ingredients.some(i=>i.includes(a)));
+      const results = allRecipes.map(recipe => {
+        const ingredients = (recipe.zutaten || []).map(z => z.toLowerCase());
+        const matches = available.filter(a => ingredients.some(i => i.includes(a)));
         return {recipe,matches,score:matches.length};
-      }).filter(r=>r.score>0).sort((a,b)=>b.score-a.score).slice(0,8);
+      }).filter(r => r.score > 0).sort((a,b) => b.score - a.score).slice(0,8);
 
-      document.getElementById("rescueResults").innerHTML=results.length ? `
-        <h2>Passende Rezepte</h2>
-        <div class="grid">${results.map(r=>`
-          <div class="card">
-            ${imageUrl(r.recipe) ? `<img src="${imageUrl(r.recipe)}" alt="${r.recipe.name}">` : `<div class="placeholder">Kein Bild</div>`}
-            <div class="card-body">
-              <span class="badge">${r.score} Treffer</span>
-              <h3>${r.recipe.name}</h3>
-              <div class="meta">Passt zu: ${r.matches.join(", ")}</div>
-              <div class="card-actions">
-                <button class="primary" onclick="showRecipe(${r.recipe.id})">Rezept ansehen</button>
-                <button class="secondary" onclick="quickAddToPlan(${r.recipe.id})">📅 Planen</button>
+      document.getElementById("rescueResults").innerHTML = results.length
+        ? `<h2>Passende Rezepte</h2><div class="grid">${results.map(r => `
+            <div class="card" onclick="showRecipe(${r.recipe.id})">
+              ${imageUrl(r.recipe) ? `<img src="${imageUrl(r.recipe)}" alt="${r.recipe.name}">` : `<div class="placeholder">Kein Bild</div>`}
+              <div class="card-body">
+                <span class="badge">${r.score} Treffer</span>
+                <h3>${r.recipe.name}</h3>
+                <div class="meta">Passt zu: ${r.matches.join(", ")}</div>
+                <div class="card-actions">
+                  <button class="primary" onclick="event.stopPropagation(); showRecipe(${r.recipe.id})">Rezept ansehen</button>
+                  <button class="secondary" onclick="event.stopPropagation(); quickAddToPlan(${r.recipe.id})">📅 Planen</button>
+                </div>
               </div>
-            </div>
-          </div>`).join("")}</div>` : `<p class="muted">Keine passenden Rezepte gefunden.</p>`;
+            </div>`).join("")}</div>`
+        : `<div class="empty-state"><h2>Keine passenden Rezepte gefunden</h2><p>Versuche allgemeinere Zutaten wie Reis, Käse oder Tomaten.</p></div>`;
     }
 
     async function quickAddToPlan(id){
-      const day=prompt("Für welchen Tag?\n\nMontag, Dienstag, Mittwoch, Donnerstag, Freitag, Samstag oder Sonntag");
+      const day = prompt("Für welchen Tag?\n\nMontag, Dienstag, Mittwoch, Donnerstag, Freitag, Samstag oder Sonntag");
       if(!day) return;
-      const r=await fetch(`/wochenplan/${encodeURIComponent(day)}/${Number(id)}`,{method:"POST"});
+      const r = await fetch(`/wochenplan/${encodeURIComponent(day)}/${Number(id)}`,{method:"POST"});
       showToast(r.ok ? "Zum Wochenplan hinzugefügt!" : "Konnte nicht einplanen.");
     }
 
     function toggleFavorite(id){
-  id = Number(id);
+      id = Number(id);
+      if(favorites.includes(id)){
+        favorites = favorites.filter(f => Number(f) !== id);
+        showToast("Aus Favoriten entfernt");
+      }else{
+        favorites.push(id);
+        showToast("Zu Favoriten hinzugefügt");
+      }
 
-  if(favorites.map(Number).includes(id)){
-    favorites = favorites.filter(f => Number(f) !== id);
-    showToast("Aus Favoriten entfernt");
-  }else{
-    favorites.push(id);
-    showToast("Zu Favoriten hinzugefügt");
-  }
+      localStorage.setItem("favorites",JSON.stringify(favorites));
+      updateStats();
 
-  localStorage.setItem("favorites",JSON.stringify(favorites));
-  updateStats();
-
-  if(document.getElementById("recipeGrid")) renderRecipes();
-  renderHomeSections();
-}
+      if(document.getElementById("recipeGrid")) renderRecipes();
+      if(!document.getElementById("home").classList.contains("hidden")) renderHomeSections();
+    }
 
     function isFavorite(id){
-  return favorites.map(Number).includes(Number(id));
-}
+      return favorites.includes(Number(id));
+    }
 
     async function loadFavorites(){
       setActiveNav("favorites");
       hideHome();
       await ensureRecipesLoaded();
-      const fav=allRecipes.filter(r=>favorites.includes(r.id));
-      document.getElementById("content").innerHTML=`
+      const fav = allRecipes.filter(r => isFavorite(r.id));
+
+      document.getElementById("content").innerHTML = `
         <button class="secondary" onclick="showHome()">← Zurück</button>
         <h2>❤️ Deine Favoriten</h2>
-        ${fav.length ? `<div class="grid" id="recipeGrid">${fav.map(recipeCard).join("")}</div>` : `<div class="empty-state">
-  <h2>❤️ Noch keine Favoriten</h2>
-  <p>Speichere dein erstes Lieblingsrezept, damit du es schnell wiederfindest.</p>
-  <button class="primary" onclick="loadRecipes()">Rezepte entdecken</button>
-</div>
+        ${fav.length
+          ? `<div class="grid" id="recipeGrid">${fav.map(recipeCard).join("")}</div>`
+          : `<div class="empty-state"><h2>❤️ Noch keine Favoriten</h2><p>Speichere dein erstes Lieblingsrezept, damit du es schnell wiederfindest.</p><button class="primary" onclick="loadRecipes()">Rezepte entdecken</button></div>`}
+      `;
     }
 
     function saveRecentRecipe(recipe){
-      recentRecipes=recentRecipes.filter(r=>Number(r.id)!==Number(recipe.id));
-      recentRecipes.unshift({id:recipe.id,name:recipe.name,bild:recipe.bild,image:recipe.image,image_url:recipe.image_url,kueche:recipe.kueche,kochzeit:recipe.kochzeit,schwierigkeit:recipe.schwierigkeit});
-      recentRecipes=recentRecipes.slice(0,6);
+      recentRecipes = recentRecipes.filter(r => Number(r.id) !== Number(recipe.id));
+      recentRecipes.unshift({
+        id:recipe.id,
+        name:recipe.name,
+        bild:recipe.bild,
+        image:recipe.image,
+        image_url:recipe.image_url,
+        kueche:recipe.kueche,
+        kochzeit:recipe.kochzeit,
+        schwierigkeit:recipe.schwierigkeit,
+        tags:recipe.tags || []
+      });
+      recentRecipes = recentRecipes.slice(0,6);
       localStorage.setItem("recentRecipes",JSON.stringify(recentRecipes));
     }
 
     function loadRecentRecipes(){
       setActiveNav("recent");
       hideHome();
-      document.getElementById("content").innerHTML=`
+      document.getElementById("content").innerHTML = `
         <button class="secondary" onclick="showHome()">← Zurück</button>
         <h2>🕘 Zuletzt angesehen</h2>
-        ${recentRecipes.length ? `<div class="grid">${recentRecipes.map(recipeCard).join("")}</div>` : `<div class="empty-state">
-  <h2>❤️ Noch keine Favoriten</h2>
-  <p>Speichere dein erstes Lieblingsrezept, damit du es schnell wiederfindest.</p>
-  <button class="primary" onclick="loadRecipes()">Rezepte entdecken</button>
-</div>
+        ${recentRecipes.length
+          ? `<div class="grid">${recentRecipes.map(recipeCard).join("")}</div>`
+          : `<div class="empty-state"><h2>🕘 Noch keine zuletzt angesehenen Rezepte</h2><p>Öffne ein Rezept, dann erscheint es hier.</p><button class="primary" onclick="loadRecipes()">Rezepte entdecken</button></div>`}
+      `;
     }
 
     function ratingStars(id){
-      const current=ratings[id]||0;
-      return `<div class="rating">${[1,2,3,4,5].map(s=>`<button onclick="setRating(${id},${s})">${s<=current?"⭐":"☆"}</button>`).join("")}</div>`;
+      const current = ratings[id] || 0;
+      return `<div class="rating">${[1,2,3,4,5].map(s => `<button onclick="setRating(${id},${s})">${s <= current ? "⭐" : "☆"}</button>`).join("")}</div>`;
     }
 
     function setRating(id,value){
-      ratings[id]=value;
+      ratings[id] = value;
       localStorage.setItem("ratings",JSON.stringify(ratings));
       showToast("Bewertung gespeichert!");
       showRecipe(id);
@@ -1072,9 +1184,9 @@ async function smartRouletteVeggie(){
 
     async function shareRecipe(id){
       await ensureRecipesLoaded();
-      const recipe=allRecipes.find(r=>Number(r.id)===Number(id));
+      const recipe = allRecipes.find(r => Number(r.id) === Number(id));
       if(!recipe) return;
-      const text=`${recipe.name} auf Rezeptroulette`;
+      const text = `${recipe.name} auf Rezeptroulette`;
       if(navigator.share){
         navigator.share({title:recipe.name,text,url:location.href});
       }else{
@@ -1085,126 +1197,118 @@ async function smartRouletteVeggie(){
 
     async function startCookMode(id){
       await ensureRecipesLoaded();
-      const recipe=allRecipes.find(r=>Number(r.id)===Number(id));
+      const recipe = allRecipes.find(r => Number(r.id) === Number(id));
       if(!recipe) return;
-      cookSteps=(recipe.anleitung||"Keine Anleitung vorhanden.").split("\n").filter(Boolean);
-      cookIndex=0;
-      document.getElementById("cookTitle").textContent=`👨‍🍳 ${recipe.name}`;
+      cookSteps = (recipe.anleitung || "Keine Anleitung vorhanden.").split("\n").filter(Boolean);
+      cookIndex = 0;
+      document.getElementById("cookTitle").textContent = `👨‍🍳 ${recipe.name}`;
       updateCookStep();
       document.getElementById("cookDrawer").classList.add("show");
     }
 
     function updateCookStep(){
-      document.getElementById("cookStep").textContent=cookSteps[cookIndex] || "Fertig!";
+      document.getElementById("cookStep").textContent = cookSteps[cookIndex] || "Fertig!";
     }
-    function nextCookStep(){if(cookIndex<cookSteps.length-1) cookIndex++; updateCookStep();}
-    function previousCookStep(){if(cookIndex>0) cookIndex--; updateCookStep();}
-    function closeCookMode(){document.getElementById("cookDrawer").classList.remove("show");}
+
+    function nextCookStep(){
+      if(cookIndex < cookSteps.length - 1) cookIndex++;
+      updateCookStep();
+    }
+
+    function previousCookStep(){
+      if(cookIndex > 0) cookIndex--;
+      updateCookStep();
+    }
+
+    function closeCookMode(){
+      document.getElementById("cookDrawer").classList.remove("show");
+    }
 
     function toggleDarkMode(){
       document.body.classList.toggle("dark");
       localStorage.setItem("darkMode",document.body.classList.contains("dark"));
     }
 
-    if(localStorage.getItem("darkMode")==="true") document.body.classList.add("dark");
+    function loadCreateRecipe(){
+      hideHome();
+      setActiveNav("recipes");
+      const c = document.getElementById("content");
 
-    fetch("/rezepte").then(r=>r.json()).then(data=>{
-  allRecipes=data;
-  updateStats();
-  renderHomeSections();
-});
-    function loadCreateRecipe() {
-  hideHome();
+      c.innerHTML = `
+        <button class="secondary" onclick="showHome()">← Zurück</button>
+        <h2>➕ Eigenes Rezept hinzufügen</h2>
 
-  const c = document.getElementById("content");
+        <div class="panel" style="padding:24px;margin-top:20px;display:grid;gap:14px;">
+          <input id="newName" placeholder="Rezeptname">
+          <input id="newKitchen" placeholder="Küche, z. B. Italienisch">
+          <input id="newImage" placeholder="Bilddatei, z. B. mein_rezept.jpg">
+          <input id="newPortions" type="number" placeholder="Portionen" value="2">
+          <input id="newTime" type="number" placeholder="Kochzeit in Minuten" value="30">
 
-  c.innerHTML = `
-    <button class="secondary" onclick="showHome()">← Zurück</button>
+          <select id="newDifficulty">
+            <option>Einfach</option>
+            <option>Mittel</option>
+            <option>Schwer</option>
+          </select>
 
-    <h2>➕ Eigenes Rezept hinzufügen</h2>
+          <textarea id="newTags" placeholder="Tags, getrennt mit Komma, z. B. Schnell, Vegetarisch"></textarea>
+          <textarea id="newIngredients" placeholder="Zutaten, eine pro Zeile"></textarea>
+          <textarea id="newInstructions" placeholder="Anleitung, Schritt für Schritt"></textarea>
 
-    <div class="panel" style="padding:24px;margin-top:20px;">
-      <input id="newName" placeholder="Rezeptname">
-      <input id="newKitchen" placeholder="Küche, z. B. Italienisch">
-      <input id="newImage" placeholder="Bilddatei, z. B. mein_rezept.jpg">
-      <input id="newPortions" type="number" placeholder="Portionen" value="2">
-      <input id="newTime" type="number" placeholder="Kochzeit in Minuten" value="30">
+          <div class="buttons">
+            <button class="primary" onclick="saveNewRecipe()">💾 Rezept speichern</button>
+          </div>
+        </div>
+      `;
+    }
 
-      <select id="newDifficulty">
-        <option>Einfach</option>
-        <option>Mittel</option>
-        <option>Schwer</option>
-      </select>
+    async function saveNewRecipe(){
+      const payload = {
+        name:document.getElementById("newName").value.trim(),
+        kueche:document.getElementById("newKitchen").value.trim(),
+        bild:document.getElementById("newImage").value.trim(),
+        portionen:Number(document.getElementById("newPortions").value || 2),
+        kochzeit:Number(document.getElementById("newTime").value || 30),
+        schwierigkeit:document.getElementById("newDifficulty").value,
+        tags:document.getElementById("newTags").value.split(",").map(x => x.trim()).filter(Boolean),
+        zutaten:document.getElementById("newIngredients").value.split("\n").map(x => x.trim()).filter(Boolean),
+        anleitung:document.getElementById("newInstructions").value.trim()
+      };
 
-      <textarea id="newTags" placeholder="Tags, getrennt mit Komma, z. B. Schnell, Vegetarisch"></textarea>
-      <textarea id="newIngredients" placeholder="Zutaten, eine pro Zeile"></textarea>
-      <textarea id="newInstructions" placeholder="Anleitung, Schritt für Schritt"></textarea>
+      if(!payload.name) return showToast("Bitte Rezeptnamen eingeben.");
+      if(!payload.zutaten.length) return showToast("Bitte mindestens eine Zutat eingeben.");
 
-      <div class="buttons">
-        <button class="primary" onclick="saveNewRecipe()">💾 Rezept speichern</button>
-      </div>
-    </div>
-  `;
-}
+      const response = await fetch("/rezept-erstellen",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify(payload)
+      });
 
-async function saveNewRecipe() {
-  const payload = {
-    name: document.getElementById("newName").value.trim(),
-    kueche: document.getElementById("newKitchen").value.trim(),
-    bild: document.getElementById("newImage").value.trim(),
-    portionen: Number(document.getElementById("newPortions").value || 2),
-    kochzeit: Number(document.getElementById("newTime").value || 30),
-    schwierigkeit: document.getElementById("newDifficulty").value,
-    tags: document.getElementById("newTags").value
-      .split(",")
-      .map(x => x.trim())
-      .filter(Boolean),
-    zutaten: document.getElementById("newIngredients").value
-      .split("\n")
-      .map(x => x.trim())
-      .filter(Boolean),
-    anleitung: document.getElementById("newInstructions").value.trim()
-  };
+      if(!response.ok) return showToast("Rezept konnte nicht gespeichert werden.");
 
-  if (!payload.name) {
-    showToast("Bitte Rezeptnamen eingeben.");
-    return;
-  }
+      const savedRecipe = await response.json();
+      allRecipes = [];
+      await ensureRecipesLoaded();
+      showToast("Rezept gespeichert!");
+      showRecipe(savedRecipe.id);
+    }
 
-  if (!payload.zutaten.length) {
-    showToast("Bitte mindestens eine Zutat eingeben.");
-    return;
-  }
+    if(localStorage.getItem("darkMode") === "true") document.body.classList.add("dark");
 
-  const response = await fetch("/rezept-erstellen", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(payload)
-  });
+    fetch("/rezepte")
+      .then(r => r.json())
+      .then(data => {
+        allRecipes = data;
+        updateStats();
+        renderHomeSections();
+      })
+      .catch(() => {
+        document.getElementById("content").innerHTML = `
+          <div class="error-box">❌ Rezepte konnten nicht geladen werden.</div>
+        `;
+      });
 
-  if (!response.ok) {
-    showToast("Rezept konnte nicht gespeichert werden.");
-    return;
-  }
-
-  const savedRecipe = await response.json();
-
-  allRecipes = [];
-  await ensureRecipesLoaded();
-
-  showToast("Rezept gespeichert!");
-  showRecipe(savedRecipe.id);
-}
-fetch("/rezepte").then(r=>r.json()).then(data=>{
-  allRecipes=data;
-  updateStats();
-  renderHomeSections();
-});
-
-showHome();
-
+    showHome();
   </script>
 </body>
 </html>

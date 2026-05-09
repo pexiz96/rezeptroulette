@@ -1,35 +1,18 @@
 import os
 import random
 from dataclasses import asdict
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from database import Database
 from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
-from dataclasses import asdict
 from pydantic import BaseModel
+
+from database import Database
 from models import Rezept
 
-app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-BILDER_DIR = os.path.join(BASE_DIR, "bilder")
-
-app.mount("/bilder", StaticFiles(directory=BILDER_DIR), name="bilder")
-
-
-def get_db():
-    class RezeptCreate(BaseModel):
+class RezeptCreate(BaseModel):
     name: str
     kueche: str = "Unbekannt"
     bild: str = ""
@@ -39,8 +22,28 @@ def get_db():
     tags: list[str] = []
     zutaten: list[str] = []
     anleitung: str = "Keine Anleitung vorhanden."
-    return Database()
 
+
+app = FastAPI()
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_DIR = os.path.join(BASE_DIR, "static")
+BILDER_DIR = os.path.join(BASE_DIR, "bilder")
+
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+app.mount("/bilder", StaticFiles(directory=BILDER_DIR), name="bilder")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+def get_db():
+    return Database()
 
 @app.get("/")
 def home():
