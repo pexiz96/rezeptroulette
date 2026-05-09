@@ -141,11 +141,12 @@ def loesche_tag(day: str):
 def setze_wochenplan(day: str, recipe_id: int):
     db = get_db()
     plan = db.weekly_plan()
+
+    if day not in plan:
+        return {"error": "Tag nicht gefunden"}
+
     plan[day] = recipe_id
     db.set_weekly_plan(plan)
-
-        if day not in plan:
-        return {"error": "Tag nicht gefunden"}
 
     return {"message": "Gespeichert", "day": day, "recipe_id": recipe_id}
 
