@@ -1,13 +1,15 @@
 import os
 import random
 from dataclasses import asdict
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from database import Database
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from dataclasses import asdict
+from pydantic import BaseModel
+from models import Rezept
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -27,6 +29,16 @@ app.mount("/bilder", StaticFiles(directory=BILDER_DIR), name="bilder")
 
 
 def get_db():
+    class RezeptCreate(BaseModel):
+    name: str
+    kueche: str = "Unbekannt"
+    bild: str = ""
+    portionen: int = 2
+    kochzeit: int = 30
+    schwierigkeit: str = "Einfach"
+    tags: list[str] = []
+    zutaten: list[str] = []
+    anleitung: str = "Keine Anleitung vorhanden."
     return Database()
 
 
@@ -40,6 +52,27 @@ def get_rezepte():
     db = get_db()
     return [asdict(r) for r in db.all_recipes()]
 
+@app.post("/rezept-erstellen")
+def rezept_erstellen(daten: RezeptCreate):
+    db = get_db()
+
+    rezept = Rezept(
+        name=daten.name.strip(),
+        kueche=daten.kueche.strip() or "Unbekannt",
+        bild=daten.bild.strip(),
+        portionen=max(1, daten.portionen),
+        kochzeit=max(1, daten.kochzeit),
+        schwierigkeit=daten.schwierigkeit or "Einfach",
+        tags=daten.tags,
+        favorit=False,
+        zutaten=daten.zutaten,
+        anleitung=daten.anleitung.strip() or "Keine Anleitung vorhanden.",
+    )
+
+    recipe_id = db.save_recipe(rezept)
+    saved = db.get_recipe(recipe_id)
+
+    return asdict(saved)
 
 @app.get("/roulette")
 def roulette():

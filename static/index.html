@@ -41,7 +41,10 @@
       border-radius:32px;
       box-shadow:0 20px 60px rgba(90,40,15,.14);
     }
-    .hero{padding:36px;margin-bottom:24px}
+    .hero{
+  padding:28px;
+  margin-bottom:18px;
+}
     .hero-badge,.badge,.winner-badge{
       display:inline-flex;
       background:#fff0e6;
@@ -67,7 +70,13 @@
     button:hover{transform:translateY(-2px)}
     .primary{color:white;background:linear-gradient(135deg,#ff6b35,#ffb703);box-shadow:0 12px 30px rgba(255,107,53,.3)}
     .secondary{background:white;color:#2d1b12;box-shadow:0 8px 22px rgba(90,40,15,.08)}
-    .hero-stat{background:white;padding:16px 18px;border-radius:18px;min-width:120px;box-shadow:0 8px 22px rgba(90,40,15,.08)}
+    .hero-stat{
+  background:white;
+  padding:18px 20px;
+  border-radius:22px;
+  min-width:130px;
+  box-shadow:0 10px 24px rgba(90,40,15,.08);
+}
     .hero-stat strong{display:block;font-size:26px}
     .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-top:22px}
     .card{
@@ -77,7 +86,16 @@
       transition:.18s ease;
     }
     .card:hover{transform:translateY(-6px);box-shadow:0 24px 50px rgba(90,40,15,.18)}
-    .card img{width:100%;height:230px;object-fit:cover;display:block}
+    .card img{
+  width:100%;
+  height:260px;
+  object-fit:cover;
+  display:block;
+  transition:.3s ease;
+}
+.card:hover img{
+  transform:scale(1.04);
+}
     .card-body{padding:18px}
     .card h3{margin:0 0 8px;font-size:22px}
     .meta{font-size:14px;margin-bottom:12px;display:flex;gap:10px;flex-wrap:wrap}
@@ -124,14 +142,32 @@
       padding:10px;box-shadow:0 12px 40px rgba(90,40,15,.15);z-index:1000;overflow-x:auto;
     }
     .bottom-nav button{background:transparent;display:flex;flex-direction:column;gap:4px;align-items:center;color:#7c4a2d;font-size:13px;padding:8px 10px;min-width:72px;box-shadow:none}
-    .bottom-nav button.active{background:linear-gradient(135deg,#ff6b35,#ffb703);color:white}
+   .bottom-nav button.active{
+  background:linear-gradient(135deg,#ff6b35,#ffb703);
+  color:white;
+  transform:translateY(-4px);
+  box-shadow:0 12px 30px rgba(255,107,53,.28);
+}
+   
     .roulette-stage{padding:30px;overflow:hidden;position:relative;margin-top:18px}
     .roulette-track{display:flex;gap:18px;will-change:transform}
     .roulette-item{min-width:240px;background:#fff7ed;border-radius:22px;overflow:hidden;flex-shrink:0;box-shadow:0 8px 24px rgba(90,40,15,.08)}
     .roulette-item img{width:100%;height:160px;object-fit:cover}
     .roulette-item h3{padding:14px;margin:0;font-size:18px}
     .winner-result{margin-top:20px;display:flex;justify-content:center}
-    .winner-result .card{max-width:380px;border:5px solid #ffb703;box-shadow:0 0 36px rgba(255,183,3,.65),0 24px 60px rgba(90,40,15,.22)}
+    .winner-result .card{
+  max-width:430px;
+  overflow:hidden;
+  position:relative;
+  transition:.25s ease;
+  border-radius:32px;
+  background:white;
+  box-shadow:
+    0 10px 30px rgba(90,40,15,.08),
+    0 20px 60px rgba(90,40,15,.10);
+}
+
+
     .winner-pop{animation:winnerPop .45s ease}
     @keyframes winnerPop{0%{transform:scale(.9);opacity:0}70%{transform:scale(1.05);opacity:1}100%{transform:scale(1)}}
     .drawer{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:flex-end;z-index:2500}
@@ -174,6 +210,149 @@
   font-weight: 700;
 }
 
+.home-sections{
+  display:grid;
+  gap:38px;
+  margin-top:30px;
+}
+
+.section-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:16px;
+  margin-bottom:16px;
+}
+
+.section-head h2{
+  margin:0;
+  font-size:28px;
+}
+
+.preview-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:18px;
+}
+
+.smart-card{
+  background:linear-gradient(135deg,#ff6b35,#ffb703);
+  color:white;
+  border-radius:32px;
+  padding:30px;
+  box-shadow:0 24px 60px rgba(255,107,53,.28);
+}
+
+.smart-card h2{
+  margin:10px 0;
+  font-size:34px;
+}
+
+.smart-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:20px 0;
+}
+
+.smart-tags button{
+  border:none;
+  cursor:pointer;
+  transition:.2s ease;
+}
+
+.smart-tags button:hover{
+  transform:translateY(-2px);
+  background:rgba(255,255,255,.3);
+}
+
+.rescue-card{
+  background:white;
+  border-radius:32px;
+  padding:30px;
+  box-shadow:0 20px 60px rgba(90,40,15,.12);
+}
+
+.rescue-chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:18px 0;
+}
+
+.rescue-chips span{
+  background:#ecfdf3;
+  color:#067647;
+  padding:10px 14px;
+  border-radius:999px;
+  font-weight:850;
+}
+
+.big-cta{
+  font-size:18px;
+  padding:16px 28px;
+}
+
+.hero{
+  padding:30px;
+}
+
+.hero-buttons .secondary{
+  opacity:.9;
+}
+
+.empty-state{
+  background:white;
+  padding:24px;
+  border-radius:28px;
+  color:#7c4a2d;
+  box-shadow:0 12px 30px rgba(90,40,15,.08);
+}
+
+body.dark .rescue-card,
+body.dark .empty-state{
+  background:#24140d;
+  color:#fff7ed;
+}
+
+.card{
+  cursor:pointer;
+}
+
+@media(max-width:520px){
+  .grid,
+  .preview-grid{
+    grid-template-columns:1fr;
+  }
+
+  .card{
+    max-width:none;
+  }
+
+  h1{
+    font-size:42px;
+  }
+
+  .hero-stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+  }
+
+  .hero-stat{
+    min-width:0;
+    padding:14px;
+  }
+
+  .hero-stat strong{
+    font-size:22px;
+  }
+
+  .section-head{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+}
+
   </style>
 </head>
 
@@ -213,13 +392,19 @@
         <div class="hero-stat"><strong>7</strong><span>Tage Planung</span></div>
       </div>
 
-      <div class="buttons">
-        <button class="primary" onclick="loadRoulette()">🎲 Rezept ziehen</button>
-        <button class="secondary" onclick="smartRoulette()">✨ Smart Roulette</button>
-        <button class="secondary" onclick="loadRecipes()">🍲 Alle Rezepte</button>
-        <button class="secondary" onclick="loadWeeklyPlan()">📅 Wochenplan</button>
-        <button class="secondary" onclick="loadShoppingList()">🛒 Einkaufsliste</button>
-        <button class="secondary" onclick="loadFoodRescue()">♻️ Food Rescue</button>
+   <div class="buttons hero-buttons">
+  <button class="primary big-cta" onclick="loadRoulette()">
+    🎲 Rezept ziehen
+  </button>
+
+  <button class="secondary" onclick="loadRecipes()">
+    🍲 Alle Rezepte
+  </button>
+
+  <button class="secondary" onclick="loadCreateRecipe()">
+    ➕ Rezept hinzufügen
+  </button>
+</div>
       </div>
     </section>
 
@@ -267,12 +452,97 @@
     }
 
     function showHome(){
-      setActiveNav("home");
-      document.getElementById("content").innerHTML="";
-      document.getElementById("home").classList.remove("hidden");
-      updateStats();
-      window.scrollTo({top:0,behavior:"smooth"});
-    }
+  setActiveNav("home");
+  document.getElementById("home").classList.remove("hidden");
+  updateStats();
+  renderHomeSections();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+    async function renderHomeSections(){
+  const c = document.getElementById("content");
+
+  try {
+    await ensureRecipesLoaded();
+
+    const recommended = allRecipes.slice(0,3);
+
+    c.innerHTML = `
+      <div class="home-sections">
+
+        <section>
+          <div class="section-head">
+            <div>
+              <h2>Heute empfohlen</h2>
+              <p class="muted">Schnelle Ideen für dein nächstes Lieblingsessen.</p>
+            </div>
+            <button class="secondary" onclick="loadRecipes()">Alle ansehen</button>
+          </div>
+
+          ${
+            recommended.length
+              ? `<div class="preview-grid">${recommended.map(recipeCard).join("")}</div>`
+              : `<div class="empty-state">Noch keine Rezepte geladen.</div>`
+          }
+        </section>
+
+        <section class="smart-card">
+          <div class="hero-badge" style="background:rgba(255,255,255,.22);color:white;">
+            ✨ Smart Roulette
+          </div>
+
+          <h2>Keine Idee? Lass die App entscheiden.</h2>
+
+          <p>
+            Smart Roulette schlägt dir ein Rezept vor, das du zuletzt noch nicht hattest.
+          </p>
+
+          <div class="smart-tags">
+  <button onclick="smartRouletteByTime(20)">
+    ⚡ Unter 20 Min
+  </button>
+
+  <button onclick="smartRouletteByDifficulty('Einfach')">
+    😌 Einfach
+  </button>
+
+  <button onclick="smartRouletteVeggie()">
+    🥦 Vegetarisch
+  </button>
+</div>
+
+<button class="secondary" onclick="smartRoulette()">
+  🎲 Komplett zufällig
+</button>
+        </section>
+
+        <section class="rescue-card">
+          <p class="hero-badge">♻️ Food Rescue</p>
+
+          <h2>Was ist noch im Kühlschrank?</h2>
+
+          <p class="muted">
+            Gib deine übrigen Zutaten ein und finde passende Rezepte.
+          </p>
+
+          <div class="rescue-chips">
+            <span>Tomaten</span>
+            <span>Käse</span>
+            <span>Reis</span>
+            <span>Paprika</span>
+          </div>
+
+          <button class="primary" onclick="loadFoodRescue()">
+            Lebensmittel retten
+          </button>
+        </section>
+
+      </div>
+    `;
+  } catch (error) {
+    c.innerHTML = "";
+  }
+}
 
     function hideHome(){document.getElementById("home").classList.add("hidden")}
 
@@ -313,31 +583,65 @@
     }
 
     function recipeCard(recipe){
-      const img=imageUrl(recipe);
-      return `
-        <div class="card">
-          ${img ? `<img src="${img}" alt="${recipe.name}">` : `<div class="placeholder">Kein Bild</div>`}
-          <div class="favorite-row">
-            <button class="favorite-btn" onclick="toggleFavorite(${recipe.id})">${isFavorite(recipe.id) ? "❤️" : "🤍"}</button>
-          </div>
-          <div class="card-body">
-            <h3>${recipe.name}</h3>
-            <div class="meta">${recipe.kueche || "Unbekannt"} · ${recipe.kochzeit || "?"} Min · ${recipe.schwierigkeit || "Einfach"}</div>
-            <div class="card-actions">
-              <button class="primary" onclick="showRecipe(${recipe.id})">Rezept ansehen</button>
-              <button class="secondary" onclick="quickAddToPlan(${recipe.id})">📅 Planen</button>
-              <button class="secondary" onclick="shareRecipe(${recipe.id})">📤 Teilen</button>
-            </div>
-          </div>
+  const img=imageUrl(recipe);
+
+  return `
+    <div class="card" onclick="showRecipe(${recipe.id})">
+
+      ${img
+        ? `<img src="${img}" alt="${recipe.name}">`
+        : `<div class="placeholder">Kein Bild</div>`
+      }
+
+      <div class="favorite-row">
+        <button class="favorite-btn"
+          onclick="event.stopPropagation(); toggleFavorite(${recipe.id})">
+          ${isFavorite(recipe.id) ? "❤️" : "🤍"}
+        </button>
+      </div>
+
+      <div class="card-body">
+        <h3>${recipe.name}</h3>
+
+        <div class="meta">
+          ${recipe.kueche || "Unbekannt"} ·
+          ${recipe.kochzeit || "?"} Min ·
+          ${recipe.schwierigkeit || "Einfach"}
         </div>
-      `;
-    }
+
+        <div class="card-actions">
+
+          <button class="primary"
+            onclick="event.stopPropagation(); showRecipe(${recipe.id})">
+            Rezept ansehen
+          </button>
+
+          <button class="secondary"
+            onclick="event.stopPropagation(); quickAddToPlan(${recipe.id})">
+            📅 Planen
+          </button>
+
+          <button class="secondary"
+            onclick="event.stopPropagation(); shareRecipe(${recipe.id})">
+            📤 Teilen
+          </button>
+
+        </div>
+      </div>
+    </div>
+  `;
+}
 
     async function loadRecipes(){
       setActiveNav("recipes");
       hideHome();
       const c=document.getElementById("content");
-      c.innerHTML="<p>Rezepte werden geladen...</p>";
+      c.innerHTML = `
+  <div class="loading-box">
+    <h2>🍲 Rezepte werden geladen...</h2>
+    <p class="muted">Einen Moment, wir decken schon mal den Tisch.</p>
+  </div>
+`;
       await ensureRecipesLoaded();
 
       c.innerHTML=`
@@ -480,6 +784,61 @@
       showRecipe(winner.id);
       showToast("Smart Roulette hat gewählt!");
     }
+    async function smartRouletteByTime(maxTime){
+  await ensureRecipesLoaded();
+
+  const filtered = allRecipes.filter(r =>
+    Number(r.kochzeit) <= maxTime
+  );
+
+  if(!filtered.length){
+    showToast("Keine passenden Rezepte gefunden.");
+    return;
+  }
+
+  const winner = filtered[Math.floor(Math.random() * filtered.length)];
+
+  showRecipe(winner.id);
+  showToast(`⚡ Rezept unter ${maxTime} Minuten gefunden!`);
+}
+
+async function smartRouletteByDifficulty(level){
+  await ensureRecipesLoaded();
+
+  const filtered = allRecipes.filter(r =>
+    (r.schwierigkeit || "").toLowerCase() === level.toLowerCase()
+  );
+
+  if(!filtered.length){
+    showToast("Keine passenden Rezepte gefunden.");
+    return;
+  }
+
+  const winner = filtered[Math.floor(Math.random() * filtered.length)];
+
+  showRecipe(winner.id);
+  showToast(`😌 ${level}-Rezept gefunden!`);
+}
+
+async function smartRouletteVeggie(){
+  await ensureRecipesLoaded();
+
+  const filtered = allRecipes.filter(r =>
+    (r.tags || []).some(tag =>
+      tag.toLowerCase().includes("vegetar")
+    )
+  );
+
+  if(!filtered.length){
+    showToast("Keine vegetarischen Rezepte gefunden.");
+    return;
+  }
+
+  const winner = filtered[Math.floor(Math.random() * filtered.length)];
+
+  showRecipe(winner.id);
+  showToast("🥦 Vegetarisches Rezept gefunden!");
+}
 
     async function loadWeeklyPlan(){
       setActiveNav("plan");
@@ -643,19 +1002,26 @@
     }
 
     function toggleFavorite(id){
-      if(favorites.includes(id)){
-        favorites=favorites.filter(f=>f!==id);
-        showToast("Aus Favoriten entfernt");
-      }else{
-        favorites.push(id);
-        showToast("Zu Favoriten hinzugefügt");
-      }
-      localStorage.setItem("favorites",JSON.stringify(favorites));
-      updateStats();
-      if(document.getElementById("recipeGrid")) renderRecipes();
-    }
+  id = Number(id);
 
-    function isFavorite(id){return favorites.includes(id)}
+  if(favorites.map(Number).includes(id)){
+    favorites = favorites.filter(f => Number(f) !== id);
+    showToast("Aus Favoriten entfernt");
+  }else{
+    favorites.push(id);
+    showToast("Zu Favoriten hinzugefügt");
+  }
+
+  localStorage.setItem("favorites",JSON.stringify(favorites));
+  updateStats();
+
+  if(document.getElementById("recipeGrid")) renderRecipes();
+  renderHomeSections();
+}
+
+    function isFavorite(id){
+  return favorites.map(Number).includes(Number(id));
+}
 
     async function loadFavorites(){
       setActiveNav("favorites");
@@ -665,7 +1031,11 @@
       document.getElementById("content").innerHTML=`
         <button class="secondary" onclick="showHome()">← Zurück</button>
         <h2>❤️ Deine Favoriten</h2>
-        ${fav.length ? `<div class="grid" id="recipeGrid">${fav.map(recipeCard).join("")}</div>` : `<p class="muted">Du hast noch keine Favoriten gespeichert.</p>`}`;
+        ${fav.length ? `<div class="grid" id="recipeGrid">${fav.map(recipeCard).join("")}</div>` : `<div class="empty-state">
+  <h2>❤️ Noch keine Favoriten</h2>
+  <p>Speichere dein erstes Lieblingsrezept, damit du es schnell wiederfindest.</p>
+  <button class="primary" onclick="loadRecipes()">Rezepte entdecken</button>
+</div>
     }
 
     function saveRecentRecipe(recipe){
@@ -681,7 +1051,11 @@
       document.getElementById("content").innerHTML=`
         <button class="secondary" onclick="showHome()">← Zurück</button>
         <h2>🕘 Zuletzt angesehen</h2>
-        ${recentRecipes.length ? `<div class="grid">${recentRecipes.map(recipeCard).join("")}</div>` : `<p class="muted">Du hast noch keine Rezepte angesehen.</p>`}`;
+        ${recentRecipes.length ? `<div class="grid">${recentRecipes.map(recipeCard).join("")}</div>` : `<div class="empty-state">
+  <h2>❤️ Noch keine Favoriten</h2>
+  <p>Speichere dein erstes Lieblingsrezept, damit du es schnell wiederfindest.</p>
+  <button class="primary" onclick="loadRecipes()">Rezepte entdecken</button>
+</div>
     }
 
     function ratingStars(id){
@@ -735,9 +1109,102 @@
     if(localStorage.getItem("darkMode")==="true") document.body.classList.add("dark");
 
     fetch("/rezepte").then(r=>r.json()).then(data=>{
-      allRecipes=data;
-      updateStats();
-    });
+  allRecipes=data;
+  updateStats();
+  renderHomeSections();
+});
+    function loadCreateRecipe() {
+  hideHome();
+
+  const c = document.getElementById("content");
+
+  c.innerHTML = `
+    <button class="secondary" onclick="showHome()">← Zurück</button>
+
+    <h2>➕ Eigenes Rezept hinzufügen</h2>
+
+    <div class="panel" style="padding:24px;margin-top:20px;">
+      <input id="newName" placeholder="Rezeptname">
+      <input id="newKitchen" placeholder="Küche, z. B. Italienisch">
+      <input id="newImage" placeholder="Bilddatei, z. B. mein_rezept.jpg">
+      <input id="newPortions" type="number" placeholder="Portionen" value="2">
+      <input id="newTime" type="number" placeholder="Kochzeit in Minuten" value="30">
+
+      <select id="newDifficulty">
+        <option>Einfach</option>
+        <option>Mittel</option>
+        <option>Schwer</option>
+      </select>
+
+      <textarea id="newTags" placeholder="Tags, getrennt mit Komma, z. B. Schnell, Vegetarisch"></textarea>
+      <textarea id="newIngredients" placeholder="Zutaten, eine pro Zeile"></textarea>
+      <textarea id="newInstructions" placeholder="Anleitung, Schritt für Schritt"></textarea>
+
+      <div class="buttons">
+        <button class="primary" onclick="saveNewRecipe()">💾 Rezept speichern</button>
+      </div>
+    </div>
+  `;
+}
+
+async function saveNewRecipe() {
+  const payload = {
+    name: document.getElementById("newName").value.trim(),
+    kueche: document.getElementById("newKitchen").value.trim(),
+    bild: document.getElementById("newImage").value.trim(),
+    portionen: Number(document.getElementById("newPortions").value || 2),
+    kochzeit: Number(document.getElementById("newTime").value || 30),
+    schwierigkeit: document.getElementById("newDifficulty").value,
+    tags: document.getElementById("newTags").value
+      .split(",")
+      .map(x => x.trim())
+      .filter(Boolean),
+    zutaten: document.getElementById("newIngredients").value
+      .split("\n")
+      .map(x => x.trim())
+      .filter(Boolean),
+    anleitung: document.getElementById("newInstructions").value.trim()
+  };
+
+  if (!payload.name) {
+    showToast("Bitte Rezeptnamen eingeben.");
+    return;
+  }
+
+  if (!payload.zutaten.length) {
+    showToast("Bitte mindestens eine Zutat eingeben.");
+    return;
+  }
+
+  const response = await fetch("/rezept-erstellen", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload)
+  });
+
+  if (!response.ok) {
+    showToast("Rezept konnte nicht gespeichert werden.");
+    return;
+  }
+
+  const savedRecipe = await response.json();
+
+  allRecipes = [];
+  await ensureRecipesLoaded();
+
+  showToast("Rezept gespeichert!");
+  showRecipe(savedRecipe.id);
+}
+fetch("/rezepte").then(r=>r.json()).then(data=>{
+  allRecipes=data;
+  updateStats();
+  renderHomeSections();
+});
+
+showHome();
+
   </script>
 </body>
 </html>
