@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from database import Database
 from models import Rezept
@@ -19,8 +19,8 @@ class RezeptCreate(BaseModel):
     portionen: int = 2
     kochzeit: int = 30
     schwierigkeit: str = "Einfach"
-    tags: list[str] = []
-    zutaten: list[str] = []
+    tags: list[str] = Field(default_factory=list)
+zutaten: list[str] = Field(default_factory=list)
     anleitung: str = "Keine Anleitung vorhanden."
 
 
@@ -58,6 +58,9 @@ def get_rezepte():
 @app.post("/rezept-erstellen")
 def rezept_erstellen(daten: RezeptCreate):
     db = get_db()
+
+if not daten.name.strip():
+        return {"error": "Name fehlt"}
 
     rezept = Rezept(
         name=daten.name.strip(),
@@ -140,6 +143,9 @@ def setze_wochenplan(day: str, recipe_id: int):
     plan = db.weekly_plan()
     plan[day] = recipe_id
     db.set_weekly_plan(plan)
+
+        if day not in plan:
+        return {"error": "Tag nicht gefunden"}
 
     return {"message": "Gespeichert", "day": day, "recipe_id": recipe_id}
 
