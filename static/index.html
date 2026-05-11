@@ -537,30 +537,8 @@
       100%{background-position:-200% 0}
     }
 
-    .roulette-stage{
-      padding:30px;
-      overflow:hidden;
-      position:relative;
-      margin-top:18px;
-      background:var(--white);
-      border-radius:32px;
-      box-shadow:var(--shadow);
-    }
 
-    .roulette-track{
-      display:flex;
-      gap:18px;
-      will-change:transform;
-    }
 
-    .roulette-item{
-      min-width:240px;
-      background:#fff7ed;
-      border-radius:22px;
-      overflow:hidden;
-      flex-shrink:0;
-      box-shadow:var(--soft);
-    }
 
     .roulette-item img{
       width:100%;
@@ -572,12 +550,6 @@
       padding:14px;
       margin:0;
       font-size:18px;
-    }
-
-    .winner-result{
-      margin-top:20px;
-      display:flex;
-      justify-content:center;
     }
 
     .drawer{
@@ -609,6 +581,80 @@
     }
 
     .hidden{display:none}
+
+    .roulette-page{
+  max-width:1000px;
+  margin:0 auto;
+}
+
+.back-btn{
+  margin-bottom:22px;
+}
+
+.roulette-header{
+  background:rgba(255,255,255,.92);
+  border-radius:32px;
+  padding:36px;
+  box-shadow:var(--shadow);
+  margin-bottom:22px;
+}
+
+.roulette-header h1{
+  margin:18px 0 10px;
+}
+
+.roulette-controls{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:14px;
+  margin-bottom:28px;
+}
+
+.roulette-controls select{
+  margin:0;
+}
+
+.roulette-result-card{
+  background:var(--white);
+  border-radius:32px;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  box-shadow:var(--shadow);
+}
+
+.roulette-image-wrap img,
+.roulette-image-wrap .placeholder{
+  width:100%;
+  height:420px;
+  object-fit:cover;
+  display:block;
+}
+
+.roulette-result-body{
+  padding:38px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+.roulette-result-body h2{
+  font-size:42px;
+  line-height:1.05;
+  margin:18px 0;
+}
+
+@media(max-width:850px){
+  .roulette-controls,
+  .roulette-result-card{
+    grid-template-columns:1fr;
+  }
+
+  .roulette-image-wrap img,
+  .roulette-image-wrap .placeholder{
+    height:260px;
+  }
+}
 
     body.dark{
       --bg:#120b08;
@@ -1048,21 +1094,30 @@ function renderIngredientBlock(ingredient){
   }
 
   content.innerHTML = `
-    <button class="secondary" onclick="showHome()">← Zurück</button>
-    <h2>🎲 Rezept ziehen</h2>
+    <section class="roulette-page">
+      <button class="secondary back-btn" onclick="showHome()">← Zurück</button>
 
-    <div class="filters">
-      <select id="rouletteCategory">
-        <option value="Alle">Alle</option>
-        <option value="Frühstück">Frühstück</option>
-        <option value="Mittagessen">Mittagessen</option>
-        <option value="Abendbrot">Abendbrot</option>
-      </select>
+      <div class="roulette-header">
+        <div>
+          <span class="hero-badge">🎲 Rezept-Roulette</span>
+          <h1>Was darf es sein?</h1>
+          <p class="muted">Wähle eine Mahlzeit und lass dich inspirieren.</p>
+        </div>
+      </div>
 
-      <button class="primary" onclick="drawRouletteRecipe()">Rezept ziehen</button>
-    </div>
+      <div class="roulette-controls">
+        <select id="rouletteCategory">
+          <option value="Alle">Alle Rezepte</option>
+          <option value="Frühstück">Frühstück</option>
+          <option value="Mittagessen">Mittagessen</option>
+          <option value="Abendbrot">Abendbrot</option>
+        </select>
 
-    <div id="rouletteResult"></div>
+        <button class="primary" onclick="drawRouletteRecipe()">🎲 Rezept ziehen</button>
+      </div>
+
+      <div id="rouletteResult"></div>
+    </section>
   `;
 
   drawRouletteRecipe();
@@ -1071,7 +1126,6 @@ function renderIngredientBlock(ingredient){
 function drawRouletteRecipe(){
   const selected = document.getElementById("rouletteCategory")?.value || "Alle";
   const result = document.getElementById("rouletteResult");
-
   if(!result) return;
 
   let pool = allRecipes;
@@ -1106,14 +1160,29 @@ function drawRouletteRecipe(){
   }
 
   const winner = pool[Math.floor(Math.random() * pool.length)];
+  const img = imageUrl(winner);
 
   result.innerHTML = `
-    <h2>🎉 Dein Rezept</h2>
-    <div class="winner-result">${recipeCard(winner)}</div>
+    <div class="roulette-result-card">
+      <div class="roulette-image-wrap">
+        ${img ? `<img src="${img}" alt="${winner.name}">` : `<div class="placeholder">Kein Bild</div>`}
+      </div>
 
-    <div class="buttons">
-      <button class="primary" onclick="drawRouletteRecipe()">🔁 Nochmal ziehen</button>
-      <button class="secondary" onclick="showRecipe(${winner.id})">🍽️ Rezept ansehen</button>
+      <div class="roulette-result-body">
+        <span class="badge">🎉 Dein Treffer</span>
+        <h2>${winner.name}</h2>
+
+        <div class="meta">
+          <span>🌍 ${winner.kueche || "Unbekannt"}</span>
+          <span>⏱️ ${winner.kochzeit || "?"} Min</span>
+          <span>🔥 ${winner.schwierigkeit || "Einfach"}</span>
+        </div>
+
+        <div class="buttons">
+          <button class="primary" onclick="showRecipe(${winner.id})">Rezept öffnen</button>
+          <button class="secondary" onclick="drawRouletteRecipe()">Nochmal ziehen</button>
+        </div>
+      </div>
     </div>
   `;
 }
