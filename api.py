@@ -2,12 +2,11 @@ import os
 import random
 from dataclasses import asdict
 
-from import_pdf_recipes import import_recipes
 import os
 
 if os.path.exists("Neu Essen, Neu Leben.pdf"):
     try:
-        import_recipes()
+       
     except Exception as exc:
         print("PDF-Import Fehler:", exc)
 
