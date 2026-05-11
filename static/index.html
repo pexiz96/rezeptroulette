@@ -402,6 +402,41 @@
       font-weight:650;
     }
 
+    .ingredient-builder{
+  display:grid;
+  gap:10px;
+}
+
+.ingredient-main{
+  font-weight:900;
+}
+
+.ingredient-alt-box{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px;
+  font-size:14px;
+}
+
+.ingredient-alt-box span{
+  color:var(--muted);
+  font-weight:850;
+}
+
+.alt-btn{
+  padding:7px 11px;
+  border-radius:999px;
+  background:#ecfdf3;
+  color:#067647;
+  box-shadow:none;
+  font-size:13px;
+}
+
+.alt-btn:hover{
+  transform:translateY(-1px);
+}
+
     .chips{
       display:flex;
       flex-wrap:wrap;
@@ -700,6 +735,69 @@
     let cookSteps = [];
     let cookIndex = 0;
 
+    const ingredientAlternatives = {
+  "mehl": ["Dinkelmehl", "Hafermehl", "Mandelmehl", "Vollkornmehl"],
+  "milch": ["Mandelmilch", "Hafermilch", "Sojamilch", "laktosefreie Milch"],
+  "sahne": ["Cremefine", "Hafercuisine", "Kokosmilch"],
+  "butter": ["Margarine", "Olivenöl", "Kokosöl"],
+  "zucker": ["Erythrit", "Honig", "Ahornsirup", "Agavendicksaft"],
+  "ei": ["Apfelmus", "Leinsamen-Ei", "Banane"],
+  "eier": ["Apfelmus", "Leinsamen-Ei", "Banane"],
+  "quark": ["Skyr", "griechischer Joghurt", "pflanzlicher Quark"],
+  "skyr": ["Magerquark", "griechischer Joghurt", "pflanzlicher Skyr"],
+  "käse": ["Mozzarella light", "Reibekäse light", "veganer Käse"],
+  "nudeln": ["Vollkornnudeln", "Linsennudeln", "High-Protein Nudeln"],
+  "reis": ["Quinoa", "Bulgur", "Couscous"],
+  "hackfleisch": ["Hähnchenhack", "Rinderhack light", "Sojagranulat"],
+  "hähnchen": ["Putenbrust", "Tofu", "Kichererbsen"],
+  "kartoffeln": ["Süßkartoffeln", "Pastinaken", "Blumenkohl"],
+  "brokkoli": ["Blumenkohl", "Zucchini", "grüne Bohnen"]
+};
+
+function normalizeIngredientText(text){
+  return String(text || "")
+    .toLowerCase()
+    .replaceAll("ä","ae")
+    .replaceAll("ö","oe")
+    .replaceAll("ü","ue")
+    .replaceAll("ß","ss");
+}
+
+function getIngredientAlternatives(ingredient){
+  const text = normalizeIngredientText(ingredient);
+
+  for(const key in ingredientAlternatives){
+    const normalizedKey = normalizeIngredientText(key);
+
+    if(text.includes(normalizedKey)){
+      return ingredientAlternatives[key];
+    }
+  }
+
+  return [];
+}
+
+function renderIngredientBlock(ingredient){
+  const alternatives = getIngredientAlternatives(ingredient);
+
+  return `
+    <div class="ingredient ingredient-builder">
+      <div class="ingredient-main">✓ ${ingredient}</div>
+
+      ${alternatives.length ? `
+        <div class="ingredient-alt-box">
+          <span>Alternativen:</span>
+          ${alternatives.map(alt => `
+            <button class="alt-btn" onclick="event.stopPropagation(); showToast('${ingredient} → ${alt}')">
+              ${alt}
+            </button>
+          `).join("")}
+        </div>
+      ` : ""}
+    </div>
+  `;
+}
+
     function imageUrl(recipe){
       const raw = recipe.image || recipe.bild || recipe.image_url;
       if(!raw) return "";
@@ -924,7 +1022,7 @@
             <div class="columns">
               <div>
                 <h2>Zutaten</h2>
-                <div class="ingredients">${(recipe.zutaten || []).map(i => `<div class="ingredient">✓ ${i}</div>`).join("")}</div>
+            <div class="ingredients">${(recipe.zutaten || []).map(renderIngredientBlock).join("")}</div>
               </div>
               <div>
                 <h2>Anleitung</h2>
