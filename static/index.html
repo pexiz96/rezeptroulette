@@ -557,6 +557,66 @@ object-position:center;border-radius:50%}
     .cook-step{font-size:24px;line-height:1.5;background:#fff7ed;padding:24px;border-radius:24px}
     .hidden{display:none}
 
+    .clean-hero{
+  text-align:center;
+  padding:42px 30px;
+}
+
+.clean-hero .muted{
+  max-width:620px;
+  margin:0 auto;
+  font-size:18px;
+  line-height:1.5;
+}
+
+.clean-actions{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+  margin-top:28px;
+}
+
+.clean-recipe-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:18px;
+}
+
+.clean-card{
+  max-width:none;
+  cursor:pointer;
+}
+
+.clean-card img{
+  height:165px;
+}
+
+.clean-card .card-body{
+  padding:14px;
+}
+
+.clean-card h3{
+  font-size:18px;
+  line-height:1.2;
+  min-height:44px;
+}
+
+.full-btn{
+  width:100%;
+  margin-top:8px;
+  padding:11px 14px;
+}
+
+@media(max-width:760px){
+  .clean-actions{
+    grid-template-columns:1fr;
+  }
+
+  .clean-hero{
+    padding:28px 20px;
+  }
+}
+
     body.dark{
       --bg-1:#120b08;
       --bg-2:#2d1b12;
@@ -635,10 +695,21 @@ object-position:center;border-radius:50%}
   </header>
 
   <main>
-    <section class="hero" id="home">
-      <div class="hero-badge">🍽️ Smarte Rezeptplanung</div>
-      <h1>Was essen wir heute?</h1>
-      <p class="muted">Ziehe ein zufälliges Rezept, plane deine Woche, rette Lebensmittel und sammle Favoriten.</p>
+    <section class="hero clean-hero" id="home">
+  <div class="hero-badge">🍽️ Rezeptroulette</div>
+
+  <h1>Was essen wir heute?</h1>
+
+  <p class="muted">
+    Finde schnell ein Rezept, plane deine Woche oder rette Lebensmittel aus deinem Kühlschrank.
+  </p>
+
+  <div class="clean-actions">
+    <button class="primary big-cta" onclick="loadRoulette()">🎲 Rezept ziehen</button>
+    <button class="secondary big-cta" onclick="loadRecipes()">🍲 Alle Rezepte</button>
+    <button class="secondary big-cta" onclick="loadFoodRescue()">♻️ Food Rescue</button>
+  </div>
+</section>
 
       <div class="chips">
         <div class="chip">⚡ Schnell</div>
@@ -752,78 +823,55 @@ object-position:center;border-radius:50%}
       if(fc) fc.textContent = favorites.length || 0;
     }
 
-    async function renderHomeSections(){
-      const c = document.getElementById("content");
+   async function renderHomeSections(){
+  const c = document.getElementById("content");
 
-      try{
-        await ensureRecipesLoaded();
-        const recommended = allRecipes.slice(0,4);
-        const recentPreview = recentRecipes.slice(0,3);
+  try{
+    await ensureRecipesLoaded();
+    const recommended = allRecipes.slice(0,4);
 
-        c.innerHTML = `
-          <div class="home-sections">
-            <section>
-              <div class="section-head">
-                <div>
-                  <h2>Heute empfohlen</h2>
-                  <p class="muted">Schnelle Ideen für dein nächstes Lieblingsessen.</p>
-                </div>
-                <button class="secondary" onclick="loadRecipes()">Alle ansehen</button>
-              </div>
-
-              ${recommended.length
-                ? `<div class="recipe-slider">${recommended.map(recipeCard).join("")}</div>`
-                : `<div class="empty-state">Noch keine Rezepte geladen.</div>`}
-            </section>
-
-            <section class="smart-card">
-              <div class="hero-badge" style="background:rgba(255,255,255,.22);color:white;">✨ Smart Roulette</div>
-              <h2>Keine Idee? Lass die App entscheiden.</h2>
-              <p>Wähle eine Stimmung oder lass dich komplett überraschen.</p>
-
-              <div class="smart-tags">
-                <button onclick="smartRouletteByTime(20)">⚡ Unter 20 Min</button>
-                <button onclick="smartRouletteByDifficulty('Einfach')">😌 Einfach</button>
-                <button onclick="smartRouletteVeggie()">🥦 Vegetarisch</button>
-              </div>
-
-              <button class="secondary" onclick="smartRoulette()">🎲 Komplett zufällig</button>
-            </section>
-
-            <section class="rescue-card">
-              <p class="hero-badge">♻️ Food Rescue</p>
-              <h2>Was ist noch im Kühlschrank?</h2>
-              <p class="muted">Gib deine übrigen Zutaten ein und finde passende Rezepte.</p>
-
-              <div class="rescue-chips">
-                <span>Tomaten</span>
-                <span>Käse</span>
-                <span>Reis</span>
-                <span>Paprika</span>
-              </div>
-
-              <button class="primary" onclick="loadFoodRescue()">Lebensmittel retten</button>
-            </section>
-
-            <section>
-              <div class="section-head">
-                <div>
-                  <h2>Zuletzt angesehen</h2>
-                  <p class="muted">Schnell zurück zu deinen letzten Rezepten.</p>
-                </div>
-                <button class="secondary" onclick="loadRecentRecipes()">Öffnen</button>
-              </div>
-
-              ${recentPreview.length
-                ? `<div class="recipe-slider">${recentPreview.map(recipeCard).join("")}</div>`
-                : `<div class="empty-state">Noch keine Rezepte angesehen.</div>`}
-            </section>
+    c.innerHTML = `
+      <div class="home-sections">
+        <section>
+          <div class="section-head">
+            <div>
+              <h2>Heute empfohlen</h2>
+              <p class="muted">Vier einfache Ideen für heute.</p>
+            </div>
+            <button class="secondary" onclick="loadRecipes()">Alle ansehen</button>
           </div>
-        `;
-      }catch(error){
-        c.innerHTML = "";
-      }
-    }
+
+          ${recommended.length
+            ? `<div class="clean-recipe-grid">${recommended.map(simpleRecipeCard).join("")}</div>`
+            : `<div class="empty-state">Noch keine Rezepte geladen.</div>`}
+        </section>
+      </div>
+    `;
+  }catch(error){
+    c.innerHTML = "";
+  }
+}
+
+function simpleRecipeCard(recipe){
+  const img = imageUrl(recipe);
+
+  return `
+    <div class="card clean-card" onclick="showRecipe(${Number(recipe.id)})">
+      ${img ? `<img src="${img}" alt="${recipe.name}">` : `<div class="placeholder">Kein Bild</div>`}
+
+      <div class="card-body">
+        <h3>${recipe.name}</h3>
+        <div class="meta">
+          ⏱️ ${recipe.kochzeit || "?"} Min · 🔥 ${recipe.schwierigkeit || "Einfach"}
+        </div>
+
+        <button class="primary full-btn" onclick="event.stopPropagation(); showRecipe(${Number(recipe.id)})">
+          Öffnen
+        </button>
+      </div>
+    </div>
+  `;
+}
 
     function recipeCard(recipe){
       const img = imageUrl(recipe);
