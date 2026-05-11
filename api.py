@@ -2,6 +2,13 @@ import os
 import random
 from dataclasses import asdict
 
+from import_pdf_recipes import import_recipes
+
+try:
+    import_recipes()
+except Exception as exc:
+    print("PDF-Import übersprungen:", exc)
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
