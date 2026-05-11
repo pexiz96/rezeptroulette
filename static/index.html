@@ -1192,74 +1192,68 @@ function drawRouletteRecipe(){
       loadWeeklyPlan();
     }
 
-    async function loadShoppingList(){
-      setActiveNav("list");
-      hideHome();
-      const c = document.getElementById("content");
-      await ensureRecipesLoaded();
-      const r = await fetch("/wochenplan");
-      const plan = await r.json();
-      const ingredients = [];
+   async function loadShoppingList(){
+  setActiveNav("list");
+  hideHome();
 
-      Object.values(plan).forEach(entry => {
-        if(!entry) return;
-        const id = typeof entry === "object" ? Number(entry.id) : Number(entry);
-        const recipe = allRecipes.find(r => Number(r.id) === id);
-        if(recipe?.zutaten) ingredients.push(...recipe.zutaten);
-      });
+  const c = document.getElementById("content");
+  await ensureRecipesLoaded();
 
-      const atHome = JSON.parse(localStorage.getItem("atHomeIngredients") || "[]")
-  .map(x => x.toLowerCase().trim())
-  .filter(Boolean);
+  const r = await fetch("/wochenplan");
+  const plan = await r.json();
+  const ingredients = [];
 
-const unique = [...new Set(ingredients)];
+  Object.values(plan).forEach(entry => {
+    if(!entry) return;
 
-const filtered = unique.filter(item => {
-  const itemText = item.toLowerCase();
-  return !atHome.some(homeItem => itemText.includes(homeItem));
-});
-       <div class="panel" style="margin:18px 0;display:grid;gap:12px;">
-  <h3>🏠 Habe ich zuhause</h3>
-  <p class="muted">Trage Zutaten ein, die nicht auf die Einkaufsliste sollen.</p>
-  <textarea id="atHomeInput" placeholder="Milch&#10;Mehl&#10;Eier">${atHome.join("\n")}</textarea>
-  <button class="primary" onclick="saveAtHomeIngredients()">Liste neu berechnen</button>
-</div>
+    const id = typeof entry === "object" ? Number(entry.id) : Number(entry);
+    const recipe = allRecipes.find(r => Number(r.id) === id);
 
-${filtered.length
-  ? `<div class="shopping-list">${filtered.map(i => `<label class="shopping-item"><input type="checkbox"><span class="shopping-item-text">${i}</span></label>`).join("")}</div>`
-          : `<div class="empty-state"><h2>🛒 Noch keine Zutaten</h2><p>Füge zuerst Rezepte zum Wochenplan hinzu.</p><button class="primary" onclick="loadWeeklyPlan()">Zum Wochenplan</button></div>`}
-      `;
+    if(recipe?.zutaten){
+      ingredients.push(...recipe.zutaten);
     }
+  });
 
-    function copyShoppingList(){
-      const items = [...document.querySelectorAll(".shopping-item-text")].map(i => i.textContent.trim()).join("\n");
-      if(!items) return showToast("Keine Zutaten zum Kopieren.");
-      navigator.clipboard.writeText(items);
-      showToast("Einkaufsliste kopiert!");
-    }
+  const atHome = JSON.parse(localStorage.getItem("atHomeIngredients") || "[]")
+    .map(x => x.toLowerCase().trim())
+    .filter(Boolean);
 
-    function loadFoodRescue(){
-      setActiveNav("rescue");
-      hideHome();
-      const c = document.getElementById("content");
-      c.innerHTML = `
-        <button class="secondary" onclick="showHome()">← Zurück</button>
-        <h2>♻️ Food Rescue</h2>
-        <p class="muted">Gib ein, was du zuhause hast. Die App findet passende Rezepte.</p>
-        <textarea id="rescueInput" placeholder="Sahne&#10;Paprika&#10;Reis&#10;Eier&#10;Käse">${pantry.join("\n")}</textarea>
-        <div class="buttons">
-          <button class="primary" onclick="findRescueRecipes()">Lebensmittel retten</button>
-          <button class="secondary" onclick="savePantry()">Vorrat speichern</button>
-        </div>
-        <div id="rescueResults"></div>
-      `;
-    }
+  const unique = [...new Set(ingredients)];
 
-    function savePantry(){
-      pantry = document.getElementById("rescueInput").value.split(/\n|,|;/).map(x => x.trim()).filter(Boolean);
-      localStorage.setItem("pantry",JSON.stringify(pantry));
-      showToast("Vorrat gespeichert!");
-    }
+  const filtered = unique.filter(item => {
+    const itemText = item.toLowerCase();
+    return !atHome.some(homeItem => itemText.includes(homeItem));
+  });
+
+  c.innerHTML = `
+    <button class="secondary" onclick="showHome()">← Zurück</button>
+    <h2>🛒 Einkaufsliste</h2>
+
+    <div class="panel" style="margin:18px 0;display:grid;gap:12px;">
+      <h3>🏠 Habe ich zuhause</h3>
+      <p class="muted">Trage Zutaten ein, die nicht auf die Einkaufsliste sollen.</p>
+      <textarea id="atHomeInput" placeholder="Milch&#10;Mehl&#10;Eier">${atHome.join("\n")}</textarea>
+      <button class="primary" onclick="saveAtHomeIngredients()">Liste neu berechnen</button>
+    </div>
+
+    <button class="secondary" onclick="copyShoppingList()">Liste kopieren</button>
+
+    ${filtered.length
+      ? `<div class="shopping-list">
+          ${filtered.map(i => `
+            <label class="shopping-item">
+              <input type="checkbox">
+              <span class="shopping-item-text">${i}</span>
+            </label>
+          `).join("")}
+        </div>`
+      : `<div class="empty-state">
+          <h2>🛒 Nichts einzukaufen</h2>
+          <p>Entweder ist dein Wochenplan leer oder du hast alle Zutaten bereits zuhause.</p>
+          <button class="primary" onclick="loadWeeklyPlan()">Zum Wochenplan</button>
+        </div>`}
+  `;
+}
 
     async function findRescueRecipes(){
       const input = document.getElementById("rescueInput").value;
