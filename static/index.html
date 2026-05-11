@@ -395,7 +395,42 @@ object-position:center;border-radius:50%}
       box-shadow:0 12px 30px rgba(255,107,53,.28);
     }
 
-    .home-sections{display:grid;gap:38px;margin-top:30px}
+    .home-sections{
+  gap:26px;
+}
+
+.recipe-slider{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:18px;
+  overflow:visible;
+}
+
+.recipe-slider .card{
+  min-width:0;
+  max-width:none;
+}
+
+.card img{
+  height:170px;
+}
+
+.card h3{
+  font-size:19px;
+}
+
+.card-body{
+  padding:14px;
+}
+
+.card-actions{
+  gap:8px;
+}
+
+.card-actions button{
+  padding:10px 14px;
+  font-size:14px;
+}
 
     .section-head{
       display:flex;
@@ -722,7 +757,7 @@ object-position:center;border-radius:50%}
 
       try{
         await ensureRecipesLoaded();
-        const recommended = allRecipes.slice(0,6);
+        const recommended = allRecipes.slice(0,4);
         const recentPreview = recentRecipes.slice(0,3);
 
         c.innerHTML = `
