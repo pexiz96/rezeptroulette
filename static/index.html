@@ -937,37 +937,44 @@
       window.scrollTo({top:0,behavior:"smooth"});
     }
 
-  async function loadRoulette(){
+ async function loadRoulette(){
   setActiveNav("home");
   hideHome();
 
-  const c = document.getElementById("content");
+  const content = document.getElementById("content");
   await ensureRecipesLoaded();
 
   if(!allRecipes.length){
-    c.innerHTML = `<div class="empty-state">Keine Rezepte vorhanden.</div>`;
+    content.innerHTML = `<div class="empty-state">Keine Rezepte vorhanden.</div>`;
     return;
   }
 
-  const categories = ["Alle", "Frühstück", "Mittagessen", "Abendbrot"];
-
-  c.innerHTML = `
+  content.innerHTML = `
     <button class="secondary" onclick="showHome()">← Zurück</button>
     <h2>🎲 Rezept ziehen</h2>
 
     <div class="filters">
       <select id="rouletteCategory">
-        ${categories.map(cat => `<option value="${cat}">${cat}</option>`).join("")}
+        <option value="Alle">Alle</option>
+        <option value="Frühstück">Frühstück</option>
+        <option value="Mittagessen">Mittagessen</option>
+        <option value="Abendbrot">Abendbrot</option>
       </select>
+
       <button class="primary" onclick="drawRouletteRecipe()">Rezept ziehen</button>
     </div>
 
     <div id="rouletteResult"></div>
   `;
 
-  function drawRouletteRecipe(){
+  drawRouletteRecipe();
+}
+
+function drawRouletteRecipe(){
   const selected = document.getElementById("rouletteCategory")?.value || "Alle";
   const result = document.getElementById("rouletteResult");
+
+  if(!result) return;
 
   let pool = allRecipes;
 
@@ -980,15 +987,15 @@
       ].join(" ").toLowerCase();
 
       if(selected === "Frühstück"){
-        return text.includes("frühstück") || text.includes("breakfast");
+        return text.includes("frühstück");
       }
 
       if(selected === "Mittagessen"){
-        return text.includes("mittag") || text.includes("hauptgericht") || text.includes("herzhaft");
+        return text.includes("mittag") || text.includes("herzhaft") || text.includes("hauptgericht");
       }
 
       if(selected === "Abendbrot"){
-        return text.includes("abend") || text.includes("abendbrot") || text.includes("brot") || text.includes("snack");
+        return text.includes("abend") || text.includes("brot") || text.includes("snack");
       }
 
       return true;
@@ -1005,14 +1012,13 @@
   result.innerHTML = `
     <h2>🎉 Dein Rezept</h2>
     <div class="winner-result">${recipeCard(winner)}</div>
+
     <div class="buttons">
       <button class="primary" onclick="drawRouletteRecipe()">🔁 Nochmal ziehen</button>
       <button class="secondary" onclick="showRecipe(${winner.id})">🍽️ Rezept ansehen</button>
     </div>
   `;
 }
-drawRouletteRecipe();
-return;
 
     async function loadWeeklyPlan(){
       setActiveNav("plan");
