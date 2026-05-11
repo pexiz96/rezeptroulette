@@ -12,6 +12,11 @@ from PIL import Image, ImageTk, ImageOps
 from config import BASE_DIR, LOCAL_IMAGE_DIR, IMAGE_DIR, IMAGE_EXTENSIONS, DAYS
 from database import Database
 from models import Rezept
+from import_pdf_recipes import import_recipes
+
+import_recipes()
+
+from fastapi import FastAPI
 
 def normalize(text: str) -> str:
     text = str(text).lower().strip()
