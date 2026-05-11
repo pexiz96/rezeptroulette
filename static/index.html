@@ -1208,13 +1208,25 @@ function drawRouletteRecipe(){
         if(recipe?.zutaten) ingredients.push(...recipe.zutaten);
       });
 
-      const unique = [...new Set(ingredients)];
-      c.innerHTML = `
-        <button class="secondary" onclick="showHome()">← Zurück</button>
-        <h2>🛒 Einkaufsliste</h2>
-        <button class="secondary" onclick="copyShoppingList()">Liste kopieren</button>
-        ${unique.length
-          ? `<div class="shopping-list">${unique.map(i => `<label class="shopping-item"><input type="checkbox"><span class="shopping-item-text">${i}</span></label>`).join("")}</div>`
+      const atHome = JSON.parse(localStorage.getItem("atHomeIngredients") || "[]")
+  .map(x => x.toLowerCase().trim())
+  .filter(Boolean);
+
+const unique = [...new Set(ingredients)];
+
+const filtered = unique.filter(item => {
+  const itemText = item.toLowerCase();
+  return !atHome.some(homeItem => itemText.includes(homeItem));
+});
+       <div class="panel" style="margin:18px 0;display:grid;gap:12px;">
+  <h3>🏠 Habe ich zuhause</h3>
+  <p class="muted">Trage Zutaten ein, die nicht auf die Einkaufsliste sollen.</p>
+  <textarea id="atHomeInput" placeholder="Milch&#10;Mehl&#10;Eier">${atHome.join("\n")}</textarea>
+  <button class="primary" onclick="saveAtHomeIngredients()">Liste neu berechnen</button>
+</div>
+
+${filtered.length
+  ? `<div class="shopping-list">${filtered.map(i => `<label class="shopping-item"><input type="checkbox"><span class="shopping-item-text">${i}</span></label>`).join("")}</div>`
           : `<div class="empty-state"><h2>🛒 Noch keine Zutaten</h2><p>Füge zuerst Rezepte zum Wochenplan hinzu.</p><button class="primary" onclick="loadWeeklyPlan()">Zum Wochenplan</button></div>`}
       `;
     }
@@ -1272,6 +1284,18 @@ function drawRouletteRecipe(){
       const r = await fetch(`/wochenplan/${encodeURIComponent(day)}/${Number(id)}`,{method:"POST"});
       showToast(r.ok ? "Zum Wochenplan hinzugefügt!" : "Konnte nicht einplanen.");
     }
+      function saveAtHomeIngredients(){
+  const value = document.getElementById("atHomeInput")?.value || "";
+
+  const items = value
+    .split(/\n|,|;/)
+    .map(x => x.trim())
+    .filter(Boolean);
+
+  localStorage.setItem("atHomeIngredients", JSON.stringify(items));
+  showToast("Vorhandene Zutaten gespeichert!");
+  loadShoppingList();
+}
 
     function toggleFavorite(id){
       id = Number(id);
