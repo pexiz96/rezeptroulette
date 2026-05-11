@@ -723,6 +723,7 @@
     <button data-nav="plan" onclick="loadWeeklyPlan()">📅<span>Plan</span></button>
     <button data-nav="list" onclick="loadShoppingList()">🛒<span>Liste</span></button>
     <button data-nav="rescue" onclick="loadFoodRescue()">♻️<span>Rescue</span></button>
+    <button data-nav="import" onclick="loadRecipeImport()">🔗<span>Import</span></button>
   </nav>
 
   <header>
@@ -884,6 +885,59 @@ function renderIngredientBlock(ingredient){
     function hideHome(){
       document.getElementById("home").classList.add("hidden");
     }
+
+    function loadRecipeImport(){
+  hideHome();
+  setActiveNav("import");
+
+  const c = document.getElementById("content");
+
+  c.innerHTML = `
+    <button class="secondary" onclick="showHome()">← Zurück</button>
+
+    <div class="panel" style="display:grid;gap:16px;margin-top:20px;">
+      <div>
+        <span class="hero-badge">🔗 Rezept aus Link</span>
+        <h1>Rezept importieren</h1>
+        <p class="muted">
+          Füge einen Link von TikTok, YouTube oder Instagram ein. Die App legt daraus ein Rezept an.
+        </p>
+      </div>
+
+      <input id="recipeImportUrl" placeholder="https://www.youtube.com/watch?v=...">
+
+      <button class="primary" onclick="saveRecipeFromLink()">Rezept aus Link erstellen</button>
+    </div>
+  `;
+}
+
+async function saveRecipeFromLink(){
+  const url = document.getElementById("recipeImportUrl").value.trim();
+
+  if(!url){
+    showToast("Bitte Link einfügen.");
+    return;
+  }
+
+  const response = await fetch("/rezept-aus-link", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({url})
+  });
+
+  if(!response.ok){
+    showToast("Rezept konnte nicht importiert werden.");
+    return;
+  }
+
+  const recipe = await response.json();
+
+  allRecipes = [];
+  await ensureRecipesLoaded();
+
+  showToast("Rezept wurde angelegt!");
+  showRecipe(recipe.id);
+}
 
     async function ensureRecipesLoaded(){
       try{
