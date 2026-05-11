@@ -1173,7 +1173,9 @@ function drawRouletteRecipe(){
         <h2>${winner.name}</h2>
 
         <div class="meta">
-          <span>🌍 ${winner.kueche || "Unbekannt"}</span>
+          ${winner.kueche && winner.kueche !== "PDF Import"
+  ? `<span>🌍 ${winner.kueche}</span>`
+  : ""}
           <span>⏱️ ${winner.kochzeit || "?"} Min</span>
           <span>🔥 ${winner.schwierigkeit || "Einfach"}</span>
         </div>
