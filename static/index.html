@@ -801,6 +801,27 @@
   "brokkoli": ["Blumenkohl", "Zucchini", "grüne Bohnen"]
 };
 
+async function deleteImportedRecipes(){
+  if(!confirm("Alle importierten Rezepte wirklich löschen?")){
+    return;
+  }
+
+  const response = await fetch("/rezepte/importierte", {
+    method: "DELETE"
+  });
+
+  if(!response.ok){
+    showToast("Importierte Rezepte konnten nicht gelöscht werden.");
+    return;
+  }
+
+  allRecipes = [];
+  await ensureRecipesLoaded();
+
+  showToast("Importierte Rezepte gelöscht!");
+  loadRecipes();
+}
+
 function normalizeIngredientText(text){
   return String(text || "")
     .toLowerCase()
@@ -1050,6 +1071,7 @@ async function saveRecipeFromLink(){
         <button class="secondary" onclick="showHome()">← Zurück</button>
         <h2>🍲 Alle Rezepte</h2>
         <div class="filters">
+          <button class="secondary" onclick="deleteImportedRecipes()">🗑️ Importierte Rezepte löschen</button>
           <input id="searchInput" placeholder="Wonach hast du Hunger? Pasta, Reis, Käse..." oninput="renderRecipes()">
           <label class="favorite-filter"><input type="checkbox" id="favoriteOnly" onchange="renderRecipes()"> Nur Favoriten</label>
           <select id="kitchenFilter" onchange="renderRecipes()"><option value="">Alle Küchen</option></select>

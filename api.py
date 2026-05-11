@@ -105,6 +105,12 @@ def rezept_aus_link(daten: dict):
 
     return asdict(saved)
 
+@app.delete("/rezepte/importierte")
+def importierte_rezepte_loeschen():
+    db = get_db()
+    db.conn.execute("DELETE FROM recipes WHERE kueche = ?", ("Link Import",))
+    db.conn.commit()
+    return {"message": "Importierte Rezepte gelöscht"}
     
 @app.get("/roulette")
 def roulette():
