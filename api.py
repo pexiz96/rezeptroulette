@@ -79,7 +79,33 @@ def rezept_erstellen(daten: RezeptCreate):
     saved = db.get_recipe(recipe_id)
 
     return asdict(saved)
+@app.post("/rezept-aus-link")
+def rezept_aus_link(daten: dict):
+    db = get_db()
+    url = daten.get("url", "").strip()
 
+    if not url:
+        return {"error": "Kein Link angegeben"}
+
+    rezept = Rezept(
+        name="Importiertes Rezept",
+        kueche="Link Import",
+        bild="",
+        portionen=2,
+        kochzeit=30,
+        schwierigkeit="Einfach",
+        tags=["Import"],
+        favorit=False,
+        zutaten=["Bitte Zutaten prüfen"],
+        anleitung=f"Quelle:\n{url}\n\nBitte Zutaten und Anleitung ergänzen."
+    )
+
+    recipe_id = db.save_recipe(rezept)
+    saved = db.get_recipe(recipe_id)
+
+    return asdict(saved)
+
+    
 @app.get("/roulette")
 def roulette():
     db = get_db()
@@ -110,6 +136,7 @@ def wochenplan():
             result[day] = None
 
     return result
+
 
 
 @app.post("/wochenplan/reset")
