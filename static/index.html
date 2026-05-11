@@ -1326,6 +1326,49 @@ function drawRouletteRecipe(){
   `;
 }
 
+function loadFoodRescue(){
+  setActiveNav("rescue");
+  hideHome();
+
+  const c = document.getElementById("content");
+
+  c.innerHTML = `
+    <button class="secondary" onclick="showHome()">← Zurück</button>
+
+    <div class="panel" style="display:grid;gap:16px;margin-top:20px;">
+      <div>
+        <span class="hero-badge">♻️ Food Rescue</span>
+        <h1>Was hast du noch zuhause?</h1>
+        <p class="muted">
+          Gib Lebensmittel ein, die du verwerten möchtest. Die App sucht passende Rezepte.
+        </p>
+      </div>
+
+      <textarea
+        id="rescueInput"
+        placeholder="Zum Beispiel:&#10;Sahne&#10;Paprika&#10;Reis&#10;Eier&#10;Käse"
+      >${pantry.join("\n")}</textarea>
+
+      <div class="buttons">
+        <button class="primary" onclick="findRescueRecipes()">Lebensmittel retten</button>
+        <button class="secondary" onclick="savePantry()">Vorrat speichern</button>
+      </div>
+    </div>
+
+    <div id="rescueResults" style="margin-top:28px;"></div>
+  `;
+}
+
+function savePantry(){
+  pantry = document.getElementById("rescueInput").value
+    .split(/\n|,|;/)
+    .map(x => x.trim())
+    .filter(Boolean);
+
+  localStorage.setItem("pantry", JSON.stringify(pantry));
+  showToast("Vorrat gespeichert!");
+}
+
     async function findRescueRecipes(){
       const input = document.getElementById("rescueInput").value;
       const available = input.split(/\n|,|;/).map(x => x.trim().toLowerCase()).filter(Boolean);
