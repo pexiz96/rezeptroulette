@@ -2,14 +2,6 @@ import os
 import random
 from dataclasses import asdict
 
-import os
-
-if os.path.exists("Neu Essen, Neu Leben.pdf"):
-    try:
-       
-    except Exception as exc:
-        print("PDF-Import Fehler:", exc)
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
