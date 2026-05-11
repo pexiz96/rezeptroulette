@@ -3,11 +3,13 @@ import random
 from dataclasses import asdict
 
 from import_pdf_recipes import import_recipes
+import os
 
-try:
-    import_recipes()
-except Exception as exc:
-    print("PDF-Import übersprungen:", exc)
+if os.path.exists("Neu Essen, Neu Leben.pdf"):
+    try:
+        import_recipes()
+    except Exception as exc:
+        print("PDF-Import Fehler:", exc)
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
