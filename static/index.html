@@ -185,13 +185,13 @@
     }
 
     .card img{
-      width:100%;
-      height:260px;
-      object-fit:cover;
-      display:block;
-      transition:.3s ease;
-      filter:saturate(1.05) contrast(1.02);
-    }
+  width:100%;
+  height:220px;
+  object-fit:cover;
+  object-position:center;
+  display:block;
+  background:#fff7ed;
+}
 
     .card:hover img{transform:scale(1.04)}
     .card-body{padding:18px}
@@ -241,7 +241,14 @@
     }
 
     .detail{overflow:hidden;margin-top:22px;background:var(--white)}
-    .detail img{width:100%;height:420px;object-fit:cover}
+    .detail img{
+  width:100%;
+  height:360px;
+  object-fit:cover;
+  object-position:center;
+  display:block;
+  background:#fff7ed;
+}
     .detail-body{padding:26px;display:flex;flex-direction:column;gap:18px}
     .columns{display:grid;grid-template-columns:.8fr 1.2fr;gap:28px}
 
@@ -260,7 +267,14 @@
     .shopping-item{display:flex;gap:12px;align-items:center}
     .shopping-item:has(input:checked){opacity:.55;text-decoration:line-through}
 
-    .week-image{width:100%;height:170px;object-fit:cover;border-radius:18px;margin-bottom:14px}
+   .week-image{
+  width:100%;
+  height:170px;
+  object-fit:cover;
+  object-position:center;
+  border-radius:18px;
+  margin-bottom:14px;
+  background:#fff7ed;
     .week-title{font-size:18px;font-weight:850}
 
     .rating{display:flex;gap:6px;flex-wrap:wrap}
