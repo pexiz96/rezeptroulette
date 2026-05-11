@@ -948,17 +948,69 @@
         return;
       }
 
-      const winner = allRecipes[Math.floor(Math.random() * allRecipes.length)];
-      c.innerHTML = `
-        <button class="secondary" onclick="showHome()">← Zurück</button>
-        <h2>🎲 Dein Rezept</h2>
-        <div class="winner-result">${recipeCard(winner)}</div>
-        <div class="buttons">
-          <button class="primary" onclick="loadRoulette()">🔁 Nochmal ziehen</button>
-          <button class="secondary" onclick="showRecipe(${winner.id})">🍽️ Rezept ansehen</button>
-        </div>
-      `;
-    }
+      const categories = ["Alle", "Frühstück", "Mittagessen", "Abendbrot"];
+
+c.innerHTML = `
+  <button class="secondary" onclick="showHome()">← Zurück</button>
+  <h2>🎲 Rezept ziehen</h2>
+
+  <div class="filters">
+    <select id="rouletteCategory">
+      ${categories.map(c => `<option value="${c}">${c}</option>`).join("")}
+    </select>
+    <button class="primary" onclick="drawRouletteRecipe()">Rezept ziehen</button>
+  </div>
+
+  <div id="rouletteResult"></div>
+`;
+function drawRouletteRecipe(){
+  const selected = document.getElementById("rouletteCategory")?.value || "Alle";
+  const result = document.getElementById("rouletteResult");
+
+  let pool = allRecipes;
+
+  if(selected !== "Alle"){
+    pool = allRecipes.filter(recipe => {
+      const text = [
+        recipe.name,
+        recipe.kueche,
+        ...(recipe.tags || [])
+      ].join(" ").toLowerCase();
+
+      if(selected === "Frühstück"){
+        return text.includes("frühstück") || text.includes("breakfast");
+      }
+
+      if(selected === "Mittagessen"){
+        return text.includes("mittag") || text.includes("lunch") || text.includes("hauptgericht");
+      }
+
+      if(selected === "Abendbrot"){
+        return text.includes("abend") || text.includes("abendbrot") || text.includes("brot") || text.includes("snack");
+      }
+
+      return true;
+    });
+  }
+
+  if(!pool.length){
+    result.innerHTML = `<div class="empty-state">Keine Rezepte für ${selected} gefunden.</div>`;
+    return;
+  }
+
+  const winner = pool[Math.floor(Math.random() * pool.length)];
+
+  result.innerHTML = `
+    <h2>🎉 Dein Rezept</h2>
+    <div class="winner-result">${recipeCard(winner)}</div>
+    <div class="buttons">
+      <button class="primary" onclick="drawRouletteRecipe()">🔁 Nochmal ziehen</button>
+      <button class="secondary" onclick="showRecipe(${winner.id})">🍽️ Rezept ansehen</button>
+    </div>
+  `;
+}
+drawRouletteRecipe();
+return;
 
     async function loadWeeklyPlan(){
       setActiveNav("plan");
