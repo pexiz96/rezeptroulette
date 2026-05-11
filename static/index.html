@@ -937,33 +937,35 @@
       window.scrollTo({top:0,behavior:"smooth"});
     }
 
-    async function loadRoulette(){
-      setActiveNav("home");
-      hideHome();
-      const c = document.getElementById("content");
-      await ensureRecipesLoaded();
+  async function loadRoulette(){
+  setActiveNav("home");
+  hideHome();
 
-      if(!allRecipes.length){
-        c.innerHTML = `<div class="empty-state">Keine Rezepte vorhanden.</div>`;
-        return;
-      }
+  const c = document.getElementById("content");
+  await ensureRecipesLoaded();
 
-      const categories = ["Alle", "Frühstück", "Mittagessen", "Abendbrot"];
+  if(!allRecipes.length){
+    c.innerHTML = `<div class="empty-state">Keine Rezepte vorhanden.</div>`;
+    return;
+  }
 
-c.innerHTML = `
-  <button class="secondary" onclick="showHome()">← Zurück</button>
-  <h2>🎲 Rezept ziehen</h2>
+  const categories = ["Alle", "Frühstück", "Mittagessen", "Abendbrot"];
 
-  <div class="filters">
-    <select id="rouletteCategory">
-      ${categories.map(c => `<option value="${c}">${c}</option>`).join("")}
-    </select>
-    <button class="primary" onclick="drawRouletteRecipe()">Rezept ziehen</button>
-  </div>
+  c.innerHTML = `
+    <button class="secondary" onclick="showHome()">← Zurück</button>
+    <h2>🎲 Rezept ziehen</h2>
 
-  <div id="rouletteResult"></div>
-`;
-function drawRouletteRecipe(){
+    <div class="filters">
+      <select id="rouletteCategory">
+        ${categories.map(cat => `<option value="${cat}">${cat}</option>`).join("")}
+      </select>
+      <button class="primary" onclick="drawRouletteRecipe()">Rezept ziehen</button>
+    </div>
+
+    <div id="rouletteResult"></div>
+  `;
+
+  function drawRouletteRecipe(){
   const selected = document.getElementById("rouletteCategory")?.value || "Alle";
   const result = document.getElementById("rouletteResult");
 
@@ -972,8 +974,8 @@ function drawRouletteRecipe(){
   if(selected !== "Alle"){
     pool = allRecipes.filter(recipe => {
       const text = [
-        recipe.name,
-        recipe.kueche,
+        recipe.name || "",
+        recipe.kueche || "",
         ...(recipe.tags || [])
       ].join(" ").toLowerCase();
 
@@ -982,7 +984,7 @@ function drawRouletteRecipe(){
       }
 
       if(selected === "Mittagessen"){
-        return text.includes("mittag") || text.includes("lunch") || text.includes("hauptgericht");
+        return text.includes("mittag") || text.includes("hauptgericht") || text.includes("herzhaft");
       }
 
       if(selected === "Abendbrot"){
