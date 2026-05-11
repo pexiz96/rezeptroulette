@@ -93,7 +93,8 @@
     select{width:100%;margin-top:14px;background:#fff7ed}
 
     .brand{display:flex;align-items:center;gap:14px;font-size:28px;font-weight:900}
-    .logo{width:58px;height:58px;object-fit:contain;border-radius:50%}
+    .logo{width:58px;height:58px;object-fit:cover;
+object-position:center;border-radius:50%}
     .header-actions{display:flex;gap:10px}
 
     .primary{
@@ -190,7 +191,8 @@
   object-fit:cover;
   object-position:center;
   display:block;
-  background:#fff7ed;
+  border-radius:22px 22px 0 0;
+  background:#e9d8c5;
 }
 
     .card:hover img{transform:scale(1.04)}
@@ -243,11 +245,12 @@
     .detail{overflow:hidden;margin-top:22px;background:var(--white)}
     .detail img{
   width:100%;
-  height:360px;
+  height:420px;
   object-fit:cover;
   object-position:center;
+  border-radius:28px;
   display:block;
-  background:#fff7ed;
+  background:#e9d8c5;
 }
     .detail-body{padding:26px;display:flex;flex-direction:column;gap:18px}
     .columns{display:grid;grid-template-columns:.8fr 1.2fr;gap:28px}
