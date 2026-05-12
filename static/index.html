@@ -610,6 +610,23 @@
   margin-bottom:28px;
 }
 
+.meal-buttons{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.meal-btn{
+  background:white;
+  color:var(--text);
+  box-shadow:var(--soft);
+}
+
+.meal-btn.active{
+  background:linear-gradient(135deg,var(--orange),var(--amber));
+  color:white;
+}
+
 .roulette-controls select{
   margin:0;
 }
@@ -780,6 +797,19 @@
     let recentRecipes = JSON.parse(localStorage.getItem("recentRecipes") || "[]");
     let pantry = JSON.parse(localStorage.getItem("pantry") || "[]");
     let cookSteps = [];
+    let recipeScrollPosition = 0;
+    let selectedMealType = "Alle";
+
+function selectMealType(type, button){
+  selectedMealType = type;
+
+  document.querySelectorAll(".meal-btn")
+    .forEach(btn => btn.classList.remove("active"));
+
+  button.classList.add("active");
+
+  drawRouletteRecipe();
+}
     let cookIndex = 0;
 
     const ingredientAlternatives = {
@@ -801,6 +831,26 @@
   "brokkoli": ["Blumenkohl", "Zucchini", "grüne Bohnen"]
 };
 
+async function deleteRecipe(id){
+  if(!confirm("Dieses Rezept wirklich löschen?")){
+    return;
+  }
+
+  const response = await fetch(`/rezepte/${Number(id)}`, {
+    method: "DELETE"
+  });
+
+  if(!response.ok){
+    showToast("Rezept konnte nicht gelöscht werden.");
+    return;
+  }
+
+  allRecipes = [];
+  await ensureRecipesLoaded();
+
+  showToast("Rezept gelöscht!");
+  loadRecipes();
+}
 async function deleteImportedRecipes(){
   if(!confirm("Alle importierten Rezepte wirklich löschen?")){
     return;
@@ -1054,6 +1104,11 @@ async function saveRecipeFromLink(){
               <button class="primary" onclick="event.stopPropagation(); showRecipe(${Number(recipe.id)})">Rezept ansehen</button>
               <button class="secondary" onclick="event.stopPropagation(); quickAddToPlan(${Number(recipe.id)})">📅 Planen</button>
               <button class="secondary" onclick="event.stopPropagation(); shareRecipe(${Number(recipe.id)})">📤 Teilen</button>
+              ${recipe.kueche === "Link Import" ? `
+  <button class="secondary" onclick="event.stopPropagation(); deleteRecipe(${Number(recipe.id)})">
+    🗑️ Löschen
+  </button>
+` : ""}
             </div>
           </div>
         </div>
@@ -1109,6 +1164,7 @@ async function saveRecipeFromLink(){
     }
 
     async function showRecipe(id){
+      recipeScrollPosition = window.scrollY;
       hideHome();
       await ensureRecipesLoaded();
       const recipe = allRecipes.find(r => Number(r.id) === Number(id));
@@ -1118,7 +1174,7 @@ async function saveRecipeFromLink(){
       const img = imageUrl(recipe);
 
       document.getElementById("content").innerHTML = `
-        <button class="secondary" onclick="loadRecipes()">← Zurück zu allen Rezepten</button>
+        <button class="secondary" onclick="backToRecipes()">← Zurück zu allen Rezepten</button>
         <div class="detail">
           ${img ? `<img src="${img}" alt="${recipe.name}">` : `<div class="placeholder">Kein Bild</div>`}
           <div class="detail-body">
@@ -1182,12 +1238,18 @@ async function saveRecipeFromLink(){
       </div>
 
       <div class="roulette-controls">
-        <select id="rouletteCategory">
-          <option value="Alle">Alle Rezepte</option>
-          <option value="Frühstück">Frühstück</option>
-          <option value="Mittagessen">Mittagessen</option>
-          <option value="Abendbrot">Abendbrot</option>
-        </select>
+      <div class="meal-buttons">
+  <button class="meal-btn active" onclick="selectMealType('Alle', this)">Alle</button>
+  <button class="meal-btn" onclick="selectMealType('Frühstück', this)">Frühstück</button>
+  <button class="meal-btn" onclick="selectMealType('Mittagessen', this)">Mittagessen</button>
+  <button class="meal-btn" onclick="selectMealType('Abendbrot', this)">Abendbrot</button>
+  <button class="meal-btn" onclick="selectMealType('Nudeln', this)">🍝 Nudeln</button>
+<button class="meal-btn" onclick="selectMealType('Auflauf', this)">🥘 Auflauf</button>
+<button class="meal-btn" onclick="selectMealType('Suppe', this)">🍲 Suppe</button>
+<button class="meal-btn" onclick="selectMealType('Vegetarisch', this)">🥦 Vegetarisch</button>
+<button class="meal-btn" onclick="selectMealType('Snack', this)">🥪 Snack</button>
+<button class="meal-btn" onclick="selectMealType('Dessert', this)">🍰 Dessert</button>
+</div>
 
         <button class="primary" onclick="drawRouletteRecipe()">🎲 Rezept ziehen</button>
       </div>
@@ -1200,7 +1262,7 @@ async function saveRecipeFromLink(){
 }
 
 function drawRouletteRecipe(){
-  const selected = document.getElementById("rouletteCategory")?.value || "Alle";
+  const selected = selectedMealType;
   const result = document.getElementById("rouletteResult");
   if(!result) return;
 
@@ -1209,10 +1271,11 @@ function drawRouletteRecipe(){
   if(selected !== "Alle"){
     pool = allRecipes.filter(recipe => {
       const text = [
-        recipe.name || "",
-        recipe.kueche || "",
-        ...(recipe.tags || [])
-      ].join(" ").toLowerCase();
+  recipe.name || "",
+  recipe.kueche || "",
+  recipe.kategorie || "",
+  ...(recipe.tags || [])
+].join(" ").toLowerCase();
 
       if(selected === "Frühstück"){
         return text.includes("frühstück");
@@ -1225,6 +1288,30 @@ function drawRouletteRecipe(){
       if(selected === "Abendbrot"){
         return text.includes("abend") || text.includes("brot") || text.includes("snack");
       }
+
+      if(selected === "Nudeln"){
+  return text.includes("nudel") || text.includes("pasta");
+}
+
+if(selected === "Auflauf"){
+  return text.includes("auflauf");
+}
+
+if(selected === "Suppe"){
+  return text.includes("suppe");
+}
+
+if(selected === "Vegetarisch"){
+  return text.includes("vegetarisch");
+}
+
+if(selected === "Snack"){
+  return text.includes("snack");
+}
+
+if(selected === "Dessert"){
+  return text.includes("dessert") || text.includes("kuchen");
+}
 
       return true;
     });
@@ -1616,6 +1703,17 @@ function savePantry(){
       });
 
     showHome();
+
+    async function backToRecipes(){
+  await loadRecipes();
+
+  setTimeout(() => {
+    window.scrollTo({
+      top: recipeScrollPosition,
+      behavior: "auto"
+    });
+  }, 100);
+}
   </script>
 </body>
 </html>

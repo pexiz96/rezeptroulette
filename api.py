@@ -11,6 +11,31 @@ from pydantic import BaseModel, Field
 from database import Database
 from models import Rezept
 
+import re
+
+def clean_text(text):
+    if not text:
+        return ""
+
+    text = str(text)
+
+    replacements = {
+        "Ã¤": "ä",
+        "Ã¶": "ö",
+        "Ã¼": "ü",
+        "ÃŸ": "ß",
+        "â€“": "-",
+        "â€œ": "\"",
+        "â€": "\"",
+    }
+
+    for wrong, correct in replacements.items():
+        text = text.replace(wrong, correct)
+
+    text = re.sub(r'\s+', ' ', text)
+
+    return text.strip()
+
 
 class RezeptCreate(BaseModel):
     name: str
@@ -109,7 +134,7 @@ def rezept_loeschen(recipe_id: int):
     db = get_db()
     db.delete_recipe(recipe_id)
     return {"message": "Rezept gelöscht"}
-    
+
 @app.delete("/rezepte/importierte")
 def importierte_rezepte_loeschen():
     db = get_db()
