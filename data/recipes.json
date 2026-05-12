@@ -1,0 +1,16 @@
+[
+  {
+    "name": "Test Rezept",
+    "kueche": "PDF Import",
+    "bild": "test.jpg",
+    "portionen": 2,
+    "kochzeit": 15,
+    "schwierigkeit": "Einfach",
+    "tags": ["Snack"],
+    "zutaten": [
+      "2 Eier",
+      "1 Scheibe Brot"
+    ],
+    "anleitung": "1. Eier braten.\n2. Brot toasten.\n3. Servieren."
+  }
+]

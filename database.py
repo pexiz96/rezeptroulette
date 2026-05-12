@@ -2,6 +2,8 @@ import json
 import sqlite3
 from pathlib import Path
 
+DATA_RECIPE_PATH = Path("data/recipes.json")
+
 from config import DB_PATH, IMAGE_DIR, LOCAL_IMAGE_DIR, DAYS
 from models import Rezept
 
@@ -55,6 +57,84 @@ Hühnerfrikassee|Deutsch|frikassee.jpg|4|60|Mittel|Hähnchen,Reis,Klassiker|600 
 Pelmeni|Russisch|pelmeni.jpg|3|25|Einfach|Teigtaschen,Schnell,Herzhaft|500 g Pelmeni;1 EL Butter;150 g Schmand;Salz;Pfeffer;Dill|1. Pelmeni in kochendem Salzwasser garen, bis sie oben schwimmen.\\n2. Noch 3 bis 4 Minuten ziehen lassen.\\n3. Abgießen.\\n4. Mit Butter vermengen.\\n5. Mit Schmand, Pfeffer und Dill servieren.
 Kohlrouladen|Deutsch|kohlrouladen.jpg|4|90|Mittel|Hausmannskost,Kohl,Hackfleisch|1 Weißkohl;600 g Hackfleisch;1 Brötchen;1 Ei;1 Zwiebel;500 ml Brühe;2 EL Öl;Salz;Pfeffer;Paprikapulver|1. Kohlblätter vorsichtig lösen und kurz blanchieren.\\n2. Brötchen einweichen und ausdrücken.\\n3. Hackfleisch mit Brötchen, Ei, Zwiebel und Gewürzen mischen.\\n4. Füllung auf Kohlblätter geben und aufrollen.\\n5. Rouladen fixieren.\\n6. In Öl rundherum anbraten.\\n7. Mit Brühe ablöschen.\\n8. Zugedeckt ca. 60 Minuten schmoren.\\n9. Mit Kartoffeln servieren.
 Kartoffelgratin|Französisch|kartoffelauflauf.jpg|4|60|Einfach|Ofengericht,Kartoffeln,Vegetarisch|900 g Kartoffeln;250 ml Sahne;150 ml Milch;150 g Käse;1 Knoblauchzehe;1 EL Butter;Salz;Pfeffer;Muskat|1. Kartoffeln schälen und in dünne Scheiben schneiden.\\n2. Auflaufform mit Butter einfetten.\\n3. Knoblauch pressen und mit Sahne und Milch verrühren.\\n4. Mit Salz, Pfeffer und Muskat würzen.\\n5. Kartoffeln in die Form schichten.\\n6. Sahnemischung darübergeben.\\n7. Käse darüberstreuen.\\n8. Bei 180 °C ca. 45 Minuten backen.
+
+Erdbeer-Bananen-Skyr Dessert|Neues Essen, neues Leben|erdbeer_bananen_sky.png|2|20|Einfach|Frühstück,Dessert,Protein,Süß|400 g Erdbeeren;1–2 EL Erythrit;1 TL Zitronensaft;400 g Skyr;200 ml fettarme Milch;1 Päckchen Vanillepuddingpulver;2 kleine Bananen;150 g Frischkäse light;200 ml Protein-Sahne;1 Päckchen Sahnesteif;1 TL Vanilleextrakt;120–150 g Protein-Biskuit|1. Erdbeeren waschen, putzen und klein schneiden.\n2. Bananen in Scheiben schneiden und mit Zitronensaft sowie Süße vermengen.\n3. Vanillepudding mit Milch zubereiten und lauwarm abkühlen lassen.\n4. Skyr und Frischkäse glatt rühren und unter den Pudding mischen.\n5. Vanilleextrakt einrühren.\n6. Sahne mit Sahnesteif aufschlagen und vorsichtig unterheben.\n7. Dessert mit Biskuit, Früchten und Creme schichten.\n8. Mindestens 30 Minuten kaltstellen.
+Fluffige Erdbeer-Proteincreme|Neues Essen, neues Leben|erdbeer_creme.png|2|15|Einfach|Frühstück,Dessert,Protein,Süß|250 g gefrorene Erdbeeren;32 g Proteinpulver Sahne;Chunky Flavour nach Wahl;ca. 100 ml gefrorene ungesüßte Mandelmilch;frische Erdbeeren optional;Light-Schokodrops optional|1. Gefrorene Erdbeeren grob mixen.\n2. Proteinpulver und etwas gefrorene Mandelmilch dazugeben.\n3. Die Masse mehrere Minuten aufschlagen, bis sie luftig und cremig wird.\n4. Nach Bedarf weitere Flüssigkeit einarbeiten.\n5. In eine Schale füllen und nach Wunsch toppen.
+Froschgrütze|Neues Essen, neues Leben|froschgruetze.png|2|10|Einfach|Frühstück,Dessert,Protein,Süß|1 Tüte ungesüßte Götterspeise Waldmeister;Chunky Flavour nach Wahl;250 ml heißes Wasser;500 g Magerquark|1. Götterspeise in eine Schüssel geben.\n2. Mit heißem Wasser übergießen und gründlich verrühren.\n3. Chunky Flavour nach Geschmack einrühren.\n4. Magerquark nach und nach unterrühren.\n5. Über Nacht im Kühlschrank fest werden lassen.\n6. Gut gekühlt servieren.
+Thunfisch-Frischkäse-Aufstrich|Neues Essen, neues Leben|tunfisch_aufstrich.png|2|15|Einfach|Frühstück,Protein,Herzhaft,Schnell|1 Dose Thunfisch;1 kleine Paprika;1 Lauchzwiebel;1 EL Tomatenmark;1 Dose Mais;200 g Kräuterfrischkäse light;1 EL Miracle Whip light;Eisbergsalat;4 Scheiben Eiweißbrot|1. Thunfisch und Mais abtropfen lassen und vermengen.\n2. Paprika fein würfeln und Lauchzwiebel in Ringe schneiden.\n3. Gemüse, Frischkäse, Miracle Whip und Tomatenmark zum Thunfisch geben.\n4. Alles cremig verrühren.\n5. Eiweißbrot nach Wunsch toasten.\n6. Mit Salat belegen und den Aufstrich darauf verteilen.
+High Protein Käse-Flatbread|Neues Essen, neues Leben||2|30|Einfach|Frühstück,Protein,Herzhaft,Pfanne|130 g Weizenmehl;200 g Hüttenkäse fettarm;Salz;30 g Proteinpulver neutral;ca. 60 g Mozzarella light;Kräuter optional;Knoblauch optional|1. Hüttenkäse im Mixer glatt pürieren.\n2. Mehl, Proteinpulver, Hüttenkäse und Salz zu einem Teig verkneten.\n3. Teig etwa 10 Minuten ruhen lassen.\n4. Teig halbieren und dünn ausrollen.\n5. Mozzarella in die Mitte geben.\n6. Teig darüberfalten und wieder vorsichtig flachrollen.\n7. In einer heißen Pfanne etwa 5 Minuten pro Seite goldbraun braten.
+Protein-Chia-Pudding mit Erdbeeren und Schokolade|Neues Essen, neues Leben|schokopudding.png|2|10|Einfach|Frühstück,Dessert,Protein,Süß|200–250 g Joghurt pur;20 g gefriergetrocknete Erdbeeren;20 g Chiasamen;1 TL Honig;dunkle Schokolade nach Belieben|1. Joghurt, Chiasamen, Honig und Erdbeeren gründlich verrühren.\n2. Die Mischung mindestens 2 Stunden im Kühlschrank quellen lassen.\n3. Vor dem Servieren mit geschmolzener dunkler Schokolade beträufeln.\n4. Nach Wunsch mit weiteren Erdbeeren dekorieren.
+Protein-Schokobrötchen|Neues Essen, neues Leben|schokobroetchen.png|4|35|Einfach|Frühstück,Protein,Süß,Backen|250 g Magerquark;50 g Proteinpulver Sahne;50 g Schokoladentropfen;100 g Dinkelmehl;1 TL Backpulver;Chunky Flavour Vanille|1. Backofen auf 170 °C Ober-/Unterhitze vorheizen.\n2. Magerquark, Proteinpulver und Chunky Flavour glatt verrühren.\n3. Dinkelmehl und Backpulver unterkneten.\n4. Schokoladentropfen unterheben.\n5. Kleine Brötchen formen und auf ein Backblech legen.\n6. Etwa 25 Minuten goldgelb backen.
+High Protein Käse-Brezeln|Neues Essen, neues Leben|kaesebrezel.png|3|30|Einfach|Frühstück,Protein,Herzhaft,Backen|500 g Skyr;10 g Backpulver;1 Eigelb;350 g Dinkelmehl;100 g Light-Reibekäse;grobes Salz|1. Skyr, Dinkelmehl, Backpulver, Reibekäse, Eigelb und Salz zu einem Teig verkneten.\n2. Teig in 2–3 Portionen teilen.\n3. Aus den Portionen Brezeln formen.\n4. Auf ein Backblech legen.\n5. Bei 200 °C Umluft etwa 20 Minuten goldbraun backen.\n6. Nach Wunsch aufschneiden und belegen.
+Quark-Bagels mit Mohn und Sonnenblumenkernen|Neues Essen, neues Leben|bagle.png|4|35|Einfach|Frühstück,Protein,Backen,Herzhaft|250 g Magerquark;300 g Dinkelmehl Type 630;1 TL Salz;1 TL Backpulver;2 EL Olivenöl;etwas Wasser;2 TL Mohn;2 TL Sonnenblumenkerne|1. Backofen auf 180 °C Ober-/Unterhitze vorheizen.\n2. Magerquark mit Öl und Salz glatt verrühren.\n3. Backpulver und Mehl einarbeiten.\n4. Alles zu einem formbaren Teig verkneten.\n5. Teig in vier Portionen teilen und Bagels formen.\n6. Oberfläche leicht mit Wasser bestreichen.\n7. Mit Mohn und Sonnenblumenkernen bestreuen.\n8. 20–25 Minuten goldbraun backen.
+Quark-Himbeer-Frühstück aus dem Ofen|Neues Essen, neues Leben|himbeer_fruestueck.png|2|38|Einfach|Frühstück,Protein,Süß,Ofengericht|250 g Magerquark;200 g Frischkäse;2 Eier;50 g gemahlene Mandeln;40 g Erythrit;80 g Himbeeren;1 Prise Salz|1. Backofen auf 170 °C Umluft vorheizen.\n2. Magerquark, Frischkäse, Eier, Erythrit, Mandeln und Salz cremig verrühren.\n3. Himbeeren vorsichtig unterheben.\n4. Masse in eine ofenfeste Form geben.\n5. Etwa 30 Minuten backen, bis die Oberfläche leicht goldbraun ist.\n6. Warm oder kalt genießen.
+Protein-Pfannkuchen Vanille|Neues Essen, neues Leben|panecake_vanille.png|2|17|Einfach|Frühstück,Protein,Süß,Pfanne|3 Eier;70 g Magerquark;5 g Vanille-Proteinpulver;90 ml Mandelmilch;1 Prise Salz;50 g Dinkelmehl Type 630|1. Eier, Mandelmilch und Magerquark in einer Schüssel verrühren.\n2. Dinkelmehl, Proteinpulver und Salz dazugeben.\n3. Alles zu einem glatten Teig verrühren.\n4. Eine Pfanne leicht einfetten.\n5. Teig portionsweise dünn ausbacken.\n6. Warm servieren.
+High Protein Waffeln|Neues Essen, neues Leben|protein_waffel.png|2|15|Einfach|Frühstück,Protein,Süß,Waffeln|200 g proteinreicher Vanillepudding;25 g Protein-Eiskaffee Honig-Karamell-Waffel;1 Ei;25 g Dinkelmehl;3 g Backpulver;Light-Schokodrops optional;etwas Ölspray|1. Alle Zutaten in einer Schüssel verrühren.\n2. So lange rühren, bis ein glatter cremiger Teig entsteht.\n3. Waffeleisen vorheizen und leicht einsprühen.\n4. Teig portionsweise einfüllen.\n5. Waffeln goldbraun backen.\n6. Nach Wunsch mit Schokodrops oder Früchten servieren.
+Protein-Quarkbrötchen mit Körnerkruste|Neues Essen, neues Leben|quarkbroetchen.png|4|30|Einfach|Frühstück,Protein,Backen,Herzhaft|200 g Dinkelmehl;330 g Magerquark;¾ Päckchen Backpulver;¾ TL Salz;45 g Körner zum Wälzen|1. Airfryer-Korb oder Backblech mit Backpapier auslegen.\n2. Dinkelmehl, Magerquark, Backpulver und Salz in eine Schüssel geben.\n3. Alles zu einem glatten Teig verkneten.\n4. Teig in vier Portionen teilen und Brötchen formen.\n5. Brötchen in Körnern wälzen und leicht andrücken.\n6. Im Airfryer bei 165 °C etwa 25 Minuten backen.\n7. Alternativ im Backofen bei 180 °C Umluft etwa 30 Minuten backen.
+Protein-Pfannkuchen mit Apfelmark|Neues Essen, neues Leben|panecake_apfelmark.png|2|20|Einfach|Frühstück,Protein,Süß,Pfanne|60 g Mehl;270 ml ungesüßte Mandelmilch;1–2 Scoops Chunky Flavour Vanille;2 Eier;50 g Proteinpulver Sahne;10 ml Sprudelwasser optional;Apfelmark zum Servieren;Früchte optional|1. Alle Zutaten für die Pfannkuchen in einer Schüssel verrühren.\n2. Eine beschichtete Pfanne leicht einfetten.\n3. Teig portionsweise hineingeben.\n4. Pfannkuchen von beiden Seiten goldbraun ausbacken.\n5. Mit Apfelmark servieren.\n6. Nach Wunsch mit frischen Früchten toppen.
+Frühstücks-Wrap|Neues Essen, neues Leben|fruestueck_wrap.png|1|10|Einfach|Frühstück,Protein,Herzhaft,Schnell|1 Low-Carb-Wrap;2 Eier;30 g Frischkäse;30 g geriebener Käse;Salz;Pfeffer|1. Eier in einer Pfanne zu Rührei braten.\n2. Mit Salz und Pfeffer würzen.\n3. Wrap mit Frischkäse bestreichen.\n4. Rührei auf dem Wrap verteilen.\n5. Geriebenen Käse darüberstreuen.\n6. Wrap einrollen.\n7. Optional kurz in der Pfanne anbraten.
+Protein Brötchen Brot|Neues Essen, neues Leben|protein_brot.png|4|45|Einfach|Frühstück,Protein,Backen,Grundrezept|350 g Dinkelmehl;380 g Skyr;9 g Backpulver;1 Ei;1 TL Olivenöl;1 Prise Salz;etwas Speisestärke optional|1. Dinkelmehl mit Backpulver und Salz vermischen.\n2. Skyr, Ei und Olivenöl hinzufügen.\n3. Alles zuerst mit einem Löffel, dann mit den Händen verkneten.\n4. Bei Bedarf etwas Speisestärke verwenden, damit der Teig formbar wird.\n5. Teig zu Brötchen, Brot oder Fladen formen.\n6. Nach gewünschter Form backen, bis er goldbraun ist.
+Proteinreiche Skyr-Stangen|Neues Essen, neues Leben|skyr_stangen.png|4|45|Einfach|Frühstück,Protein,Backen,Herzhaft|250 g Skyr;150 g Mehl;½ Päckchen Backpulver;1 Prise Salz;etwas Wasser;Salatkernmischung|1. Skyr, Mehl, Backpulver und Salz in eine Schüssel geben.\n2. Zu einem geschmeidigen Teig verkneten.\n3. Backofen auf 180 °C Ober-/Unterhitze vorheizen.\n4. Teig in vier Portionen teilen und zu Stangen formen.\n5. Stangen leicht mit Wasser bestreichen.\n6. In der Kernmischung wälzen.\n7. Auf ein Backblech legen und 25–30 Minuten goldbraun backen.
+Apfel Pancakes|Frühstück|apfel_panecake.png|2|20|Einfach|Frühstück,Süß,Vegetarisch|2 Äpfel;2 Eier;120 g Mehl;200 ml Milch;1 TL Backpulver;1 TL Zimt;1 EL Zucker;Butter|1. Äpfel schälen und fein raspeln.\n2. Eier mit Milch verrühren.\n3. Mehl, Backpulver, Zucker und Zimt einrühren.\n4. Apfelraspel unterheben.\n5. Butter in einer Pfanne erhitzen.\n6. Kleine Pancakes portionsweise ausbacken.\n7. Goldbraun wenden und servieren.
+
+Apfelkuchen Bowl|Dessert|apfelkuchen_bowl.png|2|10|Einfach|Dessert,Süß,Schnell|250 g Skyr;1 Apfel;30 g Haferflocken;1 TL Zimt;1 TL Honig;10 g Walnüsse|1. Apfel klein würfeln.\n2. Mit Zimt kurz in der Pfanne anbraten.\n3. Skyr in eine Schüssel geben.\n4. Haferflocken und Apfel darauf verteilen.\n5. Mit Honig und Walnüssen toppen.
+
+Auflauf Fischstäbchen|Abendessen|auflauf_fischstaebchen.png|4|35|Einfach|Auflauf,Familie,Fisch|10 Fischstäbchen;800 g Kartoffeln;200 ml Sahne;150 g Käse;Salz;Pfeffer;Muskat|1. Kartoffeln schälen und in Scheiben schneiden.\n2. Kurz vorkochen.\n3. In eine Auflaufform geben.\n4. Sahne würzen und darüber verteilen.\n5. Fischstäbchen darauflegen.\n6. Käse darübergeben.\n7. Bei 180 °C 25 Minuten backen.
+
+Bagel|Snack|bagle.png|2|15|Einfach|Snack,Schnell,Frühstück|2 Bagels;100 g Frischkäse;Salat;Tomaten;Gurke;Putenbrust|1. Bagels halbieren.\n2. Mit Frischkäse bestreichen.\n3. Mit Salat, Tomaten, Gurke und Putenbrust belegen.\n4. Zusammenklappen und servieren.
+
+Blueberry Dessert|Dessert|blaubeer_dessert.png|2|10|Einfach|Dessert,Süß,Schnell|250 g Skyr;100 g Blaubeeren;20 g Granola;1 TL Honig|1. Skyr in Gläser geben.\n2. Blaubeeren darauf verteilen.\n3. Granola darüberstreuen.\n4. Mit Honig servieren.
+
+
+Cheesecake Bowl|Dessert|cheesecake_bowl.png|2|10|Einfach|Dessert,Süß,Protein|250 g Frischkäse light;150 g Skyr;1 TL Honig;Keksbrösel;Beeren|1. Frischkäse und Skyr cremig verrühren.\n2. In Schalen geben.\n3. Mit Beeren und Keksbröseln toppen.
+
+Churros|Dessert|churros.png|2|25|Einfach|Dessert,Süß,Snack|100 g Mehl;150 ml Wasser;1 EL Zucker;1 Prise Salz;Zimt;Zucker;Öl|1. Wasser mit Zucker und Salz erhitzen.\n2. Mehl einrühren bis ein Teig entsteht.\n3. In einen Spritzbeutel füllen.\n4. In heißes Öl spritzen.\n5. Goldbraun ausbacken.\n6. In Zimt-Zucker wenden.
+
+Corndogs|Snack|corndogs.png|2|30|Einfach|Snack,Fast Food,Herzhaft|4 Würstchen;120 g Mehl;80 g Maismehl;1 Ei;150 ml Milch;1 TL Backpulver;Öl|1. Würstchen auf Spieße stecken.\n2. Teig aus allen Zutaten herstellen.\n3. Würstchen eintauchen.\n4. In heißem Öl goldbraun ausbacken.
+
+Erdbeerpudding|Dessert|erdbeerpudding.png|2|15|Einfach|Dessert,Süß|500 ml Milch;1 Puddingpulver;150 g Erdbeeren;1 EL Zucker|1. Pudding nach Anleitung kochen.\n2. Erdbeeren klein schneiden.\n3. Unterheben oder darübergeben.\n4. Kalt stellen.
+
+Erdnuss Schnitte|Dessert|erdnuss_schnitte.png|4|20|Einfach|Dessert,Süß,Protein|150 g Haferflocken;80 g Erdnussbutter;2 EL Honig;100 g Skyr|1. Alles vermengen.\n2. In eine Form drücken.\n3. Kalt stellen.\n4. In Stücke schneiden.
+
+Friss dich dumm Suppe|Suppe|friss_dich_dumm_suppe.png|4|35|Einfach|Suppe,Herzhaft,Familie|500 g Hackfleisch;1 Zwiebel;1 Paprika;1 Dose Mais;1 Dose Tomaten;500 ml Brühe;200 g Schmelzkäse|1. Hackfleisch anbraten.\n2. Gemüse dazugeben.\n3. Brühe und Tomaten hinzufügen.\n4. 15 Minuten köcheln.\n5. Schmelzkäse einrühren.
+
+Froschgrütze|Dessert|froschgruetze.png|2|10|Einfach|Dessert,Süß|1 Packung Wackelpudding;500 ml Wasser;Vanillesoße|1. Wackelpudding nach Anleitung kochen.\n2. Abkühlen lassen.\n3. Mit Vanillesoße servieren.
+
+Fruchtschnitten|Snack|fruchtschnitten.png|4|15|Einfach|Snack,Süß|150 g Haferflocken;2 Bananen;100 g Trockenfrüchte|1. Alles pürieren.\n2. In eine Form drücken.\n3. Backen oder kalt stellen.\n4. In Riegel schneiden.
+
+Fruestueck Wrap|Frühstück|fruestueck_wrap.png|2|10|Einfach|Frühstück,Schnell|2 Wraps;2 Eier;Frischkäse;Salat;Tomaten|1. Eier anbraten.\n2. Wraps bestreichen.\n3. Mit Zutaten füllen.\n4. Einrollen.
+
+Gartenpasta|Nudeln|gartenpasta.png|3|25|Einfach|Pasta,Vegetarisch|300 g Pasta;Zucchini;Paprika;Tomaten;200 ml Sahne;Parmesan|1. Pasta kochen.\n2. Gemüse anbraten.\n3. Sahne hinzufügen.\n4. Pasta unterheben.\n5. Mit Parmesan servieren.
+
+Gnocchi Pfanne|Abendessen|gnocchi.png|3|20|Einfach|Gnocchi,Schnell|500 g Gnocchi;1 Zwiebel;200 g Tomaten;100 g Mozzarella|1. Gnocchi anbraten.\n2. Gemüse hinzufügen.\n3. Mozzarella darübergeben.\n4. Kurz schmelzen lassen.
+Hack mit Gemüse|Abendessen|hack_mit_gemüse.png|3|25|Einfach|Hackfleisch,Low Carb,Herzhaft|500 g Hackfleisch;1 Zucchini;1 Paprika;1 Zwiebel;2 EL Öl;Salz;Pfeffer;Paprikapulver|1. Hackfleisch in Öl krümelig anbraten.\n2. Gemüse klein schneiden.\n3. Zum Hack geben.\n4. Würzen.\n5. 10 Minuten braten und servieren.
+
+Hähnchen Brokkoli Pasta|Nudeln|haehnchen_brokkoli_pasta.png|3|30|Einfach|Pasta,Hähnchen,Familie|300 g Pasta;400 g Hähnchenbrust;300 g Brokkoli;200 ml Sahne;Parmesan;Salz;Pfeffer|1. Pasta kochen.\n2. Brokkoli kurz vorgaren.\n3. Hähnchen anbraten.\n4. Sahne hinzufügen.\n5. Alles vermengen.\n6. Parmesan darübergeben.
+
+Hähnchen Paprika Auflauf|Auflauf|haehnchen_paprika_auflauf.png|4|35|Einfach|Auflauf,Hähnchen,Familie|500 g Hähnchenbrust;2 Paprika;250 ml Sahne;150 g Käse;Gewürze|1. Hähnchen würfeln.\n2. Paprika schneiden.\n3. In eine Auflaufform geben.\n4. Sahne würzen und darübergeben.\n5. Käse darüber.\n6. Backen.
+
+Hähnchenbissen|Snack|haehnchenbissen.png|2|20|Einfach|Snack,Hähnchen,Protein|400 g Hähnchenbrust;Paniermehl;1 Ei;Salz;Pfeffer|1. Hähnchen in Stücke schneiden.\n2. Würzen.\n3. Panieren.\n4. Im Ofen oder in der Pfanne goldbraun garen.
+
+Hähnchenbrust Kräutersauce|Abendessen|haehnchenbrust_kraeutersauce.png|2|30|Einfach|Hähnchen,Herzhaft|2 Hähnchenbrüste;200 ml Sahne;Kräuter;1 Zwiebel;Salz;Pfeffer|1. Hähnchen anbraten.\n2. Zwiebel dazugeben.\n3. Sahne und Kräuter hinzufügen.\n4. Kurz köcheln lassen.
+
+Hähnchen Wrap|Snack|haehnchenwrap.png|2|15|Einfach|Wrap,Schnell,Hähnchen|2 Wraps;300 g Hähnchen;Salat;Tomaten;Joghurtsoße|1. Hähnchen anbraten.\n2. Gemüse schneiden.\n3. Alles in Wraps füllen.\n4. Einrollen.
+
+Himbeer Chia Quark|Frühstück|himbeer_chia_quark.png|2|5|Einfach|Frühstück,Süß,Protein|250 g Quark;100 g Himbeeren;2 EL Chiasamen;1 TL Honig|1. Alles vermengen.\n2. Kurz ziehen lassen.\n3. Servieren.
+
+Himbeer Frühstück|Frühstück|himbeer_fruestueck.png|2|5|Einfach|Frühstück,Schnell|250 g Skyr;Himbeeren;Granola;Honig|1. Alles in eine Bowl geben.\n2. Direkt servieren.
+
+Himbeertraum|Dessert|himbeertraum.png|2|10|Einfach|Dessert,Süß|200 g Himbeeren;200 g Skyr;100 ml Sahne;Keksbrösel|1. Himbeeren pürieren.\n2. Creme anrühren.\n3. Schichten.\n4. Kühlen.
+
+Käse Patties|Snack|kaese_patties.png|2|20|Einfach|Snack,Herzhaft|200 g Käse;2 Eier;Paniermehl|1. Käse formen.\n2. Panieren.\n3. Goldbraun ausbacken.
+
+Käsebrezel|Snack|kaesebrezel.png|2|10|Einfach|Snack,Schnell|2 Brezeln;Käse;Butter|1. Brezeln aufschneiden.\n2. Mit Butter und Käse belegen.\n3. Kurz überbacken.
+
+Mini Pizza|Snack|mini_pizza.png|2|20|Einfach|Snack,Pizza,Schnell|Toast;Tomatensauce;Käse;Belag|1. Toast belegen.\n2. Käse drauf.\n3. Überbacken.
+
+Tomate Mozzarella Hähnchen|Abendessen|tomate_mozzarella_haehnchen.png|3|30|Einfach|Hähnchen,Ofen,Low Carb|500 g Hähnchenbrust;2 Tomaten;200 g Mozzarella;Gewürze|1. Hähnchen würzen.\n2. Anbraten.\n3. Mit Tomate und Mozzarella belegen.\n4. Überbacken.
+
+
+
 """
 
 
@@ -96,9 +176,45 @@ def builtin_recipe_rows() -> list[tuple]:
 
     return rows
 
+def external_recipe_rows() -> list[tuple]:
+    if not DATA_RECIPE_PATH.exists():
+        return []
 
+    with DATA_RECIPE_PATH.open("r", encoding="utf-8") as file:
+        data = json.load(file)
+
+    rows = []
+
+    for item in data:
+        name = str(item.get("name", "")).strip()
+        if not name:
+            continue
+
+        rows.append((
+            name,
+            str(item.get("kueche", "Unbekannt")).strip() or "Unbekannt",
+            str(item.get("bild", "")).strip(),
+            max(1, int(item.get("portionen", 2) or 2)),
+            max(1, int(item.get("kochzeit", 30) or 30)),
+            str(item.get("schwierigkeit", "Einfach")).strip() or "Einfach",
+            item.get("tags", []) if isinstance(item.get("tags", []), list) else [],
+            item.get("zutaten", []) if isinstance(item.get("zutaten", []), list) else [],
+            str(item.get("anleitung", "")).strip() or "Keine Anleitung vorhanden."
+        ))
+
+    return rows
 
 class Database:
+    def delete_pdf_imports(self) -> int:
+        cur = self.conn.execute("""
+        DELETE FROM recipes
+        WHERE kueche = 'PDF Import'
+           OR name LIKE '%pdf%'
+           OR bild LIKE 'pdf_%'
+        """)
+        self.conn.commit()
+        return cur.rowcount
+
     def __init__(self, path: Path = DB_PATH):
         self.path = path
         self.path.parent.mkdir(parents=True, exist_ok=True)
@@ -111,6 +227,7 @@ class Database:
         self.init_schema()
         self.seed_if_empty()
         self.import_builtin_recipes()
+        self.import_external_recipes()
 
     def init_schema(self) -> None:
         self.conn.executescript(
@@ -230,6 +347,60 @@ class Database:
         if imported or updated:
             print(f"Fest eingebaute Rezepte importiert: {imported}, Bilder aktualisiert: {updated}")
 
+    def import_external_recipes(self) -> None:
+        imported = 0
+        updated = 0
+
+        for name, kueche, bild, portionen, kochzeit, schwierigkeit, tags, zutaten, anleitung in external_recipe_rows():
+            existing = self.conn.execute(
+                "SELECT id FROM recipes WHERE name = ?",
+                (name,),
+            ).fetchone()
+
+            if existing:
+                self.conn.execute(
+                    """
+                    UPDATE recipes
+                    SET kueche=?, bild=?, portionen=?, kochzeit=?, schwierigkeit=?,
+                        tags_json=?, zutaten_json=?, anleitung=?
+                    WHERE id=?
+                    """,
+                    (
+                        kueche,
+                        bild,
+                        portionen,
+                        kochzeit,
+                        schwierigkeit,
+                        json.dumps(tags, ensure_ascii=False),
+                        json.dumps(zutaten, ensure_ascii=False),
+                        anleitung,
+                        existing["id"],
+                    ),
+                )
+                updated += 1
+                continue
+
+            recipe = Rezept(
+                name=name,
+                kueche=kueche,
+                bild=bild,
+                portionen=portionen,
+                kochzeit=kochzeit,
+                schwierigkeit=schwierigkeit,
+                tags=tags,
+                favorit=False,
+                zutaten=zutaten,
+                anleitung=anleitung,
+            )
+
+            self.save_recipe(recipe)
+            imported += 1
+
+        self.conn.commit()
+
+        if imported or updated:
+            print(f"Externe Rezepte importiert: {imported}, aktualisiert: {updated}")
+    
     def row_to_recipe(self, row: sqlite3.Row) -> Rezept:
         return Rezept(
             id=row["id"],

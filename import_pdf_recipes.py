@@ -6,112 +6,142 @@ import pdfplumber
 
 from database import Database
 from models import Rezept
+from config import LOCAL_IMAGE_DIR
 
-PDF_PATH = "Neu Essen, Neu Leben.pdf"
-IMAGE_DIR = Path("static/images")
+
+PDF_PATH = Path("Neu Essen, Neu Leben.pdf")
+
+
+def clean_import_title(title):
+    if not title:
+        return ""
+
+    title = str(title)
+
+    title = re.sub(r"[^\w\säöüÄÖÜß&\-]", " ", title)
+    title = re.sub(r"\s+", " ", title).strip()
+
+    fixes = {
+        "Protei N": "Protein",
+        "Prot E I N": "Protein",
+        "M It": "mit",
+        "M I T": "mit",
+        "Cham Pignon": "Champignon",
+        "Crem Ige": "Cremige",
+        "Crem Iger": "Cremiger",
+        "Krä Ute R": "Kräuter",
+        "Waf F E L N": "Waffeln",
+        "Ncrem E": "ncreme",
+        "Sahnecrem E": "Sahnecreme",
+        "Kuch En": "Kuchen",
+        "Pfan N Kuch En": "Pfannkuchen",
+        "Quarkbrötchen M It": "Quarkbrötchen mit",
+        "Protein Chia Pudding M It": "Protein-Chia-Pudding mit",
+        "Teriyaki Hähnchen M It": "Teriyaki-Hähnchen mit",
+        "Rinderhack M It": "Rinderhack mit",
+        "Quark Langos M It": "Quark-Langos mit",
+        "Top Secret Käsekuch En": "Top Secret Käsekuchen",
+    }
+
+    for wrong, correct in fixes.items():
+        title = title.replace(wrong, correct)
+
+    title = title.replace(" - ", "-")
+    title = re.sub(r"\s+", " ", title).strip()
+
+    return title
 
 
 def slugify(text):
-    text = text.lower()
+    text = str(text or "").lower()
     text = text.replace("ä", "ae").replace("ö", "oe").replace("ü", "ue").replace("ß", "ss")
     text = re.sub(r"[^a-z0-9]+", "_", text)
-    return text.strip("_")
+    text = text.strip("_")
+    return text[:80] or "rezept"
 
 
-def clean_title(text):
-    lines = [l.strip() for l in text.splitlines() if l.strip()]
-    lines = [l for l in lines if not l.isdigit()]
+def render_page_image(pdf_doc, page_index, image_name):
+    LOCAL_IMAGE_DIR.mkdir(parents=True, exist_ok=True)
+
+    page = pdf_doc[page_index]
+    pix = page.get_pixmap(matrix=fitz.Matrix(2, 2), alpha=False)
+
+    output_path = LOCAL_IMAGE_DIR / image_name
+    pix.save(str(output_path))
+
+
+def split_recipe_text(text):
+    lines = [line.strip() for line in (text or "").splitlines() if line.strip()]
+
     if not lines:
         return None
 
-    title = " ".join(lines[:2])
-    title = title.replace("￾", "-")
-    title = re.sub(r"\s+", " ", title).strip()
-    return title.title()
-
-
-def render_page_image(doc, page_index, filename):
-    IMAGE_DIR.mkdir(parents=True, exist_ok=True)
-
-    page = doc[page_index]
-    pix = page.get_pixmap(matrix=fitz.Matrix(2, 2), alpha=False)
-
-    path = IMAGE_DIR / filename
-    pix.save(path)
-
-    return filename
-
-
-def parse_recipe_page(text):
-    lines = [l.strip() for l in text.splitlines() if l.strip()]
-
+    title = lines[0]
     zutaten = []
     anleitung = []
 
     mode = None
 
-    for line in lines:
+    for line in lines[1:]:
         lower = line.lower()
 
-        if "zutaten" in lower:
+        if "zutat" in lower:
             mode = "zutaten"
             continue
 
-        if "zubereitung" in lower:
+        if "anleitung" in lower or "zubereitung" in lower:
             mode = "anleitung"
-            continue
-
-        if line.isdigit():
-            continue
-
-        if "vorbereitung" in lower or "gesamtzeit" in lower or "backzeit" in lower or "kühlzeit" in lower:
             continue
 
         if mode == "zutaten":
             zutaten.append(line)
-
         elif mode == "anleitung":
             anleitung.append(line)
+        else:
+            if any(char.isdigit() for char in line):
+                zutaten.append(line)
+            else:
+                anleitung.append(line)
 
-    return zutaten, anleitung
+    if not zutaten:
+        zutaten = ["Bitte Zutaten prüfen"]
+
+    if not anleitung:
+        anleitung = ["Bitte Anleitung prüfen"]
+
+    return title, zutaten, anleitung
 
 
 def import_recipes():
     db = Database()
 
-    db.conn.execute("DELETE FROM recipes WHERE kueche = 'PDF Import'")
-    db.conn.commit()
-
-    pdf_doc = fitz.open(PDF_PATH)
+    if not PDF_PATH.exists():
+        print(f"PDF nicht gefunden: {PDF_PATH}")
+        return
 
     imported = 0
 
-    with pdfplumber.open(PDF_PATH) as pdf:
-        for page_index, page in enumerate(pdf.pages):
+    pdf_doc = fitz.open(str(PDF_PATH))
+
+    with pdfplumber.open(str(PDF_PATH)) as pdf:
+        for page_index, page in enumerate(pdf.pages, start=1):
             text = page.extract_text() or ""
+            parsed = split_recipe_text(text)
 
-            if "ZUTATEN" not in text.upper() or "ZUBEREITUNG" not in text.upper():
+            if not parsed:
                 continue
 
-            if page_index == 0:
+            title, zutaten, anleitung = parsed
+            clean_title = clean_import_title(title)
+
+            if not clean_title:
                 continue
 
-            previous_text = pdf.pages[page_index - 1].extract_text() or ""
-            title = clean_title(previous_text)
-
-            if not title:
-                continue
-
-            zutaten, anleitung = parse_recipe_page(text)
-
-            if not zutaten:
-                continue
-
-            image_name = f"pdf_{slugify(title)}.png"
+            image_name = f"pdf_{slugify(clean_title)}.png"
             render_page_image(pdf_doc, page_index - 1, image_name)
 
             recipe = Rezept(
-                name=title,
+                name=clean_title,
                 kueche="PDF Import",
                 bild=image_name,
                 portionen=2,
@@ -126,9 +156,9 @@ def import_recipes():
             try:
                 db.save_recipe(recipe)
                 imported += 1
-                print(f"Importiert: {title} -> {image_name}")
+                print(f"Importiert: {clean_title} -> {image_name}")
             except Exception as exc:
-                print(f"Übersprungen: {title}", exc)
+                print(f"Übersprungen: {clean_title}", exc)
 
     print(f"{imported} PDF-Rezepte neu importiert.")
 

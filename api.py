@@ -70,6 +70,11 @@ app.add_middleware(
 def get_db():
     return Database()
 
+@app.delete("/delete-pdf-recipes")
+def delete_pdf_recipes():
+    deleted = db.delete_pdf_imports()
+    return {"deleted": deleted}
+
 @app.get("/")
 def home():
     return FileResponse("static/index.html")
