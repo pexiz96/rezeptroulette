@@ -104,7 +104,12 @@ def rezept_aus_link(daten: dict):
     saved = db.get_recipe(recipe_id)
 
     return asdict(saved)
-
+@app.delete("/rezepte/{recipe_id}")
+def rezept_loeschen(recipe_id: int):
+    db = get_db()
+    db.delete_recipe(recipe_id)
+    return {"message": "Rezept gelöscht"}
+    
 @app.delete("/rezepte/importierte")
 def importierte_rezepte_loeschen():
     db = get_db()
