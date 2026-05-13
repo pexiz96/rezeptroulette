@@ -230,15 +230,22 @@
     }
 
     .card:hover{transform:translateY(-4px)}
-    .card img{
+    .card img,
+.week-image,
+.detail img,
+.roulette-image-wrap img{
   width:100%;
-  aspect-ratio: 16 / 10;
-  height:auto;
   object-fit:cover;
-  object-position:center center;
+  object-position:center;
   display:block;
-  border-radius:0;
+  background:var(--cream);
 }
+
+.card img{
+  height:280px;
+  aspect-ratio:4 / 3;
+}
+
     .card-body{padding:24px}
     .card h3{margin:0;font-size:28px;line-height:1.12;min-height:64px;letter-spacing:-.04em}
 
