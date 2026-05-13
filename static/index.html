@@ -1282,10 +1282,147 @@ function formatSteps(anleitung){
     function loadFoodRescue(){setActiveNav("rescue");hideHome();document.getElementById("content").innerHTML=`<button class="secondary" onclick="showHome()">← Zurück</button><div class="panel" style="display:grid;gap:16px;margin-top:20px;"><div><span class="hero-badge">♻️ Food Rescue</span><h1>Was hast du noch zuhause?</h1><p class="muted">Gib Lebensmittel ein, die du verwerten möchtest. Die App sucht passende Rezepte.</p></div><textarea id="rescueInput" placeholder="Zum Beispiel:&#10;Sahne&#10;Paprika&#10;Reis&#10;Eier&#10;Käse">${pantry.join("\n")}</textarea><div class="buttons"><button class="primary" onclick="findRescueRecipes()">Lebensmittel retten</button><button class="secondary" onclick="savePantry()">Vorrat speichern</button></div></div><div id="rescueResults" style="margin-top:28px;"></div>`}
     function savePantry(){pantry=document.getElementById("rescueInput").value.split(/\n|,|;/).map(x=>x.trim()).filter(Boolean);localStorage.setItem("pantry",JSON.stringify(pantry));showToast("Vorrat gespeichert!")}
 
-    async function findRescueRecipes(){const input=document.getElementById("rescueInput").value;const available=input.split(/\n|,|;/).map(x=>x.trim().toLowerCase()).filter(Boolean);if(!available.length)return showToast("Bitte Zutaten eingeben.");await ensureRecipesLoaded();const results=allRecipes.map(recipe=>{const ingredients=(recipe.zutaten||[]).map(z=>z.toLowerCase());const matches=available.filter(a=>ingredients.some(i=>i.includes(a)));return{recipe,matches,score:matches.length}}).filter(r=>r.score>0).sort((a,b)=>b.score-a.score).slice(0,8);document.getElementById("rescueResults").innerHTML=results.length?`<h2>Passende Rezepte</h2><div class="grid">${results.map(r=>recipeCard(r.recipe)).join("")}</div>`:`<div class="empty-state"><h2>Keine passenden Rezepte gefunden</h2><p>Versuche allgemeinere Zutaten wie Reis, Käse oder Tomaten.</p></div>`}
+    async function findRescueRecipes(){
+  const input = document.getElementById("rescueInput").value;
 
-    let selectedRecipeId = null;
-    let selectedDay = null;
+  const available = input
+    .split(/\n|,|;/)
+    .map(x => x.trim().toLowerCase())
+    .filter(Boolean);
+
+  if(!available.length) return showToast("Bitte Zutaten eingeben.");
+
+  await ensureRecipesLoaded();
+
+  const existingResults = allRecipes.map(recipe => {
+    const text = [
+      recipe.name || "",
+      recipe.kueche || "",
+      ...(recipe.tags || []),
+      ...(recipe.zutaten || [])
+    ].join(" ").toLowerCase();
+
+    const matches = available.filter(item => text.includes(item));
+
+    return {recipe, matches, score: matches.length};
+  })
+  .filter(r => r.score > 0)
+  .sort((a,b) => b.score - a.score)
+  .slice(0,4);
+
+  const rescueIdeas = createRescueIdeas(available);
+
+  document.getElementById("rescueResults").innerHTML = `
+    <h2>♻️ Food-Rescue-Ideen</h2>
+
+    ${rescueIdeas.length ? `
+      <div class="grid">
+        ${rescueIdeas.map(rescueIdeaCard).join("")}
+      </div>
+    ` : ""}
+
+    ${existingResults.length ? `
+      <h2 style="margin-top:34px;">📚 Passende gespeicherte Rezepte</h2>
+      <div class="grid">
+        ${existingResults.map(r => recipeCard(r.recipe)).join("")}
+      </div>
+    ` : ""}
+  `;
+}
+  function createRescueIdeas(items){
+  const text = items.join(" ");
+
+  const ideas = [];
+
+  if(text.includes("nudel") || text.includes("pasta")){
+    ideas.push({
+      name: "Cremige Restepasta",
+      icon: "🍝",
+      ingredients: items,
+      steps: [
+        "Nudeln in Salzwasser bissfest kochen.",
+        "Vorhandenes Gemüse oder Fleisch klein schneiden.",
+        "Alles in einer Pfanne kurz anbraten.",
+        "Sahne, Frischkäse oder etwas Nudelwasser dazugeben.",
+        "Mit Salz, Pfeffer und Gewürzen abschmecken.",
+        "Nudeln unterheben und warm servieren."
+      ]
+    });
+  }
+
+  if(text.includes("sahne")){
+    ideas.push({
+      name: "Schnelle Sahnepfanne",
+      icon: "🥘",
+      ingredients: items,
+      steps: [
+        "Alle passenden Zutaten klein schneiden.",
+        "Eine Pfanne mit etwas Öl erhitzen.",
+        "Herzhafte Zutaten wie Fleisch, Gemüse oder Nudeln anbraten.",
+        "Sahne dazugeben und kurz einköcheln lassen.",
+        "Mit Salz, Pfeffer, Paprika oder Kräutern abschmecken.",
+        "Nach Wunsch mit Käse, Reis oder Nudeln servieren."
+      ]
+    });
+  }
+
+  if(text.includes("ketchup") || text.includes("tomate")){
+    ideas.push({
+      name: "Würzige Tomaten-Restepfanne",
+      icon: "🍅",
+      ingredients: items,
+      steps: [
+        "Zutaten klein schneiden und in einer Pfanne anbraten.",
+        "Ketchup, Tomatenmark oder Tomaten dazugeben.",
+        "Mit etwas Wasser oder Sahne cremig rühren.",
+        "Kurz köcheln lassen, bis alles gut verbunden ist.",
+        "Mit Salz, Pfeffer und Paprikapulver abschmecken.",
+        "Mit Nudeln, Reis oder Brot servieren."
+      ]
+    });
+  }
+
+  if(!ideas.length){
+    ideas.push({
+      name: "Freie Restepfanne",
+      icon: "♻️",
+      ingredients: items,
+      steps: [
+        "Alle Zutaten prüfen und klein schneiden.",
+        "Eine Pfanne mit etwas Öl erhitzen.",
+        "Feste Zutaten zuerst anbraten.",
+        "Weiche Zutaten später dazugeben.",
+        "Mit Salz, Pfeffer und passenden Gewürzen abschmecken.",
+        "Nach Wunsch mit Reis, Nudeln, Brot oder Kartoffeln servieren."
+      ]
+    });
+  }
+
+  return ideas;
+}
+
+function rescueIdeaCard(idea){
+  return `
+    <div class="card">
+      <div class="card-body">
+        <h3>${idea.icon} ${idea.name}</h3>
+        <div class="meta">Aus deinen Zutaten erstellt</div>
+
+        <h4>Zutaten-Idee</h4>
+        <div class="ingredients">
+          ${idea.ingredients.map(i => `<div class="ingredient">✓ ${i}</div>`).join("")}
+        </div>
+
+        <h4 style="margin-top:18px;">Anleitung</h4>
+        <div class="steps">
+          ${idea.steps.map((s, i) => `<div class="step">${i + 1}. ${s}</div>`).join("")}
+        </div>
+      </div>
+    </div>
+  `;
+}
+  let selectedRecipeId = null;
+  let selectedDay = null;
 
   function quickAddToPlan(id){
   selectedRecipeId = id;
