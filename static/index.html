@@ -230,7 +230,15 @@
     }
 
     .card:hover{transform:translateY(-4px)}
-    .card img{width:100%;height:280px;object-fit:cover;object-position:center;display:block}
+    .card img{
+  width:100%;
+  aspect-ratio: 16 / 10;
+  height:auto;
+  object-fit:cover;
+  object-position:center center;
+  display:block;
+  border-radius:0;
+}
     .card-body{padding:24px}
     .card h3{margin:0;font-size:28px;line-height:1.12;min-height:64px;letter-spacing:-.04em}
 
@@ -253,7 +261,14 @@
     .placeholder{height:220px;background:linear-gradient(135deg,var(--orange),var(--amber));display:grid;place-items:center;color:white;font-weight:900}
 
     .detail{background:var(--white);border-radius:32px;overflow:hidden;box-shadow:var(--shadow);margin-top:22px}
-    .detail img{width:100%;height:420px;object-fit:cover;object-position:center;display:block}
+    .detail img{
+  width:100%;
+  aspect-ratio: 16 / 9;
+  height:auto;
+  object-fit:cover;
+  object-position:center center;
+  display:block;
+}
     .detail-body{padding:30px;display:flex;flex-direction:column;gap:18px}
     .columns{display:grid;grid-template-columns:.8fr 1.2fr;gap:28px}
 
@@ -270,7 +285,15 @@
     .chips{display:flex;flex-wrap:wrap;gap:12px}
     .shopping-item{display:flex;align-items:center;gap:12px}
     .shopping-item:has(input:checked){opacity:.55;text-decoration:line-through}
-    .week-image{width:100%;height:170px;object-fit:cover;border-radius:18px;margin-bottom:14px}
+    .week-image{
+  width:100%;
+  aspect-ratio: 16 / 10;
+  height:auto;
+  object-fit:cover;
+  object-position:center center;
+  border-radius:18px;
+  margin-bottom:14px;
+}
     .week-title{font-size:18px;font-weight:850}
 
     .rating{display:flex;gap:6px;flex-wrap:wrap}
@@ -417,7 +440,14 @@
     }
 
     .roulette-image-wrap{min-height:380px;background:var(--cream);overflow:hidden}
-    .roulette-image-wrap img,.roulette-image-wrap .placeholder{width:100%;height:100%;min-height:380px;object-fit:cover;display:block}
+    .roulette-image-wrap img,
+.roulette-image-wrap .placeholder{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center center;
+  display:block;
+}
 
     .roulette-result-body{padding:48px;display:flex;flex-direction:column;justify-content:center;gap:4px}
     .roulette-result-body h2{font-size:42px;line-height:1.05;margin:18px 0;letter-spacing:-.05em}
