@@ -166,17 +166,8 @@ def roulette():
 @app.get("/wochenplan")
 def wochenplan():
     db = get_db()
-    plan = db.weekly_plan()
-    result = {}
-
-    for day, recipe_id in plan.items():
-        if recipe_id:
-            recipe = db.get_recipe(recipe_id)
-            result[day] = asdict(recipe) if recipe else None
-        else:
-            result[day] = None
-
-    return result
+    return db.weekly_plan()
+    
 
 
 
@@ -205,18 +196,11 @@ def loesche_tag(day: str):
     return {"message": f"{day} wurde gelöscht"}
 
 
-@app.post("/wochenplan/{day}/{recipe_id}")
-def setze_wochenplan(day: str, recipe_id: int):
+@app.post("/wochenplan/{day}/{slot}/{recipe_id}")
+def set_weekly_plan(day: str, slot: int, recipe_id: int):
     db = get_db()
-    plan = db.weekly_plan()
-
-    if day not in plan:
-        return {"error": "Tag nicht gefunden"}
-
-    plan[day] = recipe_id
-    db.set_weekly_plan(plan)
-
-    return {"message": "Gespeichert", "day": day, "recipe_id": recipe_id}
+    db.set_weekly_plan_slot(day, slot, recipe_id)
+    return {"ok": True}
 
 
 def shopping_list(recipes):
