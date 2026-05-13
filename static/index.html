@@ -1452,9 +1452,7 @@ function rescueIdeaCard(idea){
   if(!selectedRecipeId) return showToast("Kein Rezept gewählt");
   if(!selectedDay) return showToast("Bitte zuerst einen Tag wählen");
 
-  const r = await fetch(`/wochenplan/${encodeURIComponent(selectedDay)}/${slot}/${selectedRecipeId}`, {
-    method: "POST"
-  });
+  const r = await fetch(`/wochenplan/${encodeURIComponent(selectedDay)});
 
   if(r.ok){
     showToast("Zum Wochenplan hinzugefügt");
