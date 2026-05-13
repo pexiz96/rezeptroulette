@@ -1295,22 +1295,19 @@ function formatSteps(anleitung){
   await ensureRecipesLoaded();
 
   const existingResults = allRecipes.map(recipe => {
-    const text = [
-      recipe.name || "",
-      recipe.kueche || "",
-      ...(recipe.tags || []),
-      ...(recipe.zutaten || [])
-    ].join(" ").toLowerCase();
+    const recipeIngredients = (recipe.zutaten || [])
+      .map(z => String(z).toLowerCase());
 
-    const matches = available.filter(item => text.includes(item));
+    const matches = available.filter(item =>
+      recipeIngredients.some(zutat => zutat.includes(item))
+    );
 
-    return {recipe, matches, score: matches.length};
+    return { recipe, matches, score: matches.length };
   })
   .filter(r => r.score > 0)
-  .sort((a,b) => b.score - a.score)
-  .slice(0,4);
+  .sort((a,b) => b.score - a.score);
 
-  const rescueIdeas = createRescueIdeas(available);
+  const rescueIdeas = createRescueIdeasStrict(available);
 
   document.getElementById("rescueResults").innerHTML = `
     <h2>♻️ Food-Rescue-Ideen</h2>
@@ -1322,84 +1319,93 @@ function formatSteps(anleitung){
     ` : ""}
 
     ${existingResults.length ? `
-      <h2 style="margin-top:34px;">📚 Passende gespeicherte Rezepte</h2>
+      <h2 style="margin-top:34px;">📚 Rezepte mit deinen Lebensmitteln</h2>
       <div class="grid">
         ${existingResults.map(r => recipeCard(r.recipe)).join("")}
       </div>
-    ` : ""}
+    ` : `
+      <div class="empty-state" style="margin-top:24px;">
+        <h2>Keine gespeicherten Rezepte gefunden</h2>
+        <p>Ich habe aber oben passende Ideen aus deinen Zutaten erstellt.</p>
+      </div>
+    `}
   `;
 }
-  function createRescueIdeas(items){
-  const text = items.join(" ");
 
+function createRescueIdeasStrict(items){
+  const text = items.join(" ");
   const ideas = [];
+
+  if(items.length >= 2){
+    ideas.push({
+      name: "Restepfanne aus deinen Zutaten",
+      icon: "♻️",
+      ingredients: items,
+      steps: [
+        "Alle eingegebenen Lebensmittel prüfen und bei Bedarf waschen oder schälen.",
+        "Feste Zutaten klein schneiden, damit sie gleichmäßig garen.",
+        "Eine Pfanne mit etwas Öl erhitzen.",
+        "Die Zutaten nach Garzeit anbraten: harte Zutaten zuerst, weiche Zutaten später.",
+        "Alles mit Salz, Pfeffer und passenden Gewürzen abschmecken.",
+        "Kurz weiterbraten, bis alles heiß und gut vermengt ist.",
+        "Direkt servieren."
+      ]
+    });
+  }
 
   if(text.includes("nudel") || text.includes("pasta")){
     ideas.push({
-      name: "Cremige Restepasta",
+      name: "Nudelgericht aus deinen Resten",
       icon: "🍝",
       ingredients: items,
       steps: [
         "Nudeln in Salzwasser bissfest kochen.",
-        "Vorhandenes Gemüse oder Fleisch klein schneiden.",
+        "Die restlichen eingegebenen Zutaten klein schneiden.",
         "Alles in einer Pfanne kurz anbraten.",
-        "Sahne, Frischkäse oder etwas Nudelwasser dazugeben.",
+        "Etwas Nudelwasser dazugeben, damit eine leichte Soße entsteht.",
+        "Die Nudeln unterheben.",
         "Mit Salz, Pfeffer und Gewürzen abschmecken.",
-        "Nudeln unterheben und warm servieren."
+        "Warm servieren."
       ]
     });
   }
 
   if(text.includes("sahne")){
     ideas.push({
-      name: "Schnelle Sahnepfanne",
+      name: "Cremige Sahnepfanne",
       icon: "🥘",
       ingredients: items,
       steps: [
-        "Alle passenden Zutaten klein schneiden.",
-        "Eine Pfanne mit etwas Öl erhitzen.",
-        "Herzhafte Zutaten wie Fleisch, Gemüse oder Nudeln anbraten.",
-        "Sahne dazugeben und kurz einköcheln lassen.",
-        "Mit Salz, Pfeffer, Paprika oder Kräutern abschmecken.",
-        "Nach Wunsch mit Käse, Reis oder Nudeln servieren."
+        "Alle eingegebenen Zutaten klein schneiden.",
+        "Eine Pfanne erhitzen und die festen Zutaten zuerst anbraten.",
+        "Sahne dazugeben und alles kurz einköcheln lassen.",
+        "Die Soße mit Salz, Pfeffer und Kräutern abschmecken.",
+        "Alles gut vermengen.",
+        "Heiß servieren."
       ]
     });
   }
 
   if(text.includes("ketchup") || text.includes("tomate")){
     ideas.push({
-      name: "Würzige Tomaten-Restepfanne",
+      name: "Tomatige Restepfanne",
       icon: "🍅",
       ingredients: items,
       steps: [
-        "Zutaten klein schneiden und in einer Pfanne anbraten.",
-        "Ketchup, Tomatenmark oder Tomaten dazugeben.",
-        "Mit etwas Wasser oder Sahne cremig rühren.",
-        "Kurz köcheln lassen, bis alles gut verbunden ist.",
-        "Mit Salz, Pfeffer und Paprikapulver abschmecken.",
-        "Mit Nudeln, Reis oder Brot servieren."
-      ]
-    });
-  }
-
-  if(!ideas.length){
-    ideas.push({
-      name: "Freie Restepfanne",
-      icon: "♻️",
-      ingredients: items,
-      steps: [
-        "Alle Zutaten prüfen und klein schneiden.",
-        "Eine Pfanne mit etwas Öl erhitzen.",
-        "Feste Zutaten zuerst anbraten.",
-        "Weiche Zutaten später dazugeben.",
-        "Mit Salz, Pfeffer und passenden Gewürzen abschmecken.",
-        "Nach Wunsch mit Reis, Nudeln, Brot oder Kartoffeln servieren."
+        "Die eingegebenen Zutaten klein schneiden.",
+        "Alles in einer Pfanne anbraten.",
+        "Ketchup, Tomaten oder Tomatenmark einrühren.",
+        "Bei Bedarf einen kleinen Schluck Wasser hinzufügen.",
+        "Kurz köcheln lassen.",
+        "Mit Salz, Pfeffer und Paprika abschmecken.",
+        "Warm servieren."
       ]
     });
   }
 
   return ideas;
 }
+
 
 function rescueIdeaCard(idea){
   return `
