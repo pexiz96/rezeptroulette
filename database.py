@@ -58,7 +58,7 @@ Pelmeni|Russisch|pelmeni.jpg|3|25|Einfach|Teigtaschen,Schnell,Herzhaft|500 g Pel
 Kohlrouladen|Deutsch|kohlrouladen.jpg|4|90|Mittel|Hausmannskost,Kohl,Hackfleisch|1 Weißkohl;600 g Hackfleisch;1 Brötchen;1 Ei;1 Zwiebel;500 ml Brühe;2 EL Öl;Salz;Pfeffer;Paprikapulver|1. Kohlblätter vorsichtig lösen und kurz blanchieren.\\n2. Brötchen einweichen und ausdrücken.\\n3. Hackfleisch mit Brötchen, Ei, Zwiebel und Gewürzen mischen.\\n4. Füllung auf Kohlblätter geben und aufrollen.\\n5. Rouladen fixieren.\\n6. In Öl rundherum anbraten.\\n7. Mit Brühe ablöschen.\\n8. Zugedeckt ca. 60 Minuten schmoren.\\n9. Mit Kartoffeln servieren.
 Kartoffelgratin|Französisch|kartoffelauflauf.jpg|4|60|Einfach|Ofengericht,Kartoffeln,Vegetarisch|900 g Kartoffeln;250 ml Sahne;150 ml Milch;150 g Käse;1 Knoblauchzehe;1 EL Butter;Salz;Pfeffer;Muskat|1. Kartoffeln schälen und in dünne Scheiben schneiden.\\n2. Auflaufform mit Butter einfetten.\\n3. Knoblauch pressen und mit Sahne und Milch verrühren.\\n4. Mit Salz, Pfeffer und Muskat würzen.\\n5. Kartoffeln in die Form schichten.\\n6. Sahnemischung darübergeben.\\n7. Käse darüberstreuen.\\n8. Bei 180 °C ca. 45 Minuten backen.
 
-Erdbeer-Bananen-Skyr Dessert|Neues Essen, neues Leben|erdbeer_bananen_sky.png|2|20|Einfach|Frühstück,Dessert,Protein,Süß|400 g Erdbeeren;1–2 EL Erythrit;1 TL Zitronensaft;400 g Skyr;200 ml fettarme Milch;1 Päckchen Vanillepuddingpulver;2 kleine Bananen;150 g Frischkäse light;200 ml Protein-Sahne;1 Päckchen Sahnesteif;1 TL Vanilleextrakt;120–150 g Protein-Biskuit|1. Erdbeeren waschen, putzen und klein schneiden.\n2. Bananen in Scheiben schneiden und mit Zitronensaft sowie Süße vermengen.\n3. Vanillepudding mit Milch zubereiten und lauwarm abkühlen lassen.\n4. Skyr und Frischkäse glatt rühren und unter den Pudding mischen.\n5. Vanilleextrakt einrühren.\n6. Sahne mit Sahnesteif aufschlagen und vorsichtig unterheben.\n7. Dessert mit Biskuit, Früchten und Creme schichten.\n8. Mindestens 30 Minuten kaltstellen.
+Erdbeer-Bananen-Skyr Dessert|Neues Essen, neues Leben|erdbeer_bananen_skyr.png|2|20|Einfach|Frühstück,Dessert,Protein,Süß|400 g Erdbeeren;1–2 EL Erythrit;1 TL Zitronensaft;400 g Skyr;200 ml fettarme Milch;1 Päckchen Vanillepuddingpulver;2 kleine Bananen;150 g Frischkäse light;200 ml Protein-Sahne;1 Päckchen Sahnesteif;1 TL Vanilleextrakt;120–150 g Protein-Biskuit|1. Erdbeeren waschen, putzen und klein schneiden.\n2. Bananen in Scheiben schneiden und mit Zitronensaft sowie Süße vermengen.\n3. Vanillepudding mit Milch zubereiten und lauwarm abkühlen lassen.\n4. Skyr und Frischkäse glatt rühren und unter den Pudding mischen.\n5. Vanilleextrakt einrühren.\n6. Sahne mit Sahnesteif aufschlagen und vorsichtig unterheben.\n7. Dessert mit Biskuit, Früchten und Creme schichten.\n8. Mindestens 30 Minuten kaltstellen.
 Fluffige Erdbeer-Proteincreme|Neues Essen, neues Leben|erdbeer_creme.png|2|15|Einfach|Frühstück,Dessert,Protein,Süß|250 g gefrorene Erdbeeren;32 g Proteinpulver Sahne;Chunky Flavour nach Wahl;ca. 100 ml gefrorene ungesüßte Mandelmilch;frische Erdbeeren optional;Light-Schokodrops optional|1. Gefrorene Erdbeeren grob mixen.\n2. Proteinpulver und etwas gefrorene Mandelmilch dazugeben.\n3. Die Masse mehrere Minuten aufschlagen, bis sie luftig und cremig wird.\n4. Nach Bedarf weitere Flüssigkeit einarbeiten.\n5. In eine Schale füllen und nach Wunsch toppen.
 Froschgrütze|Neues Essen, neues Leben|froschgruetze.png|2|10|Einfach|Frühstück,Dessert,Protein,Süß|1 Tüte ungesüßte Götterspeise Waldmeister;Chunky Flavour nach Wahl;250 ml heißes Wasser;500 g Magerquark|1. Götterspeise in eine Schüssel geben.\n2. Mit heißem Wasser übergießen und gründlich verrühren.\n3. Chunky Flavour nach Geschmack einrühren.\n4. Magerquark nach und nach unterrühren.\n5. Über Nacht im Kühlschrank fest werden lassen.\n6. Gut gekühlt servieren.
 Thunfisch-Frischkäse-Aufstrich|Neues Essen, neues Leben|tunfisch_aufstrich.png|2|15|Einfach|Frühstück,Protein,Herzhaft,Schnell|1 Dose Thunfisch;1 kleine Paprika;1 Lauchzwiebel;1 EL Tomatenmark;1 Dose Mais;200 g Kräuterfrischkäse light;1 EL Miracle Whip light;Eisbergsalat;4 Scheiben Eiweißbrot|1. Thunfisch und Mais abtropfen lassen und vermengen.\n2. Paprika fein würfeln und Lauchzwiebel in Ringe schneiden.\n3. Gemüse, Frischkäse, Miracle Whip und Tomatenmark zum Thunfisch geben.\n4. Alles cremig verrühren.\n5. Eiweißbrot nach Wunsch toasten.\n6. Mit Salat belegen und den Aufstrich darauf verteilen.
@@ -129,9 +129,7 @@ Käse Patties|Snack|kaese_patties.png|2|20|Einfach|Snack,Herzhaft|200 g Käse;2 
 
 Käsebrezel|Snack|kaesebrezel.png|2|10|Einfach|Snack,Schnell|2 Brezeln;Käse;Butter|1. Brezeln aufschneiden.\n2. Mit Butter und Käse belegen.\n3. Kurz überbacken.
 
-Mini Pizza|Snack|mini_pizza.png|2|20|Einfach|Snack,Pizza,Schnell|Toast;Tomatensauce;Käse;Belag|1. Toast belegen.\n2. Käse drauf.\n3. Überbacken.
-
-Tomate Mozzarella Hähnchen|Abendessen|tomate_mozzarella_haehnchen.png|3|30|Einfach|Hähnchen,Ofen,Low Carb|500 g Hähnchenbrust;2 Tomaten;200 g Mozzarella;Gewürze|1. Hähnchen würzen.\n2. Anbraten.\n3. Mit Tomate und Mozzarella belegen.\n4. Überbacken.
+Mini Pizza|Snack|pizzataler.png|2|20|Einfach|Snack,Pizza,Schnell|Toast;Tomatensauce;Käse;Belag|1. Toast belegen.\n2. Käse drauf.\n3. Überbacken.
 
 
 
@@ -205,16 +203,6 @@ def external_recipe_rows() -> list[tuple]:
     return rows
 
 class Database:
-    def delete_pdf_imports(self) -> int:
-        cur = self.conn.execute("""
-        DELETE FROM recipes
-        WHERE kueche = 'PDF Import'
-           OR name LIKE '%pdf%'
-           OR bild LIKE 'pdf_%'
-        """)
-        self.conn.commit()
-        return cur.rowcount
-
     def __init__(self, path: Path = DB_PATH):
         self.path = path
         self.path.parent.mkdir(parents=True, exist_ok=True)
@@ -471,6 +459,15 @@ class Database:
     def delete_recipe(self, recipe_id: int) -> None:
         self.conn.execute("DELETE FROM recipes WHERE id = ?", (recipe_id,))
         self.conn.commit()
+
+    def delete_recipes_without_images(self) -> int:
+        cur = self.conn.execute("""
+        DELETE FROM recipes
+        WHERE bild IS NULL
+           OR TRIM(bild) = ''
+    """)
+        self.conn.commit()
+        return cur.rowcount
 
     def toggle_favorite(self, recipe_id: int) -> None:
         self.conn.execute(
