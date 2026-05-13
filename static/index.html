@@ -1485,11 +1485,13 @@ function rescueIdeaCard(idea){
   showToast(`${day} gewählt`);
 }
 
-    async function selectPlanSlot(slot){
+  async function selectPlanSlot(slot){
   if(!selectedRecipeId) return showToast("Kein Rezept gewählt");
   if(!selectedDay) return showToast("Bitte zuerst einen Tag wählen");
 
-  const r = await fetch(`/wochenplan/${encodeURIComponent(selectedDay)});
+  const r = await fetch(`/wochenplan/${encodeURIComponent(selectedDay)}/${slot}/${Number(selectedRecipeId)}`, {
+    method: "POST"
+  });
 
   if(r.ok){
     showToast("Zum Wochenplan hinzugefügt");
@@ -1518,7 +1520,22 @@ function closePlanModal(){
 
     async function shareRecipe(id){await ensureRecipesLoaded();const recipe=allRecipes.find(r=>Number(r.id)===Number(id));if(!recipe)return;const text=`${cleanRecipeText(recipe.name)} auf Rezeptroulette`;if(navigator.share){navigator.share({title:cleanRecipeText(recipe.name),text,url:location.href})}else{navigator.clipboard.writeText(text);showToast("Rezept kopiert!")}}
 
-    async function startCookMode(id){await ensureRecipesLoaded();const recipe=allRecipes.find(r=>Number(r.id)===Number(id));if(!recipe)return;cookIndex=0;document.getElementById("cookTitle").textContent=`👨‍🍳 ${cleanRecipeText(recipe.name)}`;updateCookStep();document.getElementById("cookDrawer").classList.add("show")}
+  async function startCookMode(id){
+  await ensureRecipesLoaded();
+  const recipe = allRecipes.find(r => Number(r.id) === Number(id));
+  if(!recipe) return;
+
+  cookSteps = String(recipe.anleitung || "Keine Anleitung vorhanden.")
+    .replaceAll("\\n", "\n")
+    .split(/\n|(?=\d+\.\s)/)
+    .map(s => s.trim())
+    .filter(Boolean);
+
+  cookIndex = 0;
+  document.getElementById("cookTitle").textContent = `👨‍🍳 ${cleanRecipeText(recipe.name)}`;
+  updateCookStep();
+  document.getElementById("cookDrawer").classList.add("show");
+}
     function updateCookStep(){document.getElementById("cookStep").textContent=cookSteps[cookIndex]||"Fertig!"}
     function nextCookStep(){if(cookIndex<cookSteps.length-1)cookIndex++;updateCookStep()}
     function previousCookStep(){if(cookIndex>0)cookIndex--;updateCookStep()}
