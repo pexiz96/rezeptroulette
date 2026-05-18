@@ -1228,6 +1228,9 @@ function formatSteps(anleitung){
   setActiveNav("plan");
   hideHome();
 
+    allRecipes = [];
+  await ensureRecipesLoaded();
+
   const c = document.getElementById("content");
   await ensureRecipesLoaded();
 
@@ -1304,7 +1307,10 @@ function formatSteps(anleitung){
     method: "POST"
   });
 
-  showToast("Rezept entfernt");
+  showToast("Slot entfernt");
+
+  allRecipes = [];
+  await ensureRecipesLoaded();
   loadWeeklyPlan();
 }
     async function autoFillWeek(){
@@ -1353,12 +1359,13 @@ function formatSteps(anleitung){
 
   showToast("Woche automatisch geplant!");
 
-allRecipes = [];
-await ensureRecipesLoaded();
+  allRecipes = [];
+  await ensureRecipesLoaded();
 
-setTimeout(() => {
+  setTimeout(() => {
   loadWeeklyPlan();
-}, 300);
+  }, 300);
+}
 
   function recipeMatchesSlot(recipe, slot){
   const text = [
