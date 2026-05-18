@@ -1246,7 +1246,7 @@ function formatSteps(anleitung){
     <h2>📅 Wochenplan</h2>
 
     <div class="buttons">
-      <button class="primary" onclick="autoFillWeek()">✨ Woche automatisch planen</button>
+      <button class="primary" type="button" onclick="autoFillWeek()">✨ Woche automatisch planen</button>
       <button class="secondary" onclick="resetWeek()">🗑️ Woche leeren</button>
     </div>
 
@@ -1308,10 +1308,11 @@ function formatSteps(anleitung){
   loadWeeklyPlan();
 }
     async function autoFillWeek(){
+  alert("Woche planen wurde gestartet");
+
   await ensureRecipesLoaded();
 
   const days = ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"];
-
   const slots = [
     {id: 1, name: "Frühstück"},
     {id: 2, name: "Mittag"},
@@ -1324,21 +1325,32 @@ function formatSteps(anleitung){
     for(const slot of slots){
       const pool = allRecipes.filter(recipe => recipeMatchesSlot(recipe, slot));
 
-      if(!pool.length) continue;
+      if(!pool.length){
+        console.log("Keine Rezepte für", slot.name);
+        continue;
+      }
 
       const available = pool.filter(recipe => !usedIds.includes(Number(recipe.id)));
       const finalPool = available.length ? available : pool;
-
       const recipe = finalPool[Math.floor(Math.random() * finalPool.length)];
+
       if(!recipe) continue;
 
       usedIds.push(Number(recipe.id));
 
-      await fetch(`/wochenplan/${encodeURIComponent(day)}/${slot.id}/${Number(recipe.id)}`, {
+      const response = await fetch(`/wochenplan/${encodeURIComponent(day)}/${slot.id}/${Number(recipe.id)}`, {
         method: "POST"
       });
+
+      if(!response.ok){
+        console.error("Speichern fehlgeschlagen:", day, slot.id, recipe.name, response.status);
+      }
     }
   }
+
+  showToast("Woche automatisch geplant!");
+  await loadWeeklyPlan();
+}
 
   showToast("Woche automatisch geplant!");
   loadWeeklyPlan();
