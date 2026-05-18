@@ -1313,10 +1313,36 @@ function formatSteps(anleitung){
   const days = ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"];
 
   const slots = [
-    {id: 1, name: "Frühstück", keywords: ["frühstück", "skyr", "pancake", "bowl", "waffel", "brötchen", "bagel", "wrap"]},
-    {id: 2, name: "Mittag", keywords: ["mittag", "pasta", "nudel", "reis", "hähnchen", "hack", "pfanne", "auflauf", "suppe", "eintopf"]},
-    {id: 3, name: "Abend", keywords: ["abend", "brot", "snack", "wrap", "bagel", "toast", "burger", "schnell"]}
+    {id: 1, name: "Frühstück"},
+    {id: 2, name: "Mittag"},
+    {id: 3, name: "Abend"}
   ];
+
+  const usedIds = [];
+
+  for(const day of days){
+    for(const slot of slots){
+      const pool = allRecipes.filter(recipe => recipeMatchesSlot(recipe, slot));
+
+      if(!pool.length) continue;
+
+      const available = pool.filter(recipe => !usedIds.includes(Number(recipe.id)));
+      const finalPool = available.length ? available : pool;
+
+      const recipe = finalPool[Math.floor(Math.random() * finalPool.length)];
+      if(!recipe) continue;
+
+      usedIds.push(Number(recipe.id));
+
+      await fetch(`/wochenplan/${encodeURIComponent(day)}/${slot.id}/${Number(recipe.id)}`, {
+        method: "POST"
+      });
+    }
+  }
+
+  showToast("Woche automatisch geplant!");
+  loadWeeklyPlan();
+}
 
   function recipeMatchesSlot(recipe, slot){
   const text = [
