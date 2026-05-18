@@ -1352,8 +1352,13 @@ function formatSteps(anleitung){
   }
 
   showToast("Woche automatisch geplant!");
-  await loadWeeklyPlan();
-}
+
+allRecipes = [];
+await ensureRecipesLoaded();
+
+setTimeout(() => {
+  loadWeeklyPlan();
+}, 300);
 
   function recipeMatchesSlot(recipe, slot){
   const text = [
