@@ -1392,39 +1392,6 @@ function formatSteps(anleitung){
 
   return false;
 }
-
-  function pickRandom(pool, usedIds){
-    const available = pool.filter(r => !usedIds.includes(Number(r.id)));
-    const finalPool = available.length ? available : pool;
-    return finalPool[Math.floor(Math.random() * finalPool.length)];
-  }
-
-  const usedIds = [];
-
-  for(const day of days){
-    for(const slot of slots){
-      const pool = allRecipes.filter(recipe => recipeMatchesSlot(recipe, slot));
-
-if(!pool.length){
-  console.log(`Keine Rezepte für ${slot.name}`);
-  continue;
-}
-
-const recipe = pickRandom(pool, usedIds);
-
-if(!recipe) continue;
-
-usedIds.push(Number(recipe.id));
-
-await fetch(`/wochenplan/${encodeURIComponent(day)}/${slot.id}/${Number(recipe.id)}`, {
-  method: "POST"
-});
-    }
-  }
-
-  showToast("Woche automatisch geplant!");
-  loadWeeklyPlan();
-}
     async function resetWeek(){await fetch("/wochenplan/reset",{method:"POST"});showToast("Wochenplan geleert!");loadWeeklyPlan()}
 
     async function loadShoppingList(){
