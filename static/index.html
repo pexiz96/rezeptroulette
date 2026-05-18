@@ -1307,7 +1307,98 @@ function formatSteps(anleitung){
   showToast("Rezept entfernt");
   loadWeeklyPlan();
 }
-    async function autoFillWeek(){await ensureRecipesLoaded();const days=["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"];const shuffled=[...allRecipes].sort(()=>Math.random()-.5).slice(0,7);for(let i=0;i<days.length&&shuffled[i];i++){await fetch(`/wochenplan/${encodeURIComponent(days[i])}/${shuffled[i].id}`,{method:"POST"})}showToast("Woche automatisch geplant!");loadWeeklyPlan()}
+    async function autoFillWeek(){
+  await ensureRecipesLoaded();
+
+  const days = ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"];
+
+  const slots = [
+    {id: 1, name: "Frühstück", keywords: ["frühstück", "skyr", "pancake", "bowl", "waffel", "brötchen", "bagel", "wrap"]},
+    {id: 2, name: "Mittag", keywords: ["mittag", "pasta", "nudel", "reis", "hähnchen", "hack", "pfanne", "auflauf", "suppe", "eintopf"]},
+    {id: 3, name: "Abend", keywords: ["abend", "brot", "snack", "wrap", "bagel", "toast", "burger", "schnell"]}
+  ];
+
+  function recipeMatchesSlot(recipe, slot){
+  const text = [
+    recipe.name || "",
+    recipe.kueche || "",
+    recipe.kategorie || "",
+    recipe.anleitung || "",
+    ...(recipe.tags || []),
+    ...(recipe.zutaten || [])
+  ].join(" ").toLowerCase();
+
+  if(slot.name === "Frühstück"){
+    return (
+      text.includes("frühstück") ||
+      text.includes("pancake") ||
+      text.includes("skyr") ||
+      text.includes("bowl") ||
+      text.includes("oats") ||
+      text.includes("waffel") ||
+      text.includes("bagel")
+    );
+  }
+
+  if(slot.name === "Mittag"){
+    return (
+      text.includes("mittag") ||
+      text.includes("hauptgericht") ||
+      text.includes("nudel") ||
+      text.includes("pasta") ||
+      text.includes("reis") ||
+      text.includes("hähnchen") ||
+      text.includes("auflauf") ||
+      text.includes("suppe")
+    );
+  }
+
+  if(slot.name === "Abend"){
+    return (
+      text.includes("abend") ||
+      text.includes("brot") ||
+      text.includes("toast") ||
+      text.includes("wrap") ||
+      text.includes("burger") ||
+      text.includes("snack")
+    );
+  }
+
+  return false;
+}
+
+  function pickRandom(pool, usedIds){
+    const available = pool.filter(r => !usedIds.includes(Number(r.id)));
+    const finalPool = available.length ? available : pool;
+    return finalPool[Math.floor(Math.random() * finalPool.length)];
+  }
+
+  const usedIds = [];
+
+  for(const day of days){
+    for(const slot of slots){
+      const pool = allRecipes.filter(recipe => recipeMatchesSlot(recipe, slot));
+
+if(!pool.length){
+  console.log(`Keine Rezepte für ${slot.name}`);
+  continue;
+}
+
+const recipe = pickRandom(pool, usedIds);
+
+if(!recipe) continue;
+
+usedIds.push(Number(recipe.id));
+
+await fetch(`/wochenplan/${encodeURIComponent(day)}/${slot.id}/${Number(recipe.id)}`, {
+  method: "POST"
+});
+    }
+  }
+
+  showToast("Woche automatisch geplant!");
+  loadWeeklyPlan();
+}
     async function resetWeek(){await fetch("/wochenplan/reset",{method:"POST"});showToast("Wochenplan geleert!");loadWeeklyPlan()}
 
     async function loadShoppingList(){
@@ -1490,8 +1581,8 @@ function rescueIdeaCard(idea){
   if(!selectedDay) return showToast("Bitte zuerst einen Tag wählen");
 
   const r = await fetch(`/wochenplan/${encodeURIComponent(selectedDay)}/${slot}/${Number(selectedRecipeId)}`, {
-    method: "POST"
-  });
+  method: "POST"
+});
 
   if(r.ok){
     showToast("Zum Wochenplan hinzugefügt");
