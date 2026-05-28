@@ -632,6 +632,12 @@
     let selectedMealType = "Alle";
     let cookIndex = 0;
     let rouletteHistory = JSON.parse(localStorage.getItem("rouletteHistory") || "[]").map(Number);
+    let selectedWeekSlotFilter = "Alle";
+
+function setWeekSlotFilter(slot){
+  selectedWeekSlotFilter = slot;
+  loadWeeklyPlan();
+}
 
     const ingredientAlternatives = {
       "mehl": ["Dinkelmehl", "Hafermehl", "Mandelmehl", "Vollkornmehl"],
@@ -1257,7 +1263,9 @@ function formatSteps(anleitung){
   const c = document.getElementById("content");
   await ensureRecipesLoaded();
 
-  const response = await fetch("/wochenplan");
+  const response = await fetch(`/wochenplan?t=${Date.now()}`, {
+  cache: "no-store"
+});
   const plan = await response.json();
 
   const days = ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"];
@@ -1275,6 +1283,21 @@ function formatSteps(anleitung){
       <button class="primary" type="button" onclick="autoFillWeek()">✨ Woche automatisch planen</button>
       <button class="secondary" type="button" onclick="resetWeek()">🗑️ Woche leeren</button>
     </div>
+    <div class="buttons" style="margin-top:14px;">
+  <button class="secondary" onclick="setWeekSlotFilter('Alle')">🍽️ Alle</button>
+
+  <button class="secondary" onclick="setWeekSlotFilter('Frühstück')">
+    🌅 Frühstück
+  </button>
+
+  <button class="secondary" onclick="setWeekSlotFilter('Mittag')">
+    ☀️ Mittag
+  </button>
+
+  <button class="secondary" onclick="setWeekSlotFilter('Abend')">
+    🌙 Abendessen
+  </button>
+</div>
 
     <div class="grid">
       ${days.map(day => `
@@ -1282,7 +1305,12 @@ function formatSteps(anleitung){
           <div class="card-body">
             <h3>📅 ${day}</h3>
 
-            ${slots.map(slot => {
+            ${slots
+  .filter(slot =>
+    selectedWeekSlotFilter === "Alle" ||
+    slot.name === selectedWeekSlotFilter
+  )
+  .map(slot => {
               const recipeId = plan?.[day]?.[slot.id] ?? plan?.[day]?.[String(slot.id)] ?? null;
               const recipe = allRecipes.find(r => Number(r.id) === Number(recipeId));
 
@@ -1302,8 +1330,10 @@ function formatSteps(anleitung){
 
                   <select onclick="event.stopPropagation()" onchange="setDayRecipeSlot('${day}', ${slot.id}, this.value)">
                     <option value="">Rezept auswählen</option>
-                    ${allRecipes.map(r => `<option value="${r.id}" ${Number(r.id) === Number(recipeId) ? "selected" : ""}>${cleanRecipeText(r.name)}</option>`).join("")}
-                  </select>
+                    ${allRecipes
+  .filter(r => recipeMatchesSlot(r, slot))
+  .map(r => `<option value="${r.id}">${cleanRecipeText(r.name)}</option>`)
+  .join("")}                  </select>
                 </div>
               `;
             }).join("")}
