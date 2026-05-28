@@ -1457,8 +1457,19 @@ function formatSteps(anleitung){
 
   return false;
 }
-    async function resetWeek(){await fetch("/wochenplan/reset",{method:"POST"});showToast("Wochenplan geleert!");loadWeeklyPlan()}
+    async function resetWeek(){
+  const response = await fetch("/wochenplan/reset", {
+    method: "POST"
+  });
 
+  if(!response.ok){
+    return showToast("Woche konnte nicht geleert werden.");
+  }
+
+  showToast("Wochenplan geleert!");
+
+  await loadWeeklyPlan();
+}
      async function loadShoppingList(){
   setActiveNav("list");
   hideHome();
