@@ -1314,7 +1314,7 @@ function formatSteps(anleitung){
   `;
 }
 
-    async async function setDayRecipeSlot(day, slot, id){
+    async function setDayRecipeSlot(day, slot, id){
   if(!id) return;
 
   const response = await fetch(`/wochenplan/${encodeURIComponent(day)}/${slot}/${Number(id)}`, {
@@ -1325,7 +1325,7 @@ function formatSteps(anleitung){
   await loadWeeklyPlan();
 }
 
-    async async function clearDaySlot(day, slot){
+     async function clearDaySlot(day, slot){
   const response = await fetch(`/wochenplan/${encodeURIComponent(day)}/${slot}/0`, {
     method: "POST"
   });
@@ -1333,7 +1333,7 @@ function formatSteps(anleitung){
   showToast(response.ok ? "Slot entfernt" : "Fehler beim Entfernen");
   await loadWeeklyPlan();
 }
-    async async function autoFillWeek(){
+     async function autoFillWeek(){
   showToast("Woche wird automatisch geplant...");
 
   await ensureRecipesLoaded();
@@ -1400,7 +1400,7 @@ function formatSteps(anleitung){
 }
     async function resetWeek(){await fetch("/wochenplan/reset",{method:"POST"});showToast("Wochenplan geleert!");loadWeeklyPlan()}
 
-    async async function loadShoppingList(){
+     async function loadShoppingList(){
   setActiveNav("list");
   hideHome();
 
