@@ -174,13 +174,22 @@ def wochenplan():
 @app.post("/wochenplan/reset")
 def reset_wochenplan():
     db = get_db()
-    plan = db.weekly_plan()
 
-    for day in plan:
-        plan[day] = None
+    days = [
+        "Montag",
+        "Dienstag",
+        "Mittwoch",
+        "Donnerstag",
+        "Freitag",
+        "Samstag",
+        "Sonntag"
+    ]
 
-    db.set_weekly_plan(plan)
-    return {"message": "Wochenplan zurückgesetzt"}
+    for day in days:
+        for slot in [1, 2, 3]:
+            db.set_weekly_plan_slot(day, slot, None)
+
+    return {"message": "Wochenplan geleert"}
 
 
 @app.post("/wochenplan/clear/{day}")
