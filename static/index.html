@@ -1334,44 +1334,73 @@ function formatSteps(anleitung){
   await loadWeeklyPlan();
 }
      async function autoFillWeek(){
-  showToast("Woche wird automatisch geplant...");
+  showToast("Woche wird geplant...");
 
   await ensureRecipesLoaded();
 
   const days = ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"];
+
   const slots = [
     {id: 1, name: "Frühstück"},
     {id: 2, name: "Mittag"},
     {id: 3, name: "Abend"}
   ];
 
+  const usedIds = [];
+
   for(const day of days){
+
     for(const slot of slots){
-      let pool = allRecipes.filter(recipe => recipeMatchesSlot(recipe, slot));
+
+      const pool = allRecipes.filter(recipe =>
+        recipeMatchesSlot(recipe, slot)
+      );
 
       if(!pool.length){
-        console.warn(`Keine passenden Rezepte für ${slot.name}. Fallback: alle Rezepte.`);
-        pool = allRecipes;
+        continue;
       }
 
-      if(!pool.length) continue;
+      const available = pool.filter(recipe =>
+        !usedIds.includes(Number(recipe.id))
+      );
 
-      const recipe = pool[Math.floor(Math.random() * pool.length)];
-      if(!recipe) continue;
+      const finalPool = available.length
+        ? available
+        : pool;
 
-      const response = await fetch(`/wochenplan/${encodeURIComponent(day)}/${slot.id}/${Number(recipe.id)}`, {
-        method: "POST"
-      });
+      const recipe =
+        finalPool[Math.floor(Math.random() * finalPool.length)];
 
-      if(!response.ok){
-        const errorText = await response.text();
-        console.error("Speichern fehlgeschlagen:", day, slot.id, recipe.name, response.status, errorText);
+      if(!recipe){
+        continue;
+      }
+
+      usedIds.push(Number(recipe.id));
+
+      try{
+
+        const response = await fetch(
+          `/wochenplan/${encodeURIComponent(day)}/${slot.id}/${Number(recipe.id)}`,
+          {
+            method: "POST"
+          }
+        );
+
+        if(!response.ok){
+          console.error("Fehler:", day, slot.id);
+        }
+
+      }catch(err){
+        console.error(err);
       }
     }
   }
 
-  showToast("Woche automatisch geplant!");
+  await new Promise(resolve => setTimeout(resolve, 500));
+
   await loadWeeklyPlan();
+
+  showToast("Woche automatisch geplant!");
 }
 
   function recipeMatchesSlot(recipe, slot){
