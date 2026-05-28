@@ -801,29 +801,55 @@
 
     function updateStats(){}
 
-    async function renderHomeSections(){
-      const c = document.getElementById("content");
-      try{
-        await ensureRecipesLoaded();
-        const recommended = allRecipes.slice(0,3);
-        c.innerHTML = `
-          <div class="home-sections">
-            <section>
-              <div class="section-head">
-                <div><h2>⭐ Heute empfohlen</h2><p class="muted">Drei leckere Ideen für heute.</p></div>
-                <button class="secondary" onclick="loadRecipes()">Alle ansehen →</button>
-              </div>
-              ${recommended.length ? `<div class="clean-recipe-grid">${recommended.map(simpleRecipeCard).join("")}</div>` : `<div class="empty-state">Noch keine Rezepte geladen.</div>`}
-            </section>
-            <section class="home-benefits">
-              <div>🌿 <strong>Einfach & schnell</strong><span>Für jeden Tag</span></div>
-              <div>❤️ <strong>Lieblingsrezepte</strong><span>Speichern & verwalten</span></div>
-              <div>📅 <strong>Planung leicht gemacht</strong><span>Deine Woche im Überblick</span></div>
-              <div>♻️ <strong>Lebensmittel retten</strong><span>Gut für dich & die Umwelt</span></div>
-            </section>
-          </div>`;
-      }catch(error){c.innerHTML = ""}
+    async async function renderHomeSections(){
+  const c = document.getElementById("content");
+  try{
+    await ensureRecipesLoaded();
+
+    const todayKey = new Date().toISOString().slice(0, 10);
+    const savedKey = localStorage.getItem("recommendedDate");
+    let recommendedIds = JSON.parse(localStorage.getItem("recommendedIds") || "[]");
+
+    if(savedKey !== todayKey || !recommendedIds.length){
+      recommendedIds = [...allRecipes]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3)
+        .map(r => Number(r.id));
+
+      localStorage.setItem("recommendedDate", todayKey);
+      localStorage.setItem("recommendedIds", JSON.stringify(recommendedIds));
     }
+
+    let recommended = recommendedIds
+      .map(id => allRecipes.find(r => Number(r.id) === Number(id)))
+      .filter(Boolean);
+
+    if(recommended.length < 3){
+      recommended = [...allRecipes]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3);
+    }
+
+    c.innerHTML = `
+      <div class="home-sections">
+        <section>
+          <div class="section-head">
+            <div><h2>⭐ Heute empfohlen</h2><p class="muted">Drei leckere Ideen für heute.</p></div>
+            <button class="secondary" onclick="loadRecipes()">Alle ansehen →</button>
+          </div>
+          ${recommended.length ? `<div class="clean-recipe-grid">${recommended.map(simpleRecipeCard).join("")}</div>` : `<div class="empty-state">Noch keine Rezepte geladen.</div>`}
+        </section>
+        <section class="home-benefits">
+          <div>🌿 <strong>Einfach & schnell</strong><span>Für jeden Tag</span></div>
+          <div>❤️ <strong>Lieblingsrezepte</strong><span>Speichern & verwalten</span></div>
+          <div>📅 <strong>Planung leicht gemacht</strong><span>Deine Woche im Überblick</span></div>
+          <div>♻️ <strong>Lebensmittel retten</strong><span>Gut für dich & die Umwelt</span></div>
+        </section>
+      </div>`;
+  }catch(error){
+    c.innerHTML = "";
+  }
+}
 
     function simpleRecipeCard(recipe){
       const img = imageUrl(recipe);
@@ -1224,18 +1250,15 @@ function formatSteps(anleitung){
   }, 120);
 }
 
-   async function loadWeeklyPlan(){
+   async async function loadWeeklyPlan(){
   setActiveNav("plan");
   hideHome();
-
-    allRecipes = [];
-  await ensureRecipesLoaded();
 
   const c = document.getElementById("content");
   await ensureRecipesLoaded();
 
-  const r = await fetch("/wochenplan");
-  const plan = await r.json();
+  const response = await fetch("/wochenplan");
+  const plan = await response.json();
 
   const days = ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"];
   const slots = [
@@ -1250,7 +1273,7 @@ function formatSteps(anleitung){
 
     <div class="buttons">
       <button class="primary" type="button" onclick="autoFillWeek()">✨ Woche automatisch planen</button>
-      <button class="secondary" onclick="resetWeek()">🗑️ Woche leeren</button>
+      <button class="secondary" type="button" onclick="resetWeek()">🗑️ Woche leeren</button>
     </div>
 
     <div class="grid">
@@ -1260,7 +1283,7 @@ function formatSteps(anleitung){
             <h3>📅 ${day}</h3>
 
             ${slots.map(slot => {
-              const recipeId = plan[day]?.[slot.id] || plan[day]?.[String(slot.id)];
+              const recipeId = plan?.[day]?.[slot.id] ?? plan?.[day]?.[String(slot.id)] ?? null;
               const recipe = allRecipes.find(r => Number(r.id) === Number(recipeId));
 
               return `
@@ -1272,14 +1295,14 @@ function formatSteps(anleitung){
                     <p class="week-title">${cleanRecipeText(recipe.name)}</p>
 
                     <div class="card-actions">
-                      <button class="primary" onclick="event.stopPropagation(); showRecipe(${recipe.id})">Öffnen</button>
-                      <button class="secondary" onclick="event.stopPropagation(); clearDaySlot('${day}', ${slot.id})">❌ Entfernen</button>
+                      <button class="primary" type="button" onclick="event.stopPropagation(); showRecipe(${recipe.id})">Öffnen</button>
+                      <button class="secondary" type="button" onclick="event.stopPropagation(); clearDaySlot('${day}', ${slot.id})">❌ Entfernen</button>
                     </div>
                   ` : `<p class="week-empty">Noch kein Rezept gewählt</p>`}
 
                   <select onclick="event.stopPropagation()" onchange="setDayRecipeSlot('${day}', ${slot.id}, this.value)">
                     <option value="">Rezept auswählen</option>
-                    ${allRecipes.map(r => `<option value="${r.id}">${cleanRecipeText(r.name)}</option>`).join("")}
+                    ${allRecipes.map(r => `<option value="${r.id}" ${Number(r.id) === Number(recipeId) ? "selected" : ""}>${cleanRecipeText(r.name)}</option>`).join("")}
                   </select>
                 </div>
               `;
@@ -1291,30 +1314,27 @@ function formatSteps(anleitung){
   `;
 }
 
-    async function setDayRecipeSlot(day, slot, id){
+    async async function setDayRecipeSlot(day, slot, id){
   if(!id) return;
 
-  const r = await fetch(`/wochenplan/${encodeURIComponent(day)}/${slot}/${Number(id)}`, {
+  const response = await fetch(`/wochenplan/${encodeURIComponent(day)}/${slot}/${Number(id)}`, {
     method: "POST"
   });
 
-  showToast(r.ok ? "Zum Wochenplan hinzugefügt!" : "Fehler beim Speichern");
-  loadWeeklyPlan();
+  showToast(response.ok ? "Zum Wochenplan hinzugefügt!" : "Fehler beim Speichern");
+  await loadWeeklyPlan();
 }
 
-    async function clearDaySlot(day, slot){
-  await fetch(`/wochenplan/${encodeURIComponent(day)}/${slot}/0`, {
+    async async function clearDaySlot(day, slot){
+  const response = await fetch(`/wochenplan/${encodeURIComponent(day)}/${slot}/0`, {
     method: "POST"
   });
 
-  showToast("Slot entfernt");
-
-  allRecipes = [];
-  await ensureRecipesLoaded();
-  loadWeeklyPlan();
+  showToast(response.ok ? "Slot entfernt" : "Fehler beim Entfernen");
+  await loadWeeklyPlan();
 }
-    async function autoFillWeek(){
-  alert("Woche planen wurde gestartet");
+    async async function autoFillWeek(){
+  showToast("Woche wird automatisch geplant...");
 
   await ensureRecipesLoaded();
 
@@ -1325,46 +1345,33 @@ function formatSteps(anleitung){
     {id: 3, name: "Abend"}
   ];
 
-  const usedIds = [];
-
   for(const day of days){
     for(const slot of slots){
-      const pool = allRecipes.filter(recipe => recipeMatchesSlot(recipe, slot));
-
-      console.log(slot.name, "gefundene Rezepte:", pool.length, pool.map(r => r.name));
+      let pool = allRecipes.filter(recipe => recipeMatchesSlot(recipe, slot));
 
       if(!pool.length){
-        console.log("Keine Rezepte für", slot.name);
-        continue;
+        console.warn(`Keine passenden Rezepte für ${slot.name}. Fallback: alle Rezepte.`);
+        pool = allRecipes;
       }
 
-      const available = pool.filter(recipe => !usedIds.includes(Number(recipe.id)));
-      const finalPool = available.length ? available : pool;
-      const recipe = finalPool[Math.floor(Math.random() * finalPool.length)];
+      if(!pool.length) continue;
 
+      const recipe = pool[Math.floor(Math.random() * pool.length)];
       if(!recipe) continue;
-
-      usedIds.push(Number(recipe.id));
 
       const response = await fetch(`/wochenplan/${encodeURIComponent(day)}/${slot.id}/${Number(recipe.id)}`, {
         method: "POST"
       });
 
       if(!response.ok){
-      const errorText = await response.text();
-      console.error("Speichern fehlgeschlagen:", day, slot.id, recipe.name, response.status, errorText);
-}
+        const errorText = await response.text();
+        console.error("Speichern fehlgeschlagen:", day, slot.id, recipe.name, response.status, errorText);
+      }
     }
   }
 
   showToast("Woche automatisch geplant!");
-
-  allRecipes = [];
-  await ensureRecipesLoaded();
-
-  setTimeout(() => {
-  loadWeeklyPlan();
-  }, 300);
+  await loadWeeklyPlan();
 }
 
   function recipeMatchesSlot(recipe, slot){
@@ -1378,50 +1385,100 @@ function formatSteps(anleitung){
   ].join(" ").toLowerCase();
 
   if(slot.name === "Frühstück"){
-    return (
-      text.includes("frühstück") ||
-      text.includes("pancake") ||
-      text.includes("skyr") ||
-      text.includes("bowl") ||
-      text.includes("oats") ||
-      text.includes("waffel") ||
-      text.includes("bagel")
-    );
+    return text.includes("frühstück") || text.includes("pancake") || text.includes("skyr") || text.includes("bowl") || text.includes("oats") || text.includes("porridge") || text.includes("waffel") || text.includes("bagel") || text.includes("joghurt") || text.includes("quark");
   }
 
   if(slot.name === "Mittag"){
-    return (
-      text.includes("mittag") ||
-      text.includes("hauptgericht") ||
-      text.includes("nudel") ||
-      text.includes("pasta") ||
-      text.includes("reis") ||
-      text.includes("hähnchen") ||
-      text.includes("auflauf") ||
-      text.includes("suppe")
-    );
+    return text.includes("mittag") || text.includes("hauptgericht") || text.includes("herzhaft") || text.includes("nudel") || text.includes("pasta") || text.includes("reis") || text.includes("hähnchen") || text.includes("auflauf") || text.includes("suppe") || text.includes("pfanne") || text.includes("kartoffel");
   }
 
   if(slot.name === "Abend"){
-    return (
-      text.includes("abend") ||
-      text.includes("brot") ||
-      text.includes("toast") ||
-      text.includes("wrap") ||
-      text.includes("burger") ||
-      text.includes("snack")
-    );
+    return text.includes("abend") || text.includes("abendbrot") || text.includes("brot") || text.includes("toast") || text.includes("wrap") || text.includes("burger") || text.includes("snack") || text.includes("salat") || text.includes("sandwich");
   }
 
   return false;
 }
     async function resetWeek(){await fetch("/wochenplan/reset",{method:"POST"});showToast("Wochenplan geleert!");loadWeeklyPlan()}
 
-    async function loadShoppingList(){
-      setActiveNav("list");hideHome();const c=document.getElementById("content");await ensureRecipesLoaded();const r=await fetch("/wochenplan");const plan=await r.json();const ingredients=[];Object.values(plan).forEach(entry=>{if(!entry)return;const id=typeof entry==="object"?Number(entry.id):Number(entry);const recipe=allRecipes.find(r=>Number(r.id)===id);if(recipe?.zutaten)ingredients.push(...recipe.zutaten)});const atHome=JSON.parse(localStorage.getItem("atHomeIngredients")||"[]").map(x=>x.toLowerCase().trim()).filter(Boolean);const unique=[...new Set(ingredients)];const filtered=unique.filter(item=>{const itemText=item.toLowerCase();return !atHome.some(homeItem=>itemText.includes(homeItem))});c.innerHTML=`<button class="secondary" onclick="showHome()">← Zurück</button><h2>🛒 Einkaufsliste</h2><div class="panel" style="margin:18px 0;display:grid;gap:12px;"><h3>🏠 Habe ich zuhause</h3><p class="muted">Trage Zutaten ein, die nicht auf die Einkaufsliste sollen.</p><textarea id="atHomeInput" placeholder="Milch&#10;Mehl&#10;Eier">${atHome.join("\n")}</textarea><button class="primary" onclick="saveAtHomeIngredients()">Liste neu berechnen</button></div><button class="secondary" onclick="copyShoppingList()">Liste kopieren</button>${filtered.length?`<div class="shopping-list">${filtered.map(i=>`<label class="shopping-item"><input type="checkbox"><span class="shopping-item-text">${i}</span></label>`).join("")}</div>`:`<div class="empty-state"><h2>🛒 Nichts einzukaufen</h2><p>Entweder ist dein Wochenplan leer oder du hast alle Zutaten bereits zuhause.</p><button class="primary" onclick="loadWeeklyPlan()">Zum Wochenplan</button></div>`}`;
+    async async function loadShoppingList(){
+  setActiveNav("list");
+  hideHome();
+
+  const c = document.getElementById("content");
+  await ensureRecipesLoaded();
+
+  const response = await fetch("/wochenplan");
+  const plan = await response.json();
+  const ingredients = [];
+
+  Object.values(plan).forEach(daySlots => {
+    if(!daySlots) return;
+
+    if(typeof daySlots === "object"){
+      Object.values(daySlots).forEach(recipeId => {
+        if(!recipeId) return;
+        const recipe = allRecipes.find(r => Number(r.id) === Number(recipeId));
+        if(recipe?.zutaten) ingredients.push(...recipe.zutaten);
+      });
+    } else {
+      const recipe = allRecipes.find(r => Number(r.id) === Number(daySlots));
+      if(recipe?.zutaten) ingredients.push(...recipe.zutaten);
     }
+  });
+
+  const atHome = JSON.parse(localStorage.getItem("atHomeIngredients") || "[]")
+    .map(x => x.toLowerCase().trim())
+    .filter(Boolean);
+
+  const unique = [...new Set(ingredients)];
+  const filtered = unique.filter(item => {
+    const itemText = item.toLowerCase();
+    return !atHome.some(homeItem => itemText.includes(homeItem));
+  });
+
+  c.innerHTML = `
+    <button class="secondary" onclick="showHome()">← Zurück</button>
+    <h2>🛒 Einkaufsliste</h2>
+
+    <div class="panel" style="margin:18px 0;display:grid;gap:12px;">
+      <h3>🏠 Habe ich zuhause</h3>
+      <p class="muted">Trage Zutaten ein, die nicht auf die Einkaufsliste sollen.</p>
+      <textarea id="atHomeInput" placeholder="Milch&#10;Mehl&#10;Eier">${atHome.join("\n")}</textarea>
+      <button class="primary" onclick="saveAtHomeIngredients()">Liste neu berechnen</button>
+    </div>
+
+    <button class="secondary" onclick="copyShoppingList()">Liste kopieren</button>
+
+    ${filtered.length ? `
+      <div class="shopping-list">
+        ${filtered.map(i => `<label class="shopping-item"><input type="checkbox"><span class="shopping-item-text">${i}</span></label>`).join("")}
+      </div>` : `
+      <div class="empty-state">
+        <h2>🛒 Nichts einzukaufen</h2>
+        <p>Entweder ist dein Wochenplan leer oder du hast alle Zutaten bereits zuhause.</p>
+        <button class="primary" onclick="loadWeeklyPlan()">Zum Wochenplan</button>
+      </div>`}
+  `;
+}
 
     function saveAtHomeIngredients(){const value=document.getElementById("atHomeInput")?.value||"";const items=value.split(/\n|,|;/).map(x=>x.trim()).filter(Boolean);localStorage.setItem("atHomeIngredients",JSON.stringify(items));showToast("Vorhandene Zutaten gespeichert!");loadShoppingList()}
+
+
+function copyShoppingList(){
+  const items = [...document.querySelectorAll(".shopping-item-text")]
+    .map(el => el.textContent.trim())
+    .filter(Boolean);
+
+  if(!items.length){
+    showToast("Keine Zutaten zum Kopieren.");
+    return;
+  }
+
+  navigator.clipboard.writeText(items.join("\n"))
+    .then(() => showToast("Einkaufsliste kopiert!"))
+    .catch(() => showToast("Kopieren nicht möglich."));
+}
+
 
     function loadFoodRescue(){setActiveNav("rescue");hideHome();document.getElementById("content").innerHTML=`<button class="secondary" onclick="showHome()">← Zurück</button><div class="panel" style="display:grid;gap:16px;margin-top:20px;"><div><span class="hero-badge">♻️ Food Rescue</span><h1>Was hast du noch zuhause?</h1><p class="muted">Gib Lebensmittel ein, die du verwerten möchtest. Die App sucht passende Rezepte.</p></div><textarea id="rescueInput" placeholder="Zum Beispiel:&#10;Sahne&#10;Paprika&#10;Reis&#10;Eier&#10;Käse">${pantry.join("\n")}</textarea><div class="buttons"><button class="primary" onclick="findRescueRecipes()">Lebensmittel retten</button><button class="secondary" onclick="savePantry()">Vorrat speichern</button></div></div><div id="rescueResults" style="margin-top:28px;"></div>`}
     function savePantry(){pantry=document.getElementById("rescueInput").value.split(/\n|,|;/).map(x=>x.trim()).filter(Boolean);localStorage.setItem("pantry",JSON.stringify(pantry));showToast("Vorrat gespeichert!")}
