@@ -305,7 +305,7 @@ def parse_ingredient(text):
         }
 
     amount = float(match.group(1).replace(",", "."))
-    unit = match.group(2) or "stück"
+    unit = match.group(2) or ""
     name = normalize_ingredient_name(match.group(3))
 
     unit_map = {
@@ -350,6 +350,25 @@ def parse_ingredient(text):
 
     "olivenöl": "öl",
     "öl": "öl",
+
+    "salz": "salz",
+    "pfeffer": "pfeffer",
+    "muskat": "muskat",
+    "öl": "öl",
+    "olivenöl": "öl",
+    "butter": "butter",
+
+    "knoblauch": "knoblauch",
+    "knoblauchzehe": "knoblauch",
+    "knoblauchzehen": "knoblauch",
+
+    "salz": "salz",
+    "pfeffer": "pfeffer",
+    "muskat": "muskat",
+
+    "öl": "öl",
+    "olivenöl": "öl",
+    "butter": "butter",
 }
 
     name = name_map.get(name, name)
@@ -414,6 +433,8 @@ def shopping_list(recipes):
                     label = "Zwiebel" if amount == 1 else "Zwiebeln"
                 elif name == "tomate":
                     label = "Tomate" if amount == 1 else "Tomaten"
+                elif name == "knoblauch":
+                    label = "Knoblauchzehe" if amount == 1 else "Knoblauchzehen"
                 else:
                     label = name.capitalize()
 
