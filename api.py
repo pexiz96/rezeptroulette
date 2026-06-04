@@ -424,17 +424,20 @@ def ingredient_category(name):
     name = name.lower()
 
     vegetables = [
-        "paprika", "tomate", "zwiebel", "frühlingszwiebel",
-        "karotte", "gurke", "zucchini", "salat",
-        "knoblauch", "erdbeere", "himbeere",
-        "banane", "apfel"
-    ]
+    "paprika", "tomate", "tomatenmark", "tomatensauce",
+    "zwiebel", "lauchzwiebel", "frühlingszwiebel",
+    "karotte", "möhre", "gurke", "zucchini",
+    "salat", "eisbergsalat", "knoblauch",
+    "kartoffel", "brokkoli", "erdbeere", "himbeere",
+    "banane", "apfel"
+]
 
     dairy = [
-        "skyr", "frischkäse", "hüttenkäse",
-        "käse", "mozzarella", "parmesan",
-        "sahne", "milch", "joghurt"
-    ]
+    "skyr", "frischkäse", "hüttenkäse",
+    "käse", "mozzarella", "parmesan",
+    "sahne", "milch", "joghurt",
+    "quark", "magerquark", "ei", "eier"
+]
 
     meat = [
         "hähnchen", "hackfleisch",
@@ -443,18 +446,18 @@ def ingredient_category(name):
     ]
 
     dry = [
-        "reis", "nudeln", "spaghetti",
-        "pasta", "tortellini",
-        "mehl", "haferflocken",
-        "wrap", "bagel", "toast",
-        "brezel"
-    ]
+    "reis", "milchreis", "nudeln", "spaghetti",
+    "pasta", "tortellini", "mehl", "dinkelmehl",
+    "haferflocken", "wrap", "bagel", "toast",
+    "brezel", "paniermehl", "burgerbrötchen"
+]
 
     spices = [
-        "salz", "pfeffer", "paprikapulver",
-        "oregano", "zimt", "muskat",
-        "backpulver", "vanilleextrakt"
-    ]
+    "salz", "pfeffer", "paprikapulver",
+    "oregano", "zimt", "muskat",
+    "backpulver", "vanillezucker",
+    "honig", "zucker", "öl"
+]
 
     for item in vegetables:
         if item in name:
