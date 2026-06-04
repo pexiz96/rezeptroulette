@@ -550,18 +550,18 @@ def shopping_list(recipes):
     categories = {}
 
     for item in result:
-    category = ingredient_category(item)
+        category = ingredient_category(item)
 
-    if category not in categories:
-        categories[category] = []
+        if category not in categories:
+            categories[category] = []
 
-    categories[category].append(item)
+        categories[category].append(item)
 
     for category in categories:
-    categories[category] = sorted(
-        categories[category],
-        key=lambda x: x.lower()
-    )
+        categories[category] = sorted(
+            categories[category],
+            key=lambda x: x.lower()
+        )
 
     return categories, pantry
 
