@@ -1470,38 +1470,24 @@ function formatSteps(anleitung){
 
   await loadWeeklyPlan();
 }
-     async function loadShoppingList(){
+    async function loadShoppingList(){
   setActiveNav("list");
   hideHome();
 
   const c = document.getElementById("content");
-  await ensureRecipesLoaded();
 
-  const response = await fetch("/wochenplan");
-  const plan = await response.json();
-  const ingredients = [];
-
-  Object.values(plan).forEach(daySlots => {
-    if(!daySlots) return;
-
-    if(typeof daySlots === "object"){
-      Object.values(daySlots).forEach(recipeId => {
-        if(!recipeId) return;
-        const recipe = allRecipes.find(r => Number(r.id) === Number(recipeId));
-        if(recipe?.zutaten) ingredients.push(...recipe.zutaten);
-      });
-    } else {
-      const recipe = allRecipes.find(r => Number(r.id) === Number(daySlots));
-      if(recipe?.zutaten) ingredients.push(...recipe.zutaten);
-    }
+  const response = await fetch(`/einkaufsliste?t=${Date.now()}`, {
+    cache: "no-store"
   });
+
+  const data = await response.json();
+  const ingredients = data.categories?.Zutaten || [];
 
   const atHome = JSON.parse(localStorage.getItem("atHomeIngredients") || "[]")
     .map(x => x.toLowerCase().trim())
     .filter(Boolean);
 
-  const unique = [...new Set(ingredients)];
-  const filtered = unique.filter(item => {
+  const filtered = ingredients.filter(item => {
     const itemText = item.toLowerCase();
     return !atHome.some(homeItem => itemText.includes(homeItem));
   });
@@ -1521,17 +1507,24 @@ function formatSteps(anleitung){
 
     ${filtered.length ? `
       <div class="shopping-list">
-        ${filtered.map(i => `<label class="shopping-item"><input type="checkbox"><span class="shopping-item-text">${i}</span></label>`).join("")}
-      </div>` : `
+        ${filtered.map(i => `
+          <label class="shopping-item">
+            <input type="checkbox">
+            <span class="shopping-item-text">${i}</span>
+          </label>
+        `).join("")}
+      </div>
+    ` : `
       <div class="empty-state">
         <h2>🛒 Nichts einzukaufen</h2>
         <p>Entweder ist dein Wochenplan leer oder du hast alle Zutaten bereits zuhause.</p>
         <button class="primary" onclick="loadWeeklyPlan()">Zum Wochenplan</button>
-      </div>`}
+      </div>
+    `}
   `;
 }
 
-    function saveAtHomeIngredients(){const value=document.getElementById("atHomeInput")?.value||"";const items=value.split(/\n|,|;/).map(x=>x.trim()).filter(Boolean);localStorage.setItem("atHomeIngredients",JSON.stringify(items));showToast("Vorhandene Zutaten gespeichert!");loadShoppingList()}
+function saveAtHomeIngredients(){const value=document.getElementById("atHomeInput")?.value||"";const items=value.split(/\n|,|;/).map(x=>x.trim()).filter(Boolean);localStorage.setItem("atHomeIngredients",JSON.stringify(items));showToast("Vorhandene Zutaten gespeichert!");loadShoppingList()}
 
 
 function copyShoppingList(){
