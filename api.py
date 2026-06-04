@@ -72,6 +72,7 @@ def get_db():
 
 @app.delete("/delete-pdf-recipes")
 def delete_pdf_recipes():
+    db = get_db()
     deleted = db.delete_pdf_imports()
     return {"deleted": deleted}
 
@@ -195,13 +196,10 @@ def reset_wochenplan():
 @app.post("/wochenplan/clear/{day}")
 def loesche_tag(day: str):
     db = get_db()
-    plan = db.weekly_plan()
 
-    if day not in plan:
-        return {"error": "Tag nicht gefunden"}
+    for slot in [1, 2, 3]:
+        db.set_weekly_plan_slot(day, slot, None)
 
-    plan[day] = None
-    db.set_weekly_plan(plan)
     return {"message": f"{day} wurde gelöscht"}
 
 
@@ -234,9 +232,16 @@ def einkaufsliste():
     plan = db.weekly_plan()
 
     recipes = []
-    for recipe_id in plan.values():
-        if recipe_id:
-            recipe = db.get_recipe(recipe_id)
+
+    for day_slots in plan.values():
+        if isinstance(day_slots, dict):
+            for recipe_id in day_slots.values():
+                if recipe_id:
+                    recipe = db.get_recipe(int(recipe_id))
+                    if recipe:
+                        recipes.append(recipe)
+        elif day_slots:
+            recipe = db.get_recipe(int(day_slots))
             if recipe:
                 recipes.append(recipe)
 
