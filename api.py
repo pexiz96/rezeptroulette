@@ -213,6 +213,7 @@ def set_weekly_plan(day: str, slot: int, recipe_id: int):
 def shopping_list(recipes):
     categories = {}
     pantry = []
+    ingredient_counts = {}
 
     for recipe in recipes:
         zutaten = getattr(recipe, "zutaten", None) or getattr(recipe, "ingredients", None) or []
@@ -221,7 +222,25 @@ def shopping_list(recipes):
             zutaten = [z.strip() for z in zutaten.split(",") if z.strip()]
 
         for zutat in zutaten:
-            categories.setdefault("Zutaten", []).append(zutat)
+            name = str(zutat).strip()
+
+            if not name:
+                continue
+
+            normalized = name.lower()
+
+            if normalized not in ingredient_counts:
+                ingredient_counts[normalized] = {
+                    "name": name,
+                    "count": 1
+                }
+            else:
+                ingredient_counts[normalized]["count"] += 1
+
+    categories["Zutaten"] = [
+        f'{item["name"]} ({item["count"]}x)' if item["count"] > 1 else item["name"]
+        for item in ingredient_counts.values()
+    ]
 
     return categories, pantry
 
