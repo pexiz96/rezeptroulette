@@ -35,7 +35,17 @@ def clean_text(text):
     text = re.sub(r'\s+', ' ', text)
 
     return text.strip()
+    
+def normalize_ingredient_name(text):
+    text = str(text).lower().strip()
 
+    text = re.sub(r"\d+[.,]?\d*", "", text)
+    text = re.sub(r"\b(g|kg|ml|l|el|tl|stück|stk|dose|dosen|packung|päckchen|prise|bund|glas|becher)\b", "", text)
+    text = re.sub(r"\([^)]*\)", "", text)
+    text = re.sub(r"[^a-zäöüß\s-]", "", text)
+    text = re.sub(r"\s+", " ", text)
+
+    return text.strip()
 
 class RezeptCreate(BaseModel):
     name: str
@@ -227,7 +237,7 @@ def shopping_list(recipes):
             if not name:
                 continue
 
-            normalized = name.lower()
+            normalized = normalize_ingredient_name(name)
 
             if normalized not in ingredient_counts:
                 ingredient_counts[normalized] = {
