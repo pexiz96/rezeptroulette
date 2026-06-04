@@ -282,6 +282,14 @@ def set_weekly_plan(day: str, slot: int, recipe_id: int):
 def parse_ingredient(text):
     original = str(text).strip()
     cleaned = clean_text(original).lower()
+    cleaned = cleaned.replace("½", "0.5")
+    cleaned = cleaned.replace("optional:", "")
+    cleaned = cleaned.replace("optional", "")
+    cleaned = cleaned.replace("nach wahl", "")
+    cleaned = cleaned.replace("nach belieben", "")
+    cleaned = cleaned.replace("zum servieren", "")
+    cleaned = cleaned.replace("oder gemüse", "")
+    cleaned = cleaned.strip()
 
     cleaned = cleaned.replace("–", "-")
     cleaned = cleaned.replace(" ca. ", " ")
@@ -322,6 +330,19 @@ def parse_ingredient(text):
     "ei": "ei",
     "eier": "ei",
     "eigelb": "ei",
+
+    "frühlingszwiebeln": "frühlingszwiebel",
+    "frühlingszwiebel": "frühlingszwiebel",
+
+    "gurken": "gurke",
+    "gurke": "gurke",
+
+    "parmesan": "parmesan",
+
+    "mozzarella light": "mozzarella",
+    "mozzarella": "mozzarella",
+
+    "päckchen backpulver": "backpulver",
 
     # Zwiebeln
     "zwiebel": "zwiebel",
@@ -448,6 +469,8 @@ def shopping_list(recipes):
                     label = "Tomate" if amount == 1 else "Tomaten"
                 elif name == "knoblauch":
                     label = "Knoblauchzehe" if amount == 1 else "Knoblauchzehen"
+                elif name == "frühlingszwiebel":
+                    label = "Frühlingszwiebel" if amount == 1 else "Frühlingszwiebeln"
                 else:
                     label = name.capitalize()
 
