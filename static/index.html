@@ -1481,16 +1481,26 @@ function formatSteps(anleitung){
   });
 
   const data = await response.json();
-  const ingredients = data.categories?.Zutaten || [];
+  const categories = data.categories || {};
 
   const atHome = JSON.parse(localStorage.getItem("atHomeIngredients") || "[]")
     .map(x => x.toLowerCase().trim())
     .filter(Boolean);
 
-  const filtered = ingredients.filter(item => {
-    const itemText = item.toLowerCase();
-    return !atHome.some(homeItem => itemText.includes(homeItem));
+  const filteredCategories = {};
+
+  Object.entries(categories).forEach(([category, items]) => {
+    const filteredItems = items.filter(item => {
+      const itemText = item.toLowerCase();
+      return !atHome.some(homeItem => itemText.includes(homeItem));
+    });
+
+    if(filteredItems.length){
+      filteredCategories[category] = filteredItems;
+    }
   });
+
+  const hasItems = Object.keys(filteredCategories).length > 0;
 
   c.innerHTML = `
     <button class="secondary" onclick="showHome()">← Zurück</button>
@@ -1505,13 +1515,21 @@ function formatSteps(anleitung){
 
     <button class="secondary" onclick="copyShoppingList()">Liste kopieren</button>
 
-    ${filtered.length ? `
+    ${hasItems ? `
       <div class="shopping-list">
-        ${filtered.map(i => `
-          <label class="shopping-item">
-            <input type="checkbox">
-            <span class="shopping-item-text">${i}</span>
-          </label>
+        ${Object.entries(filteredCategories).map(([category, items]) => `
+          <div class="panel" style="margin-top:18px;">
+            <h3>${category}</h3>
+
+            <div class="shopping-list">
+              ${items.map(i => `
+                <label class="shopping-item">
+                  <input type="checkbox">
+                  <span class="shopping-item-text">${i}</span>
+                </label>
+              `).join("")}
+            </div>
+          </div>
         `).join("")}
       </div>
     ` : `

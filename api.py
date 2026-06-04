@@ -420,6 +420,63 @@ def parse_ingredient(text):
         "unit": unit,
         "name": name,
     }
+def ingredient_category(name):
+    name = name.lower()
+
+    vegetables = [
+        "paprika", "tomate", "zwiebel", "frühlingszwiebel",
+        "karotte", "gurke", "zucchini", "salat",
+        "knoblauch", "erdbeere", "himbeere",
+        "banane", "apfel"
+    ]
+
+    dairy = [
+        "skyr", "frischkäse", "hüttenkäse",
+        "käse", "mozzarella", "parmesan",
+        "sahne", "milch", "joghurt"
+    ]
+
+    meat = [
+        "hähnchen", "hackfleisch",
+        "putenbrust", "speck", "kassler",
+        "würstchen", "fischstäbchen"
+    ]
+
+    dry = [
+        "reis", "nudeln", "spaghetti",
+        "pasta", "tortellini",
+        "mehl", "haferflocken",
+        "wrap", "bagel", "toast",
+        "brezel"
+    ]
+
+    spices = [
+        "salz", "pfeffer", "paprikapulver",
+        "oregano", "zimt", "muskat",
+        "backpulver", "vanilleextrakt"
+    ]
+
+    for item in vegetables:
+        if item in name:
+            return "🥦 Obst & Gemüse"
+
+    for item in dairy:
+        if item in name:
+            return "🥛 Milchprodukte"
+
+    for item in meat:
+        if item in name:
+            return "🥩 Fleisch & Fisch"
+
+    for item in dry:
+        if item in name:
+            return "🍝 Trockenwaren"
+
+    for item in spices:
+        if item in name:
+            return "🧂 Gewürze & Backen"
+
+    return "📦 Sonstiges"
 
 def shopping_list(recipes):
     categories = {}
@@ -490,7 +547,21 @@ def shopping_list(recipes):
             else:
                 result.append(item["examples"][0])
 
-    categories["Zutaten"] = sorted(result, key=lambda x: x.lower())
+    categories = {}
+
+    for item in result:
+    category = ingredient_category(item)
+
+    if category not in categories:
+        categories[category] = []
+
+    categories[category].append(item)
+
+    for category in categories:
+    categories[category] = sorted(
+        categories[category],
+        key=lambda x: x.lower()
+    )
 
     return categories, pantry
 
