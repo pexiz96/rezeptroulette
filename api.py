@@ -321,6 +321,13 @@ def parse_ingredient(text):
         "stk": "stück",
         "dose": "dose",
         "dosen": "dose",
+        "tl": "TL",
+        "el": "EL",
+        "päckchen": "Päckchen",
+        "dose": "Dose",
+        "dosen": "Dose",
+        "tüte": "Tüte",
+        "scheiben": "Scheiben",
     }
 
     unit = unit_map.get(unit, unit)
@@ -460,7 +467,7 @@ def shopping_list(recipes):
             if amount.is_integer():
                 amount = int(amount)
 
-            if unit == "stück":
+            if unit in ["", "stück"]:
                 if name == "ei":
                     label = "Ei" if amount == 1 else "Eier"
                 elif name == "zwiebel":
