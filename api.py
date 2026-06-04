@@ -279,11 +279,92 @@ def set_weekly_plan(day: str, slot: int, recipe_id: int):
     db.set_weekly_plan_slot(day, slot, recipe_id)
     return {"ok": True}
 
+def parse_ingredient(text):
+    original = str(text).strip()
+    cleaned = clean_text(original).lower()
+
+    cleaned = cleaned.replace("–", "-")
+    cleaned = cleaned.replace(" ca. ", " ")
+    cleaned = cleaned.replace("ca. ", "")
+    cleaned = cleaned.replace("optional", "")
+    cleaned = cleaned.replace("nach wahl", "")
+    cleaned = cleaned.replace("nach belieben", "")
+
+    match = re.match(
+        r"^(\d+(?:[.,]\d+)?)(?:\s*-\s*\d+(?:[.,]\d+)?)?\s*(g|kg|ml|l|el|tl|stück|stk|dose|dosen|scheiben|tüte|packung|päckchen)?\s+(.+)$",
+        cleaned
+    )
+
+    if not match:
+        name = normalize_ingredient_name(cleaned)
+        return {
+            "original": original,
+            "amount": None,
+            "unit": "",
+            "name": name,
+        }
+
+    amount = float(match.group(1).replace(",", "."))
+    unit = match.group(2) or "stück"
+    name = normalize_ingredient_name(match.group(3))
+
+    unit_map = {
+        "stk": "stück",
+        "dose": "dose",
+        "dosen": "dose",
+    }
+
+    unit = unit_map.get(unit, unit)
+
+    name_map = {
+    "eier": "ei",
+    "ei": "ei",
+    "eigelb": "ei",
+
+    "zwiebeln": "zwiebel",
+    "zwiebel": "zwiebel",
+    "rote zwiebel": "zwiebel",
+    "kleine zwiebel": "zwiebel",
+    "lauchzwiebel": "lauchzwiebel",
+
+    "tomaten": "tomate",
+    "tomate": "tomate",
+    "gehackte tomaten": "tomate",
+    "dose tomaten": "tomate",
+
+    "paprika": "paprika",
+    "kleine paprika": "paprika",
+    "rote paprika": "paprika",
+
+    "wraps": "wrap",
+    "wrap": "wrap",
+    "low-carb-wrap": "wrap",
+
+    "bagels": "bagel",
+    "bagel": "bagel",
+
+    "käse": "käse",
+    "geriebener käse": "käse",
+    "scheiben käse": "käse",
+    "light-reibekäse": "käse",
+
+    "olivenöl": "öl",
+    "öl": "öl",
+}
+
+    name = name_map.get(name, name)
+
+    return {
+        "original": original,
+        "amount": amount,
+        "unit": unit,
+        "name": name,
+    }
 
 def shopping_list(recipes):
     categories = {}
     pantry = []
-    ingredient_counts = {}
+    ingredient_map = {}
 
     for recipe in recipes:
         zutaten = getattr(recipe, "zutaten", None) or getattr(recipe, "ingredients", None) or []
@@ -292,25 +373,60 @@ def shopping_list(recipes):
             zutaten = [z.strip() for z in zutaten.split(",") if z.strip()]
 
         for zutat in zutaten:
-            name = str(zutat).strip()
+            parsed = parse_ingredient(zutat)
 
-            if not name:
-                continue
+            key = f'{parsed["name"]}|{parsed["unit"]}'
 
-            normalized = normalize_ingredient_name(name)
-
-            if normalized not in ingredient_counts:
-                ingredient_counts[normalized] = {
-                    "name": name,
+            if key not in ingredient_map:
+                ingredient_map[key] = {
+                    "name": parsed["name"],
+                    "unit": parsed["unit"],
+                    "amount": parsed["amount"],
+                    "examples": [parsed["original"]],
                     "count": 1
                 }
             else:
-                ingredient_counts[normalized]["count"] += 1
+                existing = ingredient_map[key]
 
-    categories["Zutaten"] = [
-        f'{item["name"]} ({item["count"]}x)' if item["count"] > 1 else item["name"]
-        for item in ingredient_counts.values()
-    ]
+                if existing["amount"] is not None and parsed["amount"] is not None:
+                    existing["amount"] += parsed["amount"]
+                else:
+                    existing["amount"] = None
+
+                existing["examples"].append(parsed["original"])
+                existing["count"] += 1
+
+    result = []
+
+    for item in ingredient_map.values():
+        name = item["name"]
+        unit = item["unit"]
+        amount = item["amount"]
+
+        if amount is not None:
+            if amount.is_integer():
+                amount = int(amount)
+
+            if unit == "stück":
+                if name == "ei":
+                    label = "Ei" if amount == 1 else "Eier"
+                elif name == "zwiebel":
+                    label = "Zwiebel" if amount == 1 else "Zwiebeln"
+                elif name == "tomate":
+                    label = "Tomate" if amount == 1 else "Tomaten"
+                else:
+                    label = name.capitalize()
+
+                result.append(f"{amount} {label}")
+            else:
+                result.append(f"{amount} {unit} {name}")
+        else:
+            if item["count"] > 1:
+                result.append(f'{item["examples"][0]} ({item["count"]}x)')
+            else:
+                result.append(item["examples"][0])
+
+    categories["Zutaten"] = sorted(result, key=lambda x: x.lower())
 
     return categories, pantry
 
