@@ -35,17 +35,77 @@ def clean_text(text):
     text = re.sub(r'\s+', ' ', text)
 
     return text.strip()
-    
+
 def normalize_ingredient_name(text):
     text = str(text).lower().strip()
 
+    text = clean_text(text)
+
+    text = text.replace("–", "-")
+    text = text.replace("oder", " ")
+    text = text.replace("nach wahl", "")
+    text = text.replace("optional", "")
+    text = text.replace("belieben", "")
+
+    text = re.sub(r"\d+\s*[-–]\s*\d+", "", text)
     text = re.sub(r"\d+[.,]?\d*", "", text)
-    text = re.sub(r"\b(g|kg|ml|l|el|tl|stück|stk|dose|dosen|packung|päckchen|prise|bund|glas|becher)\b", "", text)
+
+    text = re.sub(
+        r"\b(g|kg|ml|l|el|tl|stück|stk|dose|dosen|tüte|packung|päckchen|prise|bund|glas|becher)\b",
+        "",
+        text
+    )
+
     text = re.sub(r"\([^)]*\)", "", text)
     text = re.sub(r"[^a-zäöüß\s-]", "", text)
-    text = re.sub(r"\s+", " ", text)
+    text = re.sub(r"\s+", " ", text).strip()
 
-    return text.strip()
+    replacements = {
+        "tomaten": "tomate",
+        "gehackte tomaten": "tomate",
+        "tomatensauce": "tomate",
+        "tomatenmark": "tomatenmark",
+
+        "zwiebel": "zwiebel",
+        "zwiebeln": "zwiebel",
+
+        "eier": "ei",
+        "eigelb": "ei",
+
+        "hähnchenbrust": "hähnchen",
+        "hähnchen": "hähnchen",
+        "hähnchen oder hackfleisch": "hähnchen/hackfleisch",
+
+        "käse": "käse",
+        "geriebener käse": "käse",
+        "light-reibekäse": "käse",
+
+        "skyr": "skyr",
+        "magerquark": "magerquark",
+        "frischkäse": "frischkäse",
+
+        "nudeln": "nudeln",
+        "wraps": "wrap",
+        "low-carb-wrap": "wrap",
+        "bagels": "bagel",
+
+        "olivenöl": "öl",
+        "öl": "öl",
+
+        "zucker": "zucker",
+        "erythrit": "zuckerersatz",
+
+        "mehl": "mehl",
+        "dinkelmehl": "mehl",
+
+        "backpulver": "backpulver",
+        "zimt": "zimt",
+        "salz": "salz",
+        "pfeffer": "pfeffer",
+        "oregano": "oregano",
+    }
+
+    return replacements.get(text, text)
 
 class RezeptCreate(BaseModel):
     name: str
