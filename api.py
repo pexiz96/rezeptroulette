@@ -420,64 +420,74 @@ def parse_ingredient(text):
         "unit": unit,
         "name": name,
     }
+
 def ingredient_category(name):
-    name = name.lower()
+    text = normalize_ingredient_name(name).lower()
 
-    vegetables = [
-    "paprika", "tomate", "tomatenmark", "tomatensauce",
-    "zwiebel", "lauchzwiebel", "frühlingszwiebel",
-    "karotte", "möhre", "gurke", "zucchini",
-    "salat", "eisbergsalat", "knoblauch",
-    "kartoffel", "brokkoli", "erdbeere", "himbeere",
-    "banane", "apfel"
-]
+    category_map = {
+        "🥦 Obst & Gemüse": [
+            "apfel", "äpfel", "banane", "bananen", "beeren", "erdbeere", "erdbeeren",
+            "himbeere", "himbeeren", "blaubeere", "blaubeeren",
+            "tomate", "tomaten", "tomatensauce", "tomatenmark",
+            "paprika", "zucchini", "gurke", "gurken", "karotte", "karotten",
+            "möhre", "möhren", "zwiebel", "zwiebeln", "lauchzwiebel",
+            "frühlingszwiebel", "knoblauch", "kartoffel", "kartoffeln",
+            "brokkoli", "weißkohl", "kohl", "salat", "eisbergsalat", "erbsen"
+        ],
 
-    dairy = [
-    "skyr", "frischkäse", "hüttenkäse",
-    "käse", "mozzarella", "parmesan",
-    "sahne", "milch", "joghurt",
-    "quark", "magerquark", "ei", "eier"
-]
+        "🥛 Milchprodukte & Eier": [
+            "milch", "mandelmilch", "sahne", "protein-sahne", "joghurt",
+            "skyr", "quark", "magerquark", "frischkäse", "kräuterfrischkäse",
+            "hüttenkäse", "käse", "mozzarella", "parmesan", "schmand",
+            "butter", "ei", "eier"
+        ],
 
-    meat = [
-        "hähnchen", "hackfleisch",
-        "putenbrust", "speck", "kassler",
-        "würstchen", "fischstäbchen"
-    ]
+        "🥩 Fleisch & Fisch": [
+            "hähnchen", "hähnchenbrust", "hähnchenbrüste", "hackfleisch",
+            "gyrosfleisch", "rind", "rindergulasch", "kassler", "speck",
+            "speckwürfel", "putenbrust", "würstchen", "fischstäbchen",
+            "thunfisch", "schweineschnitzel"
+        ],
 
-    dry = [
-    "reis", "milchreis", "nudeln", "spaghetti",
-    "pasta", "tortellini", "mehl", "dinkelmehl",
-    "haferflocken", "wrap", "bagel", "toast",
-    "brezel", "paniermehl", "burgerbrötchen"
-]
+        "🍝 Trockenwaren & Beilagen": [
+            "reis", "milchreis", "nudeln", "spaghetti", "pasta", "tortellini",
+            "gnocchi", "mehl", "dinkelmehl", "weizenmehl", "maismehl",
+            "haferflocken", "wrap", "wraps", "bagel", "bagels", "toast",
+            "brot", "brötchen", "burgerbrötchen", "eiweißbrot", "brezel",
+            "brezeln", "paniermehl", "protein-biskuit"
+        ],
 
-    spices = [
-    "salz", "pfeffer", "paprikapulver",
-    "oregano", "zimt", "muskat",
-    "backpulver", "vanillezucker",
-    "honig", "zucker", "öl"
-]
+        "🧂 Gewürze & Backen": [
+            "salz", "pfeffer", "paprikapulver", "oregano", "zimt", "muskat",
+            "italienische kräuter", "kräuter", "kümmel", "chili",
+            "backpulver", "sahnesteif", "vanillepuddingpulver",
+            "vanillezucker", "vanilleextrakt", "zucker", "zuckerersatz",
+            "erythrit", "honig", "öl", "olivenöl", "speisestärke"
+        ],
 
-    for item in vegetables:
-        if item in name:
-            return "🥦 Obst & Gemüse"
+        "🥫 Konserven & Soßen": [
+            "kidneybohnen", "mais", "tomaten", "gehackte tomaten",
+            "brühe", "rinderbrühe", "pesto", "sojasauce", "ketchup",
+            "mayonnaise", "miracle whip", "salsa", "tzatziki", "joghurtsoße"
+        ],
 
-    for item in dairy:
-        if item in name:
-            return "🥛 Milchprodukte"
+        "🍫 Süßes & Toppings": [
+            "chunky flavour", "granola", "keksbrösel", "schokodrops",
+            "light-schokodrops", "schokolade", "trockenfrüchte",
+            "walnüsse", "chiasamen", "sonnenblumenkerne", "mohn",
+            "erdnussbutter", "salatkernmischung", "körner"
+        ],
 
-    for item in meat:
-        if item in name:
-            return "🥩 Fleisch & Fisch"
+        "📦 Sonstiges": []
+    }
 
-    for item in dry:
-        if item in name:
-            return "🍝 Trockenwaren"
+    for category, keywords in category_map.items():
+        if category == "📦 Sonstiges":
+            continue
 
-    for item in spices:
-        if item in name:
-            return "🧂 Gewürze & Backen"
+        for keyword in keywords:
+            if keyword in text:
+                return category
 
     return "📦 Sonstiges"
 
