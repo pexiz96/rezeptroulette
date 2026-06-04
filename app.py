@@ -1700,7 +1700,9 @@ class RezeptfinderApp:
                 width=120,
             ).grid(row=row, column=0, padx=16, pady=8, sticky="w")
 
-            vars_[day] = ctk.StringVar(value=by_id.get(plan.get(day), ""))
+            day_plan = plan.get(day, {})
+            recipe_id = day_plan.get(1) or day_plan.get("1") if isinstance(day_plan, dict) else day_plan
+            vars_[day] = ctk.StringVar(value=by_id.get(recipe_id, ""))
 
             ctk.CTkOptionMenu(
                 frame,
