@@ -289,6 +289,7 @@ def parse_ingredient(text):
     cleaned = cleaned.replace("optional", "")
     cleaned = cleaned.replace("nach wahl", "")
     cleaned = cleaned.replace("nach belieben", "")
+    cleaned = cleaned.replace("nach belieben", "")
 
     match = re.match(
         r"^(\d+(?:[.,]\d+)?)(?:\s*-\s*\d+(?:[.,]\d+)?)?\s*(g|kg|ml|l|el|tl|stück|stk|dose|dosen|scheiben|tüte|packung|päckchen)?\s+(.+)$",
@@ -317,60 +318,72 @@ def parse_ingredient(text):
     unit = unit_map.get(unit, unit)
 
     name_map = {
-    "eier": "ei",
+    # Eier
     "ei": "ei",
+    "eier": "ei",
     "eigelb": "ei",
 
-    "zwiebeln": "zwiebel",
+    # Zwiebeln
     "zwiebel": "zwiebel",
+    "zwiebeln": "zwiebel",
     "rote zwiebel": "zwiebel",
     "kleine zwiebel": "zwiebel",
-    "lauchzwiebel": "lauchzwiebel",
 
-    "tomaten": "tomate",
+    # Knoblauch
+    "knoblauch": "knoblauch",
+    "knoblauchzehe": "knoblauch",
+    "knoblauchzehen": "knoblauch",
+
+    # Tomaten
     "tomate": "tomate",
+    "tomaten": "tomate",
     "gehackte tomaten": "tomate",
     "dose tomaten": "tomate",
 
+    # Paprika
     "paprika": "paprika",
-    "kleine paprika": "paprika",
     "rote paprika": "paprika",
+    "kleine paprika": "paprika",
 
-    "wraps": "wrap",
-    "wrap": "wrap",
-    "low-carb-wrap": "wrap",
-
-    "bagels": "bagel",
-    "bagel": "bagel",
-
+    # Käse
     "käse": "käse",
     "geriebener käse": "käse",
     "scheiben käse": "käse",
     "light-reibekäse": "käse",
 
-    "olivenöl": "öl",
-    "öl": "öl",
+    # Backwaren
+    "wrap": "wrap",
+    "wraps": "wrap",
+    "low-carb-wrap": "wrap",
 
+    "bagel": "bagel",
+    "bagels": "bagel",
+
+    # Gewürze
     "salz": "salz",
     "pfeffer": "pfeffer",
     "muskat": "muskat",
+    "oregano": "oregano",
+
+    # Öle
     "öl": "öl",
     "olivenöl": "öl",
     "butter": "butter",
 
-    "knoblauch": "knoblauch",
-    "knoblauchzehe": "knoblauch",
-    "knoblauchzehen": "knoblauch",
+    # Backzutaten
+    "backpulver": "backpulver",
+    "mehl": "mehl",
+    "dinkelmehl": "mehl",
+    "weizenmehl": "mehl",
 
-    "salz": "salz",
-    "pfeffer": "pfeffer",
-    "muskat": "muskat",
-
-    "öl": "öl",
-    "olivenöl": "öl",
-    "butter": "butter",
+    # Milchprodukte
+    "skyr": "skyr",
+    "magerquark": "magerquark",
+    "frischkäse": "frischkäse",
+    "hüttenkäse": "hüttenkäse",
+    "sahne": "sahne",
+    "milch": "milch",
 }
-
     name = name_map.get(name, name)
 
     return {
