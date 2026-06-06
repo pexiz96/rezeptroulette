@@ -1080,101 +1080,133 @@ function formatSteps(anleitung){
       window.scrollTo({top:0,behavior:"smooth"});
     }
 
-    async function loadRoulette(){
-      setActiveNav("home");
-      hideHome();
-      const content = document.getElementById("content");
-      await ensureRecipesLoaded();
-      if(!allRecipes.length){content.innerHTML = `<div class="empty-state">Keine Rezepte vorhanden.</div>`;return}
-      selectedMealType = "Alle";
-      content.innerHTML = `
-        <section class="roulette-page">
-          <button class="secondary back-btn" onclick="showHome()">← Zurück</button>
-          <div class="roulette-header">
-            <span class="hero-badge">🎲 Rezept-Roulette</span>
-            <h1>Was darf es sein?</h1>
-            <p class="muted">Wähle eine Richtung und lass dich inspirieren.</p>
-          </div>
-          <div class="roulette-shell">
-            <div class="meal-filter-panel">
-              <div class="meal-filter-title"><span>Filter wählen</span><span>10 Kategorien</span></div>
-              <div class="meal-filter-wrap">
-                <button class="meal-circle active" onclick="selectMealType('Alle', this)"><div class="meal-icon">🍽️</div><span>Alle</span></button>
-                <button class="meal-circle" onclick="selectMealType('Frühstück', this)"><div class="meal-icon">🌅</div><span>Frühstück</span></button>
-                <button class="meal-circle" onclick="selectMealType('Mittagessen', this)"><div class="meal-icon">☀️</div><span>Mittag</span></button>
-                <button class="meal-circle" onclick="selectMealType('Abendbrot', this)"><div class="meal-icon">🌙</div><span>Abend</span></button>
-                <button class="meal-circle" onclick="selectMealType('Nudeln', this)"><div class="meal-icon">🍝</div><span>Nudeln</span></button>
-                <button class="meal-circle" onclick="selectMealType('Auflauf', this)"><div class="meal-icon">🥘</div><span>Auflauf</span></button>
-                <button class="meal-circle" onclick="selectMealType('Suppe', this)"><div class="meal-icon">🍲</div><span>Suppe</span></button>
-                <button class="meal-circle" onclick="selectMealType('Vegetarisch', this)"><div class="meal-icon">🥦</div><span>Veggie</span></button>
-                <button class="meal-circle" onclick="selectMealType('Snack', this)"><div class="meal-icon">🥪</div><span>Snack</span></button>
-                <button class="meal-circle" onclick="selectMealType('Dessert', this)"><div class="meal-icon">🍰</div><span>Dessert</span></button>
-              </div>
-            </div>
-            <button class="roulette-draw-btn" onclick="drawRouletteRecipe()"><div class="dice">🎲</div><span>Rezept<br>ziehen</span></button>
-          </div>
-          <div id="rouletteResult"></div>
-        </section>`;
-      drawRouletteRecipe();
-    }
-    function drawRouletteRecipe(){
-  const selected = selectedMealType;
-  const result = document.getElementById("rouletteResult");
-  if(!result) return;
-
-  let pool = allRecipes;
-
-  if(selected !== "Alle"){
-    pool = allRecipes.filter(recipe => {
-      const text = [
-        recipe.name || "",
-        recipe.kueche || "",
-        recipe.kategorie || "",
-        ...(recipe.tags || [])
-      ].join(" ").toLowerCase();
-
-      if(selected === "Frühstück"){
-        return text.includes("frühstück");
-      }
-
-      if(selected === "Mittagessen"){
-        return text.includes("mittag") || text.includes("herzhaft") || text.includes("hauptgericht");
-      }
-
-      if(selected === "Abendbrot"){
-        return text.includes("abend") || text.includes("brot") || text.includes("snack");
-      }
-
-      if(selected === "Nudeln"){
-        return text.includes("nudel") || text.includes("pasta");
-      }
-
-      if(selected === "Auflauf"){
-        return text.includes("auflauf");
-      }
-
-      if(selected === "Suppe"){
-        return text.includes("suppe");
-      }
-
-      if(selected === "Vegetarisch"){
-        return text.includes("vegetarisch");
-      }
-
-      if(selected === "Snack"){
-        return text.includes("snack");
-      }
-
-      if(selected === "Dessert"){
-        return text.includes("dessert") || text.includes("kuchen");
-      }
-
-      return true;
-    });
+  
   }
 
   if(!pool.length){
     result.innerHTML = `<div class="empty-state">Keine Rezepte für ${selected} gefunden.</div>`;
+    return;
+  }
+
+  let availablePool = pool.filter(recipe => !rouletteHistory.includes(Number(recipe.id)));
+  function toggleRouletteFilters(){
+  const box = document.getElementById("rouletteFilters");
+  if(box) box.classList.toggle("hidden");
+}
+
+async function loadRoulette(){
+  setActiveNav("home");
+  hideHome();
+
+  const content = document.getElementById("content");
+
+  await ensureRecipesLoaded();
+
+  if(!allRecipes.length){
+    content.innerHTML = `<div class="empty-state">Keine Rezepte vorhanden.</div>`;
+    return;
+  }
+
+  selectedMealType = "Alle";
+
+  content.innerHTML = `
+    <section class="roulette-page">
+      <button class="secondary back-btn" onclick="showHome()">← Zurück</button>
+
+      <div class="roulette-header">
+        <span class="hero-badge">🎲 Rezept-Roulette</span>
+        <h1>Was darf es sein?</h1>
+        <p class="muted">Ziehe ein Rezept oder filtere vorher nach Kategorie.</p>
+      </div>
+
+      <div class="roulette-shell">
+        <div class="meal-filter-panel">
+          <div class="meal-filter-title">
+            <span>Filter</span>
+            <button class="secondary" onclick="toggleRouletteFilters()">Ein-/ausklappen</button>
+          </div>
+
+          <div id="rouletteFilters" class="meal-filter-wrap hidden">
+            <button class="meal-circle active" onclick="selectMealType('Alle', this)"><div class="meal-icon">🍽️</div><span>Alle</span></button>
+            <button class="meal-circle" onclick="selectMealType('Frühstück', this)"><div class="meal-icon">🌅</div><span>Frühstück</span></button>
+            <button class="meal-circle" onclick="selectMealType('Mittagessen', this)"><div class="meal-icon">☀️</div><span>Mittag</span></button>
+            <button class="meal-circle" onclick="selectMealType('Abendbrot', this)"><div class="meal-icon">🌙</div><span>Abend</span></button>
+            <button class="meal-circle" onclick="selectMealType('Nudeln', this)"><div class="meal-icon">🍝</div><span>Nudeln</span></button>
+            <button class="meal-circle" onclick="selectMealType('Auflauf', this)"><div class="meal-icon">🥘</div><span>Auflauf</span></button>
+            <button class="meal-circle" onclick="selectMealType('Suppe', this)"><div class="meal-icon">🍲</div><span>Suppe</span></button>
+            <button class="meal-circle" onclick="selectMealType('Vegetarisch', this)"><div class="meal-icon">🥦</div><span>Veggie</span></button>
+            <button class="meal-circle" onclick="selectMealType('Snack', this)"><div class="meal-icon">🥪</div><span>Snack</span></button>
+            <button class="meal-circle" onclick="selectMealType('Dessert', this)"><div class="meal-icon">🍰</div><span>Dessert</span></button>
+          </div>
+        </div>
+
+        <button class="roulette-draw-btn" onclick="drawRouletteRecipe()">
+          <div class="dice">🎲</div>
+          <span>Rezept<br>ziehen</span>
+        </button>
+      </div>
+
+      <div id="rouletteResult"></div>
+    </section>
+  `;
+
+  drawRouletteRecipe();
+}
+
+function recipeMatchesRouletteFilter(recipe, selected){
+  const text = [
+    recipe.name || "",
+    recipe.kueche || "",
+    recipe.kategorie || "",
+    recipe.anleitung || "",
+    ...(recipe.tags || []),
+    ...(recipe.zutaten || [])
+  ].join(" ").toLowerCase();
+
+  const isBreakfast = text.includes("frühstück") || text.includes("pancake") || text.includes("waffel") || text.includes("oats") || text.includes("skyr") || text.includes("bowl");
+  const isDessert = text.includes("dessert") || text.includes("kuchen") || text.includes("süß") || text.includes("schoko") || text.includes("himbeer") || text.includes("erdbeer");
+
+  if(selected === "Alle") return true;
+
+  if(selected === "Frühstück"){
+    return isBreakfast;
+  }
+
+  if(selected === "Mittagessen"){
+    if(isBreakfast || isDessert) return false;
+    return text.includes("mittag") || text.includes("hauptgericht") || text.includes("herzhaft") || text.includes("nudel") || text.includes("pasta") || text.includes("reis") || text.includes("hähnchen") || text.includes("auflauf") || text.includes("suppe");
+  }
+
+  if(selected === "Abendbrot"){
+    if(isBreakfast || isDessert) return false;
+    return text.includes("abend") || text.includes("brot") || text.includes("wrap") || text.includes("toast") || text.includes("burger") || text.includes("snack");
+  }
+
+  if(selected === "Nudeln") return text.includes("nudel") || text.includes("pasta") || text.includes("spaghetti") || text.includes("makkaroni") || text.includes("tortellini");
+  if(selected === "Auflauf") return text.includes("auflauf") || text.includes("gratin") || text.includes("überbacken");
+  if(selected === "Suppe") return text.includes("suppe") || text.includes("eintopf");
+  if(selected === "Vegetarisch") return text.includes("vegetarisch") || text.includes("veggie") || text.includes("gemüse");
+  if(selected === "Snack") return text.includes("snack") || text.includes("wrap") || text.includes("toast") || text.includes("burger");
+  if(selected === "Dessert") return isDessert;
+
+  return true;
+}
+
+function drawRouletteRecipe(){
+  const selected = selectedMealType;
+  const result = document.getElementById("rouletteResult");
+  if(!result) return;
+
+  let pool = allRecipes.filter(recipe => recipeMatchesRouletteFilter(recipe, selected));
+
+  if(!pool.length){
+    result.innerHTML = `
+      <div class="empty-state">
+        <h2>Keine Rezepte gefunden</h2>
+        <p>Für "${selected}" gibt es aktuell keine passenden Rezepte.</p>
+        <button class="primary" onclick="selectedMealType='Alle'; drawRouletteRecipe()">Alle Rezepte ziehen</button>
+      </div>
+    `;
     return;
   }
 
@@ -1185,6 +1217,63 @@ function formatSteps(anleitung){
     availablePool = pool;
   }
 
+  let spinCount = 0;
+  const spinMax = 14;
+
+  const spinner = setInterval(() => {
+    const tempRecipe = pool[Math.floor(Math.random() * pool.length)];
+    const tempImg = imageUrl(tempRecipe);
+
+    result.innerHTML = `
+      <div class="roulette-result-card">
+        <div class="roulette-image-wrap">
+          ${tempImg ? `<img src="${tempImg}" alt="${cleanRecipeText(tempRecipe.name)}">` : `<div class="placeholder">Kein Bild</div>`}
+        </div>
+        <div class="roulette-result-body">
+          <span class="badge">🎰 Dreht...</span>
+          <h2>${cleanRecipeText(tempRecipe.name)}</h2>
+        </div>
+      </div>
+    `;
+
+    spinCount++;
+
+    if(spinCount >= spinMax){
+      clearInterval(spinner);
+
+      const winner = availablePool[Math.floor(Math.random() * availablePool.length)];
+      rouletteHistory.unshift(Number(winner.id));
+      rouletteHistory = rouletteHistory.slice(0, Math.min(12, Math.floor(pool.length * 0.7)));
+      localStorage.setItem("rouletteHistory", JSON.stringify(rouletteHistory));
+
+      const img = imageUrl(winner);
+
+      result.innerHTML = `
+        <div class="roulette-result-card">
+          <div class="roulette-image-wrap">
+            ${img ? `<img src="${img}" alt="${cleanRecipeText(winner.name)}">` : `<div class="placeholder">Kein Bild</div>`}
+          </div>
+
+          <div class="roulette-result-body">
+            <span class="badge">🎉 Dein Treffer</span>
+            <h2>${cleanRecipeText(winner.name)}</h2>
+
+            <div class="meta">
+              <span>⏱️ ${winner.kochzeit || "?"} Min</span>
+              <span>🔥 ${winner.schwierigkeit || "Einfach"}</span>
+            </div>
+
+            <div class="buttons">
+              <button class="primary" onclick="showRecipe(${winner.id})">Rezept öffnen</button>
+              <button class="secondary" onclick="quickAddToPlan(${winner.id})">📅 Zum Wochenplan</button>
+              <button class="secondary" onclick="drawRouletteRecipe()">🔁 Nochmal ziehen</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+  }, 120);
+}
   // SPIN ANIMATION
   let spinCount = 0;
   const spinMax = 14;
