@@ -1163,7 +1163,7 @@ function recipeMatchesRouletteFilter(recipe, selected){
     ...(recipe.zutaten || [])
   ].join(" ").toLowerCase();
 
-  const isBreakfast = text.includes("frühstück") || text.includes("pancake") || text.includes("waffel") || text.includes("oats") || text.includes("skyr") || text.includes("bowl");
+  const isBreakfast = text.includes("frühstück") || text.includes("pancake") || text.includes("waffel") || text.includes("oats") || text.includes("bowl");
   const isDessert = text.includes("dessert") || text.includes("kuchen") || text.includes("süß") || text.includes("schoko") || text.includes("himbeer") || text.includes("erdbeer");
 
   if(selected === "Alle") return true;
