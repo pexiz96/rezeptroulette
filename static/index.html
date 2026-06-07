@@ -1080,12 +1080,6 @@ function formatSteps(anleitung){
       window.scrollTo({top:0,behavior:"smooth"});
     }
 
-  if(!pool.length){
-    result.innerHTML = `<div class="empty-state">Keine Rezepte für ${selected} gefunden.</div>`;
-    return;
-  }
-
-  let availablePool = pool.filter(recipe => !rouletteHistory.includes(Number(recipe.id)));
   function toggleRouletteFilters(){
   const box = document.getElementById("rouletteFilters");
   if(box) box.classList.toggle("hidden");
