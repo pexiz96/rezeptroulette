@@ -259,18 +259,14 @@ class Database:
          );
         """
     )
-    try:
-        self.conn.execute(
-            "ALTER TABLE users ADD COLUMN username TEXT NOT NULL DEFAULT ''")
-    except sqlite3.OperationalError:
-        pass
+            
 
-        for day in DAYS:
-            for slot in range(1, 4):
-                self.conn.execute(
-                    "INSERT OR IGNORE INTO weekly_plan(day, slot, recipe_id) VALUES (?, ?, NULL)",
-                    (day, slot),
-                )
+        try:
+            self.conn.execute(
+                "ALTER TABLE users ADD COLUMN username TEXT NOT NULL DEFAULT ''"
+            )
+        except sqlite3.OperationalError:
+            pass
 
         self.conn.commit()
 
