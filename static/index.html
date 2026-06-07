@@ -1000,34 +1000,10 @@ function renderRecipes(){
 
     let matchesCategory = true;
 
-    if(selected !== "Alle"){
-  if(selected === "Frühstück") matchesCategory =
-    text.includes("frühstück") || text.includes("pancake") || text.includes("bowl") || text.includes("skyr") || text.includes("oats");
-
-  if(selected === "Mittagessen") matchesCategory =
-    text.includes("mittag") || text.includes("hauptgericht") || text.includes("herzhaft") || text.includes("reis") || text.includes("hähnchen");
-
-  if(selected === "Abendbrot") matchesCategory =
-    text.includes("abend") || text.includes("brot") || text.includes("wrap") || text.includes("toast") || text.includes("burger");
-
-  if(selected === "Nudeln") matchesCategory =
-    text.includes("nudel") || text.includes("pasta") || text.includes("spaghetti") || text.includes("makkaroni") || text.includes("tortellini");
-
-  if(selected === "Auflauf") matchesCategory =
-    text.includes("auflauf") || text.includes("gratin") || text.includes("überbacken");
-
-  if(selected === "Suppe") matchesCategory =
-    text.includes("suppe") || text.includes("eintopf");
-
-  if(selected === "Vegetarisch") matchesCategory =
-    text.includes("vegetarisch") || text.includes("veggie") || text.includes("gemüse");
-
-  if(selected === "Snack") matchesCategory =
-    text.includes("snack") || text.includes("wrap") || text.includes("toast") || text.includes("burger") || text.includes("fries");
-
-  if(selected === "Dessert") matchesCategory =
-    text.includes("dessert") || text.includes("süß") || text.includes("kuchen") || text.includes("erdbeer") || text.includes("schoko") || text.includes("oreo");
+  if(selected !== "Alle"){
+    matchesCategory = recipeMatchesRouletteFilter(r, selected);
 }
+
 
     return (
       (!search ||
