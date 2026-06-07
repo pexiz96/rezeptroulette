@@ -143,6 +143,7 @@ app.add_middleware(
 
 class UserRegister(BaseModel):
     email: str
+    username: str
     password: str
 
 class UserLogin(BaseModel):
@@ -182,12 +183,12 @@ def me(authorization: str | None = Header(default=None, alias="Authorization")):
         return {"error": "Nicht eingeloggt"}
 
     return {
-        "user": {
-            "id": user["id"],
-            "email": user["email"]
-        }
+    "user": {
+        "id": user["id"],
+        "email": user["email"],
+        "username": user["username"]
     }
-
+}
 @app.post("/favorit/{recipe_id}")
 def favorit_umstellen(recipe_id: int, authorization: str | None = Header(default=None, alias="Authorization")):
     user = get_current_user(authorization)
@@ -246,15 +247,20 @@ def login_user(daten: UserLogin):
         "token": token,
         "user": {
             "id": user["id"],
-            "email": user["email"]
-        }
+            "email": user["email"],
+            "username": user["username"]
     }
+}
 @app.post("/register")
 def register_user(daten: UserRegister):
     db = get_db()
 
     email = daten.email.strip().lower()
+    username = daten.username.strip()
     password = daten.password.strip()
+
+    if not username:
+        return {"error": "Bitte Benutzernamen eingeben"}
 
     if not email or "@" not in email:
         return {"error": "Bitte gültige E-Mail eingeben"}
@@ -271,13 +277,14 @@ def register_user(daten: UserRegister):
         bcrypt.gensalt()
     ).decode("utf-8")
 
-    user_id = db.create_user(email, password_hash)
+    user_id = db.create_user(email, username, password_hash)
 
     return {
         "message": "Benutzer wurde erstellt",
         "user": {
             "id": user_id,
-            "email": email
+            "email": email,
+            "username": username
         }
     }
 

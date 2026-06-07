@@ -222,6 +222,7 @@ class Database:
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             email TEXT NOT NULL UNIQUE,
+            username TEXT NOT NULL DEFAULT '',
             password_hash TEXT NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
@@ -258,6 +259,11 @@ class Database:
          );
         """
     )
+    try:
+        self.conn.execute(
+            "ALTER TABLE users ADD COLUMN username TEXT NOT NULL DEFAULT ''")
+    except sqlite3.OperationalError:
+        pass
 
         for day in DAYS:
             for slot in range(1, 4):
@@ -471,13 +477,13 @@ class Database:
         self.conn.execute("DELETE FROM recipes WHERE id = ?", (recipe_id,))
         self.conn.commit()
 
-    def create_user(self, email: str, password_hash: str):
+    def create_user(self, email: str, username: str, password_hash: str):
         cur = self.conn.execute(
             """
-            INSERT INTO users(email, password_hash)
-            VALUES (?, ?)
+            INSERT INTO users(email, username, password_hash)
+            VALUES (?, ?, ?)
             """,
-            (email, password_hash),
+            (email, username, password_hash),
         )
         self.conn.commit()
         return cur.lastrowid
