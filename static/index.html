@@ -683,6 +683,10 @@ function showAuthPage(mode = "login"){
         <p class="muted">${isLogin ? "Melde dich mit deinem Konto an." : "Erstelle ein neues Konto."}</p>
       </div>
 
+      ${!isLogin ? `
+      <input id="authUsername" type="text" placeholder="Benutzername">
+      ` : ""}
+
       <input id="authEmail" type="email" placeholder="E-Mail">
       <input id="authPassword" type="password" placeholder="Passwort">
 
@@ -720,13 +724,14 @@ async function loginUser(){
 }
 
 async function registerUser(){
+  const username = document.getElementById("authUsername").value.trim();
   const email = document.getElementById("authEmail").value.trim();
   const password = document.getElementById("authPassword").value;
 
   const r = await fetch("/register", {
     method: "POST",
     headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({email, password})
+    body: JSON.stringify({email, username, password})
   });
 
   const data = await r.json();
