@@ -1369,7 +1369,8 @@ function drawRouletteRecipe(){
   await ensureRecipesLoaded();
 
   const response = await fetch(`/wochenplan?t=${Date.now()}`, {
-  cache: "no-store"
+  cache: "no-store",
+  headers: authHeaders()
 });
   const plan = await response.json();
 
@@ -1453,8 +1454,9 @@ function drawRouletteRecipe(){
   if(!id) return;
 
   const response = await fetch(`/wochenplan/${encodeURIComponent(day)}/${slot}/${Number(id)}`, {
-    method: "POST"
-  });
+  method: "POST",
+  headers: authHeaders()
+});
 
   showToast(response.ok ? "Zum Wochenplan hinzugefügt!" : "Fehler beim Speichern");
   await loadWeeklyPlan();
@@ -1462,8 +1464,9 @@ function drawRouletteRecipe(){
 
      async function clearDaySlot(day, slot){
   const response = await fetch(`/wochenplan/${encodeURIComponent(day)}/${slot}/0`, {
-    method: "POST"
-  });
+  method: "POST",
+  headers: authHeaders()
+});
 
   showToast(response.ok ? "Slot entfernt" : "Fehler beim Entfernen");
   await loadWeeklyPlan();
@@ -1517,8 +1520,9 @@ function drawRouletteRecipe(){
         const response = await fetch(
           `/wochenplan/${encodeURIComponent(day)}/${slot.id}/${Number(recipe.id)}`,
           {
-            method: "POST"
-          }
+  method: "POST",
+  headers: authHeaders()
+}
         );
 
         if(!response.ok){
@@ -1564,8 +1568,9 @@ function drawRouletteRecipe(){
 }
     async function resetWeek(){
   const response = await fetch("/wochenplan/reset", {
-    method: "POST"
-  });
+  method: "POST",
+  headers: authHeaders()
+});
 
   if(!response.ok){
     return showToast("Woche konnte nicht geleert werden.");
@@ -1899,7 +1904,7 @@ function closePlanModal(){
 
     async function backToRecipes(){await loadRecipes();setTimeout(()=>{window.scrollTo({top:recipeScrollPosition,behavior:"auto"})},100)}
   updateAuthButton();
-  
+
   </script>
   <div id="planModal" class="modal hidden">
   <div class="modal-box">
