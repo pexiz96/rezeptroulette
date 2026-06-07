@@ -584,6 +584,7 @@
     <div class="header-actions">
       <button class="secondary" onclick="showHome()">Startseite</button>
       <button class="secondary" onclick="toggleDarkMode()">🌙</button>
+      <button class="secondary" id="authButton" onclick="showAuthPage('login')">👤 Login</button>
     </div>
   </header>
 
@@ -633,6 +634,124 @@
     let cookIndex = 0;
     let rouletteHistory = JSON.parse(localStorage.getItem("rouletteHistory") || "[]").map(Number);
     let selectedWeekSlotFilter = "Alle";
+    let currentUser = JSON.parse(localStorage.getItem("user") || "null");
+    let authToken = localStorage.getItem("token") || "";
+
+  
+  function updateAuthButton(){
+  const btn = document.getElementById("authButton");
+  if(!btn) return;
+
+  if(currentUser){
+    btn.textContent = `👤 ${currentUser.email}`;
+    btn.onclick = logout;
+  } else {
+    btn.textContent = "👤 Login";
+    btn.onclick = () => showAuthPage("login");
+  }
+}
+function authHeaders(){
+  return authToken
+    ? { "Authorization": `Bearer ${authToken}` }
+    : {};
+}
+
+function saveAuth(token, user){
+  authToken = token;
+  currentUser = user;
+  localStorage.setItem("token", token);
+  localStorage.setItem("user", JSON.stringify(user));
+  
+  updateAuthButton();
+}
+
+
+function showAuthPage(mode = "login"){
+  hideHome();
+  setActiveNav("");
+
+  const isLogin = mode === "login";
+  const c = document.getElementById("content");
+
+  c.innerHTML = `
+    <button class="secondary" onclick="showHome()">← Zurück</button>
+
+    <section class="panel" style="max-width:520px;margin:30px auto;display:grid;gap:16px;">
+      <div>
+        <span class="hero-badge">👤 Benutzerkonto</span>
+        <h1>${isLogin ? "Einloggen" : "Registrieren"}</h1>
+        <p class="muted">${isLogin ? "Melde dich mit deinem Konto an." : "Erstelle ein neues Konto."}</p>
+      </div>
+
+      <input id="authEmail" type="email" placeholder="E-Mail">
+      <input id="authPassword" type="password" placeholder="Passwort">
+
+      <button class="primary" onclick="${isLogin ? "loginUser()" : "registerUser()"}">
+        ${isLogin ? "Einloggen" : "Registrieren"}
+      </button>
+
+      <button class="secondary" onclick="showAuthPage('${isLogin ? "register" : "login"}')">
+        ${isLogin ? "Noch kein Konto? Registrieren" : "Schon ein Konto? Einloggen"}
+      </button>
+    </section>
+  `;
+}
+
+async function loginUser(){
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value;
+
+  const r = await fetch("/login", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({email, password})
+  });
+
+  const data = await r.json();
+
+  if(data.error){
+    showToast(data.error);
+    return;
+  }
+
+  saveAuth(data.token, data.user);
+  showToast("Erfolgreich eingeloggt!");
+  showHome();
+}
+
+async function registerUser(){
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value;
+
+  const r = await fetch("/register", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({email, password})
+  });
+
+  const data = await r.json();
+
+  if(data.error){
+    showToast(data.error);
+    return;
+  }
+
+  showToast("Konto erstellt. Bitte einloggen.");
+  showAuthPage("login");
+}
+
+function logout(){
+    authToken = "";
+    currentUser = null;
+
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    updateAuthButton();
+
+    showToast("Du wurdest ausgeloggt.");
+    showHome();
+}
 
 function setWeekSlotFilter(slot){
   selectedWeekSlotFilter = slot;
@@ -1779,6 +1898,8 @@ function closePlanModal(){
     showHome();
 
     async function backToRecipes(){await loadRecipes();setTimeout(()=>{window.scrollTo({top:recipeScrollPosition,behavior:"auto"})},100)}
+  updateAuthButton();
+  
   </script>
   <div id="planModal" class="modal hidden">
   <div class="modal-box">
