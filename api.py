@@ -1,5 +1,8 @@
 import os
 import random
+import bcrypt
+import jwt
+from datetime import datetime, timedelta
 from dataclasses import asdict
 
 from fastapi import FastAPI
@@ -124,6 +127,8 @@ app = FastAPI()
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
 BILDER_DIR = os.path.join(BASE_DIR, "bilder")
+JWT_SECRET = "dein-geheimer-schluessel"
+JWT_ALGORITHM = "HS256"
 
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 app.mount("/bilder", StaticFiles(directory=BILDER_DIR), name="bilder")
@@ -136,9 +141,83 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class UserRegister(BaseModel):
+    email: str
+    password: str
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
 
 def get_db():
     return Database()
+    
+
+@app.post("/login")
+def login_user(daten: UserLogin):
+    db = get_db()
+
+    email = daten.email.strip().lower()
+    password = daten.password
+
+    user = db.get_user_by_email(email)
+
+    if not user:
+        return {"error": "Benutzer nicht gefunden"}
+
+    if not bcrypt.checkpw(
+        password.encode("utf-8"),
+        user["password_hash"].encode("utf-8")
+    ):
+        return {"error": "Falsches Passwort"}
+
+    token = jwt.encode(
+        {
+            "user_id": user["id"],
+            "exp": datetime.utcnow() + timedelta(days=30)
+        },
+        JWT_SECRET,
+        algorithm=JWT_ALGORITHM
+    )
+
+    return {
+        "token": token,
+        "user": {
+            "id": user["id"],
+            "email": user["email"]
+        }
+    }
+@app.post("/register")
+def register_user(daten: UserRegister):
+    db = get_db()
+
+    email = daten.email.strip().lower()
+    password = daten.password.strip()
+
+    if not email or "@" not in email:
+        return {"error": "Bitte gültige E-Mail eingeben"}
+
+    if len(password) < 6:
+        return {"error": "Passwort muss mindestens 6 Zeichen haben"}
+
+    existing = db.get_user_by_email(email)
+    if existing:
+        return {"error": "Diese E-Mail ist bereits registriert"}
+
+    password_hash = bcrypt.hashpw(
+        password.encode("utf-8"),
+        bcrypt.gensalt()
+    ).decode("utf-8")
+
+    user_id = db.create_user(email, password_hash)
+
+    return {
+        "message": "Benutzer wurde erstellt",
+        "user": {
+            "id": user_id,
+            "email": email
+        }
+    }
 
 @app.delete("/delete-pdf-recipes")
 def delete_pdf_recipes():
