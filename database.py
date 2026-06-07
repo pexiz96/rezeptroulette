@@ -461,36 +461,36 @@ class Database:
         self.conn.commit()
 
     def create_user(self, email: str, password_hash: str):
-    cur = self.conn.execute(
-        """
-        INSERT INTO users(email, password_hash)
-        VALUES (?, ?)
-        """,
-        (email, password_hash),
-    )
-    self.conn.commit()
-    return cur.lastrowid
+        cur = self.conn.execute(
+            """
+            INSERT INTO users(email, password_hash)
+            VALUES (?, ?)
+            """,
+            (email, password_hash),
+        )
+        self.conn.commit()
+        return cur.lastrowid
 
 
     def get_user_by_email(self, email: str):
-    return self.conn.execute(
-        """
-        SELECT * FROM users
-        WHERE email = ?
-        """,
-        (email,),
-    ).fetchone()
+        return self.conn.execute(
+            """
+            SELECT * FROM users
+            WHERE email = ?
+            """,
+            (email,),
+        ).fetchone()
 
 
     def get_user(self, user_id: int):
-    return self.conn.execute(
-        """
-        SELECT * FROM users
-        WHERE id = ?
-        """,
-        (user_id,),
-    ).fetchone()
-
+        return self.conn.execute(
+            """
+            SELECT * FROM users
+            WHERE id = ?
+            """,
+            (user_id,),
+        ).fetchone()
+    
     def delete_recipes_without_images(self) -> int:
         cur = self.conn.execute("""
         DELETE FROM recipes
