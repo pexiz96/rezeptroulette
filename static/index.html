@@ -1018,9 +1018,12 @@ async function loadRecipes(){
   c.innerHTML = `
     <button class="secondary" onclick="showHome()">← Zurück</button>
     <h2>🍲 Alle Rezepte</h2>
-
-    <div class="meal-filter-panel" style="margin:18px 0 26px;">
-      <div class="meal-filter-title">
+    <div class="buttons" style="margin:18px 0;">
+      <button class="secondary" id="recipeFilterButton" onclick="toggleRecipeFilters()">
+      🔽 Filter anzeigen
+      </button>
+    </div>
+    <div id="recipeFilters" class="meal-filter-panel hidden" style="margin:18px 0 26px;">      <div class="meal-filter-title">
         <span>Filter wählen</span>
         <span>Rezepte</span>
       </div>
@@ -1142,7 +1145,18 @@ function renderRecipes(){
     ? filtered.map(recipeCard).join("")
     : `<div class="empty-state"><h2>Keine Rezepte gefunden</h2><p>Versuche einen anderen Filter oder Suchbegriff.</p></div>`;
 }
+function toggleRecipeFilters(){
+  const box = document.getElementById("recipeFilters");
+  const btn = document.getElementById("recipeFilterButton");
 
+  if(!box || !btn) return;
+
+  box.classList.toggle("hidden");
+
+  btn.textContent = box.classList.contains("hidden")
+    ? "🔽 Filter anzeigen"
+    : "🔼 Filter ausblenden";
+}
 function formatSteps(anleitung){
   return String(anleitung || "Keine Anleitung vorhanden.")
     .replaceAll("\\n", "\n")
