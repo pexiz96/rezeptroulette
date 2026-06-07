@@ -1080,9 +1080,6 @@ function formatSteps(anleitung){
       window.scrollTo({top:0,behavior:"smooth"});
     }
 
-  
-  }
-
   if(!pool.length){
     result.innerHTML = `<div class="empty-state">Keine Rezepte für ${selected} gefunden.</div>`;
     return;
@@ -1192,7 +1189,7 @@ function recipeMatchesRouletteFilter(recipe, selected){
   return true;
 }
 
-function drawRouletteRecipe()
+function drawRouletteRecipe(){
   const selected = selectedMealType;
   const result = document.getElementById("rouletteResult");
   if(!result) return;
