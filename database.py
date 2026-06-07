@@ -219,6 +219,13 @@ class Database:
             """
             PRAGMA foreign_keys = ON;
 
+            CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT NOT NULL UNIQUE,
+            password_hash TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
             CREATE TABLE IF NOT EXISTS recipes (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL UNIQUE,
@@ -452,6 +459,37 @@ class Database:
     def delete_recipe(self, recipe_id: int) -> None:
         self.conn.execute("DELETE FROM recipes WHERE id = ?", (recipe_id,))
         self.conn.commit()
+
+    def create_user(self, email: str, password_hash: str):
+    cur = self.conn.execute(
+        """
+        INSERT INTO users(email, password_hash)
+        VALUES (?, ?)
+        """,
+        (email, password_hash),
+    )
+    self.conn.commit()
+    return cur.lastrowid
+
+
+    def get_user_by_email(self, email: str):
+    return self.conn.execute(
+        """
+        SELECT * FROM users
+        WHERE email = ?
+        """,
+        (email,),
+    ).fetchone()
+
+
+    def get_user(self, user_id: int):
+    return self.conn.execute(
+        """
+        SELECT * FROM users
+        WHERE id = ?
+        """,
+        (user_id,),
+    ).fetchone()
 
     def delete_recipes_without_images(self) -> int:
         cur = self.conn.execute("""
