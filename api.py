@@ -376,15 +376,27 @@ def roulette():
 
 
 @app.get("/wochenplan")
-def wochenplan():
+def wochenplan(authorization: str | None = Header(default=None, alias="Authorization")):
+    user = get_current_user(authorization)
+
+    if not user:
+        return {"error": "Nicht eingeloggt"}
+
     db = get_db()
-    return db.weekly_plan()
+    return db.weekly_plan(user["id"])
     
 
 
 
 @app.post("/wochenplan/reset")
-def reset_wochenplan():
+def reset_wochenplan(
+    authorization: str | None = Header(default=None, alias="Authorization")
+):
+    user = get_current_user(authorization)
+
+    if not user:
+        return {"error": "Nicht eingeloggt"}
+
     db = get_db()
 
     days = [
@@ -399,25 +411,53 @@ def reset_wochenplan():
 
     for day in days:
         for slot in [1, 2, 3]:
-            db.set_weekly_plan_slot(day, slot, None)
+            db.set_weekly_plan_slot(
+                user["id"],
+                day,
+                slot,
+                None
+            )
 
     return {"message": "Wochenplan geleert"}
 
 
 @app.post("/wochenplan/clear/{day}")
-def loesche_tag(day: str):
+def loesche_tag(
+    day: str,
+    authorization: str | None = Header(default=None, alias="Authorization")
+):
+    user = get_current_user(authorization)
+
+    if not user:
+        return {"error": "Nicht eingeloggt"}
+
     db = get_db()
 
     for slot in [1, 2, 3]:
-        db.set_weekly_plan_slot(day, slot, None)
+        db.set_weekly_plan_slot(
+            user["id"],
+            day,
+            slot,
+            None
+        )
 
     return {"message": f"{day} wurde gelöscht"}
 
 
 @app.post("/wochenplan/{day}/{slot}/{recipe_id}")
-def set_weekly_plan(day: str, slot: int, recipe_id: int):
+def set_weekly_plan(
+    day: str,
+    slot: int,
+    recipe_id: int,
+    authorization: str | None = Header(default=None, alias="Authorization")
+):
+    user = get_current_user(authorization)
+
+    if not user:
+        return {"error": "Nicht eingeloggt"}
+
     db = get_db()
-    db.set_weekly_plan_slot(day, slot, recipe_id)
+    db.set_weekly_plan_slot(user["id"], day, slot, recipe_id)
     return {"ok": True}
 
 def parse_ingredient(text):

@@ -249,11 +249,13 @@ class Database:
         );
 
         CREATE TABLE IF NOT EXISTS weekly_plan (
+            user_id INTEGER NOT NULL,
             day TEXT NOT NULL,
             slot INTEGER NOT NULL,
             recipe_id INTEGER REFERENCES recipes(id) ON DELETE SET NULL,
-            PRIMARY KEY(day, slot)
-        );
+            PRIMARY KEY(user_id, day, slot),
+            FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+         );
         """
     )
 
@@ -511,63 +513,67 @@ class Database:
 
     def toggle_favorite(self, user_id: int, recipe_id: int) -> bool:
         existing = self.conn.execute(
-        """
-        SELECT 1 FROM favorites
-        WHERE user_id = ? AND recipe_id = ?
-        """,
-        (user_id, recipe_id),
-    ).fetchone()
+            """
+            SELECT 1 FROM favorites
+            WHERE user_id = ? AND recipe_id = ?
+            """,
+            (user_id, recipe_id),
+        ).fetchone()
 
-    if existing:
+        if existing:
+            self.conn.execute(
+                """
+                DELETE FROM favorites
+                WHERE user_id = ? AND recipe_id = ?
+                """,
+                (user_id, recipe_id),
+            )
+            self.conn.commit()
+            return False
+
         self.conn.execute(
             """
-            DELETE FROM favorites
-            WHERE user_id = ? AND recipe_id = ?
+            INSERT INTO favorites(user_id, recipe_id)
+            VALUES (?, ?)
             """,
             (user_id, recipe_id),
         )
         self.conn.commit()
-        return False
-
-    self.conn.execute(
-        """
-        INSERT INTO favorites(user_id, recipe_id)
-        VALUES (?, ?)
-        """,
-        (user_id, recipe_id),
-    )
-        self.conn.commit()
         return True
-
 
     def is_favorite(self, user_id: int, recipe_id: int) -> bool:
         row = self.conn.execute(
-        """
-        SELECT 1 FROM favorites
-        WHERE user_id = ? AND recipe_id = ?
-        """,
-        (user_id, recipe_id),
-    ).fetchone()
+            """
+            SELECT 1 FROM favorites
+            WHERE user_id = ? AND recipe_id = ?
+            """,
+            (user_id, recipe_id),
+        ).fetchone()
 
-    return row is not None
+        return row is not None
 
     def get_favorites(self, user_id: int) -> list[Rezept]:
         rows = self.conn.execute(
-        """
-        SELECT r.*
-        FROM recipes r
-        INNER JOIN favorites f ON f.recipe_id = r.id
-        WHERE f.user_id = ?
-        ORDER BY r.name COLLATE NOCASE
-        """,
-        (user_id,),
-    ).fetchall()
+            """
+            SELECT r.*
+            FROM recipes r
+            INNER JOIN favorites f ON f.recipe_id = r.id
+            WHERE f.user_id = ?
+            ORDER BY r.name COLLATE NOCASE
+            """,
+            (user_id,),
+        ).fetchall()
 
-    return [self.row_to_recipe(row) for row in rows]
+        return [self.row_to_recipe(row) for row in rows]
 
-    def weekly_plan(self) -> dict[str, dict[int, int | None]]:
+    def weekly_plan(self, user_id: int):
         rows = self.conn.execute(
-            "SELECT day, slot, recipe_id FROM weekly_plan ORDER BY day, slot"
+            """
+            SELECT day, slot, recipe_id
+            FROM weekly_plan
+            WHERE user_id = ?
+            """,
+            (user_id,),
         ).fetchall()
 
         plan = {}
@@ -580,30 +586,28 @@ class Database:
 
         return plan
 
-    def set_weekly_plan_slot(self, day: str, slot: int, recipe_id: int | None) -> None:
+    def set_weekly_plan_slot(
+        self,
+        user_id: int,
+        day: str,
+        slot: int,
+        recipe_id: int | None,
+    ) -> None:
         self.conn.execute(
             """
-            INSERT INTO weekly_plan(day, slot, recipe_id)
-            VALUES (?, ?, ?)
-            ON CONFLICT(day, slot)
+            INSERT INTO weekly_plan(user_id, day, slot, recipe_id)
+            VALUES (?, ?, ?, ?)
+            ON CONFLICT(user_id, day, slot)
             DO UPDATE SET recipe_id = excluded.recipe_id
             """,
-            (day, slot, None if recipe_id == 0 else recipe_id),
+            (
+                user_id,
+                day,
+                slot,
+                None if recipe_id == 0 else recipe_id,
+            ),
         )
         self.conn.commit()
-
-    def set_weekly_plan(self, plan: dict) -> None:
-        for day, slots in plan.items():
-            if isinstance(slots, dict):
-                for slot, recipe_id in slots.items():
-                    self.set_weekly_plan_slot(day, int(slot), recipe_id)
-
-
-def set_weekly_plan(self, plan: dict) -> None:
-    for day, slots in plan.items():
-        if isinstance(slots, dict):
-            for slot, recipe_id in slots.items():
-                self.set_weekly_plan_slot(day, int(slot), recipe_id)
 
 
     def add_profile_event(self, kind: str, value: str) -> None:
