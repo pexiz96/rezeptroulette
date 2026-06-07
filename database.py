@@ -216,37 +216,46 @@ class Database:
 
     def init_schema(self) -> None:
         self.conn.executescript(
-            """
-            PRAGMA foreign_keys = ON;
+        """
+        PRAGMA foreign_keys = ON;
 
-            CREATE TABLE IF NOT EXISTS users (
+        CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             email TEXT NOT NULL UNIQUE,
             password_hash TEXT NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+        );
 
-            CREATE TABLE IF NOT EXISTS recipes (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL UNIQUE,
-                kueche TEXT NOT NULL DEFAULT 'Unbekannt',
-                bild TEXT NOT NULL DEFAULT '',
-                portionen INTEGER NOT NULL DEFAULT 2,
-                kochzeit INTEGER NOT NULL DEFAULT 30,
-                schwierigkeit TEXT NOT NULL DEFAULT 'Einfach',
-                tags_json TEXT NOT NULL DEFAULT '[]',
-                favorit INTEGER NOT NULL DEFAULT 0,
-                zutaten_json TEXT NOT NULL DEFAULT '[]',
-                anleitung TEXT NOT NULL DEFAULT ''
-            );
+        CREATE TABLE IF NOT EXISTS favorites (
+            user_id INTEGER NOT NULL,
+            recipe_id INTEGER NOT NULL,
+            PRIMARY KEY(user_id, recipe_id),
+            FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY(recipe_id) REFERENCES recipes(id) ON DELETE CASCADE
+        );
 
-            CREATE TABLE IF NOT EXISTS weekly_plan (
-                day TEXT NOT NULL,
-                slot INTEGER NOT NULL,
-                recipe_id INTEGER REFERENCES recipes(id) ON DELETE SET NULL,
-                PRIMARY KEY(day, slot)
-            );
-            """)
+        CREATE TABLE IF NOT EXISTS recipes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL UNIQUE,
+            kueche TEXT NOT NULL DEFAULT 'Unbekannt',
+            bild TEXT NOT NULL DEFAULT '',
+            portionen INTEGER NOT NULL DEFAULT 2,
+            kochzeit INTEGER NOT NULL DEFAULT 30,
+            schwierigkeit TEXT NOT NULL DEFAULT 'Einfach',
+            tags_json TEXT NOT NULL DEFAULT '[]',
+            favorit INTEGER NOT NULL DEFAULT 0,
+            zutaten_json TEXT NOT NULL DEFAULT '[]',
+            anleitung TEXT NOT NULL DEFAULT ''
+        );
+
+        CREATE TABLE IF NOT EXISTS weekly_plan (
+            day TEXT NOT NULL,
+            slot INTEGER NOT NULL,
+            recipe_id INTEGER REFERENCES recipes(id) ON DELETE SET NULL,
+            PRIMARY KEY(day, slot)
+        );
+        """
+    )
 
         for day in DAYS:
             for slot in range(1, 4):
@@ -500,12 +509,61 @@ class Database:
         self.conn.commit()
         return cur.rowcount
 
-    def toggle_favorite(self, recipe_id: int) -> None:
+    def toggle_favorite(self, user_id: int, recipe_id: int) -> bool:
+        existing = self.conn.execute(
+        """
+        SELECT 1 FROM favorites
+        WHERE user_id = ? AND recipe_id = ?
+        """,
+        (user_id, recipe_id),
+    ).fetchone()
+
+    if existing:
         self.conn.execute(
-            "UPDATE recipes SET favorit = CASE favorit WHEN 1 THEN 0 ELSE 1 END WHERE id = ?",
-            (recipe_id,),
+            """
+            DELETE FROM favorites
+            WHERE user_id = ? AND recipe_id = ?
+            """,
+            (user_id, recipe_id),
         )
         self.conn.commit()
+        return False
+
+    self.conn.execute(
+        """
+        INSERT INTO favorites(user_id, recipe_id)
+        VALUES (?, ?)
+        """,
+        (user_id, recipe_id),
+    )
+        self.conn.commit()
+        return True
+
+
+    def is_favorite(self, user_id: int, recipe_id: int) -> bool:
+        row = self.conn.execute(
+        """
+        SELECT 1 FROM favorites
+        WHERE user_id = ? AND recipe_id = ?
+        """,
+        (user_id, recipe_id),
+    ).fetchone()
+
+    return row is not None
+
+    def get_favorites(self, user_id: int) -> list[Rezept]:
+        rows = self.conn.execute(
+        """
+        SELECT r.*
+        FROM recipes r
+        INNER JOIN favorites f ON f.recipe_id = r.id
+        WHERE f.user_id = ?
+        ORDER BY r.name COLLATE NOCASE
+        """,
+        (user_id,),
+    ).fetchall()
+
+    return [self.row_to_recipe(row) for row in rows]
 
     def weekly_plan(self) -> dict[str, dict[int, int | None]]:
         rows = self.conn.execute(

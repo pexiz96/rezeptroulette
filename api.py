@@ -5,7 +5,7 @@ import jwt
 from datetime import datetime, timedelta
 from dataclasses import asdict
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -152,6 +152,68 @@ class UserLogin(BaseModel):
 def get_db():
     return Database()
     
+def get_current_user(authorization: str | None = None):
+    if not authorization:
+        return None
+
+    if not authorization.startswith("Bearer "):
+        return None
+
+    token = authorization.replace("Bearer ", "", 1)
+
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        user_id = payload.get("user_id")
+    except Exception:
+        return None
+
+    if not user_id:
+        return None
+
+    db = get_db()
+    return db.get_user(int(user_id))
+
+
+@app.get("/me")
+def me(authorization: str | None = Header(default=None, alias="Authorization")):
+    user = get_current_user(authorization)
+
+    if not user:
+        return {"error": "Nicht eingeloggt"}
+
+    return {
+        "user": {
+            "id": user["id"],
+            "email": user["email"]
+        }
+    }
+
+@app.post("/favorit/{recipe_id}")
+def favorit_umstellen(recipe_id: int, authorization: str | None = Header(default=None, alias="Authorization")):
+    user = get_current_user(authorization)
+
+    if not user:
+        return {"error": "Nicht eingeloggt"}
+
+    db = get_db()
+    is_fav = db.toggle_favorite(user["id"], recipe_id)
+
+    return {
+        "recipe_id": recipe_id,
+        "favorit": is_fav
+    }
+
+@app.get("/favoriten")
+def favoriten_laden(authorization: str | None = Header(default=None, alias="Authorization")):
+    user = get_current_user(authorization)
+
+    if not user:
+        return {"error": "Nicht eingeloggt"}
+
+    db = get_db()
+    favorites = db.get_favorites(user["id"])
+
+    return [asdict(recipe) for recipe in favorites]
 
 @app.post("/login")
 def login_user(daten: UserLogin):
