@@ -223,10 +223,11 @@ def login_user(daten: UserLogin):
     email = daten.email.strip().lower()
     password = daten.password
 
+    print("LOGIN EMAIL:", repr(email))
+
     user = db.get_user_by_email(email)
 
-    print("LOGIN EMAIL:", email)
-    print("USER:", user)
+    print("USER FOUND:", user)
 
     if not user:
         return {"error": "Benutzer nicht gefunden"}
