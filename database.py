@@ -5,6 +5,7 @@ import psycopg2
 import psycopg2.extras
 from pathlib import Path
 
+DATA_RECIPE_PATH = Path("data/recipes.json")
 
 from config import DB_PATH, IMAGE_DIR, LOCAL_IMAGE_DIR, DAYS
 from models import Rezept
@@ -218,7 +219,7 @@ class Database:
       #      self.conn = sqlite3.connect(self.path)
        #     self.conn.row_factory = sqlite3.Row
         #    self.is_postgres = False
-        
+
         self.conn = sqlite3.connect(self.path)
         self.conn.row_factory = sqlite3.Row
         self.init_schema()
