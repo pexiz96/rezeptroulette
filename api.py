@@ -150,8 +150,10 @@ class UserLogin(BaseModel):
     email: str
     password: str
 
+db = Database()
+
 def get_db():
-    return Database()
+    return db
     
 def get_current_user(authorization: str | None = None):
     if not authorization:
