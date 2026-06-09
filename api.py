@@ -255,6 +255,20 @@ def login_user(daten: UserLogin):
 @app.get("/debug/users")
 def debug_users():
     db = get_db()
+
+    rows = db.conn.execute(
+        """
+        SELECT id, email, username, created_at
+        FROM users
+        ORDER BY id DESC
+        """
+    ).fetchall()
+
+    return [dict(row) for row in rows]
+
+@app.get("/debug/users")
+def debug_users():
+    db = get_db()
     rows = db.conn.execute(
         "SELECT id, email, username FROM users"
     ).fetchall()
