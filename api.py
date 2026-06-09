@@ -251,6 +251,15 @@ def login_user(daten: UserLogin):
             "username": user["username"]
     }
 }
+
+@app.get("/debug/users")
+def debug_users():
+    db = get_db()
+    rows = db.conn.execute(
+        "SELECT id, email, username FROM users"
+    ).fetchall()
+    return [dict(row) for row in rows]
+
 @app.post("/register")
 def register_user(daten: UserRegister):
     db = get_db()
