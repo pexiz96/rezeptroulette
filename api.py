@@ -173,8 +173,8 @@ def get_current_user(authorization: str | None = None):
     if not user_id:
         return None
 
-    db = get_db()
-    return db.get_user(int(user_id))
+def get_db():
+    return Database()
 
 
 @app.get("/me")
