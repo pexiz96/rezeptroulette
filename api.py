@@ -225,6 +225,9 @@ def login_user(daten: UserLogin):
 
     user = db.get_user_by_email(email)
 
+    print("LOGIN EMAIL:", email)
+    print("USER:", user)
+
     if not user:
         return {"error": "Benutzer nicht gefunden"}
 
