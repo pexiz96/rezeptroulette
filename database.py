@@ -208,17 +208,19 @@ class Database:
         IMAGE_DIR.mkdir(parents=True, exist_ok=True)
         LOCAL_IMAGE_DIR.mkdir(parents=True, exist_ok=True)
 
-        self.database_url = os.getenv("DATABASE_URL")
+ #       self.database_url = os.getenv("DATABASE_URL")
 
-        if self.database_url:
-            self.conn = psycopg2.connect(self.database_url)
-            self.conn.autocommit = False
-            self.is_postgres = True
-        else:
-            self.conn = sqlite3.connect(self.path)
-            self.conn.row_factory = sqlite3.Row
-            self.is_postgres = False
-
+  #      if self.database_url:
+  #          self.conn = psycopg2.connect(self.database_url)
+   #         self.conn.autocommit = False
+    #        self.is_postgres = True
+     #   else:
+      #      self.conn = sqlite3.connect(self.path)
+       #     self.conn.row_factory = sqlite3.Row
+        #    self.is_postgres = False
+        
+        self.conn = sqlite3.connect(self.path)
+        self.conn.row_factory = sqlite3.Row
         self.init_schema()
         self.seed_if_empty()
         self.import_builtin_recipes()
