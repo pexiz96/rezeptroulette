@@ -1,8 +1,10 @@
 import json
 import sqlite3
+import os
+import psycopg2
+import psycopg2.extras
 from pathlib import Path
 
-DATA_RECIPE_PATH = Path("data/recipes.json")
 
 from config import DB_PATH, IMAGE_DIR, LOCAL_IMAGE_DIR, DAYS
 from models import Rezept
@@ -206,8 +208,16 @@ class Database:
         IMAGE_DIR.mkdir(parents=True, exist_ok=True)
         LOCAL_IMAGE_DIR.mkdir(parents=True, exist_ok=True)
 
-        self.conn = sqlite3.connect(self.path)
-        self.conn.row_factory = sqlite3.Row
+        self.database_url = os.getenv("DATABASE_URL")
+
+        if self.database_url:
+            self.conn = psycopg2.connect(self.database_url)
+            self.conn.autocommit = False
+            self.is_postgres = True
+        else:
+            self.conn = sqlite3.connect(self.path)
+            self.conn.row_factory = sqlite3.Row
+            self.is_postgres = False
 
         self.init_schema()
         self.seed_if_empty()
@@ -222,7 +232,7 @@ class Database:
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             email TEXT NOT NULL UNIQUE,
-            username TEXT NOT NULL DEFAULT '',
+            username TEXT NOT NULL UNIQUE,
             password_hash TEXT NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
@@ -265,6 +275,14 @@ class Database:
             self.conn.execute(
                 "ALTER TABLE users ADD COLUMN username TEXT NOT NULL DEFAULT ''"
             )
+        except sqlite3.OperationalError:
+            pass
+        try:
+            self.conn.execute(
+                "CREATE UNIQUE INDEX IF NOT EXISTS idx_users_username ON users(username)"
+    )
+        except sqlite3.IntegrityError:
+            pass
         except sqlite3.OperationalError:
             pass
 
@@ -485,13 +503,13 @@ class Database:
         return cur.lastrowid
 
 
-    def get_user_by_email(self, email: str):
+    def get_user_by_email(self, username: str):
         return self.conn.execute(
             """
             SELECT * FROM users
-            WHERE email = ?
+            WHERE username = ?
             """,
-            (email,),
+            (username,),
         ).fetchone()
 
 

@@ -287,7 +287,12 @@ def register_user(daten: UserRegister):
     email = daten.email.strip().lower()
     username = daten.username.strip()
     password = daten.password.strip()
+    existing_username = db.get_user_by_username(username)
 
+    if existing_username:
+        return {"error": "Benutzername bereits vergeben"}
+    if not username:
+        return {"error": "Bitte Benutzernamen eingeben"}
     if not username:
         return {"error": "Bitte Benutzernamen eingeben"}
 
