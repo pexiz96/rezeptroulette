@@ -150,10 +150,6 @@ class UserLogin(BaseModel):
     email: str
     password: str
 
-db = Database()
-
-def get_db():
-    return db
     
 def get_current_user(authorization=None):
     return {
@@ -414,57 +410,21 @@ def wochenplan():
 
 
 @app.post("/wochenplan/reset")
-def reset_wochenplan(
-    authorization: str | None = Header(default=None, alias="Authorization")
-):
-    user = get_current_user(authorization)
-
-    if not user:
-        return {"error": "Nicht eingeloggt"}
-
+def reset_wochenplan():
     db = get_db()
 
-    days = [
-        "Montag",
-        "Dienstag",
-        "Mittwoch",
-        "Donnerstag",
-        "Freitag",
-        "Samstag",
-        "Sonntag"
-    ]
-
-    for day in days:
+    for day in ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"]:
         for slot in [1, 2, 3]:
-            db.set_weekly_plan_slot(
-                user["id"],
-                day,
-                slot,
-                None
-            )
+            db.set_weekly_plan_slot(1, day, slot, None)
 
     return {"message": "Wochenplan geleert"}
 
-
 @app.post("/wochenplan/clear/{day}")
-def loesche_tag(
-    day: str,
-    authorization: str | None = Header(default=None, alias="Authorization")
-):
-    user = get_current_user(authorization)
-
-    if not user:
-        return {"error": "Nicht eingeloggt"}
-
+def loesche_tag(day: str):
     db = get_db()
 
     for slot in [1, 2, 3]:
-        db.set_weekly_plan_slot(
-            user["id"],
-            day,
-            slot,
-            None
-        )
+        db.set_weekly_plan_slot(1, day, slot, None)
 
     return {"message": f"{day} wurde gelöscht"}
 
