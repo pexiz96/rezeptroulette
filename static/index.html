@@ -1392,9 +1392,8 @@ function drawRouletteRecipe(){
   const plan = await response.json();
 
   if(plan.error){
-    showToast(plan.error);
-    showAuthPage("login");
-    return;
+  showToast(plan.error);
+  return;
 }
 
   const days = ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"];
