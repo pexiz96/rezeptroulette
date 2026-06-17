@@ -243,19 +243,16 @@ def login_user(daten: UserLogin):
     }
 }
 
-@app.get("/debug/users")
-def debug_users():
+@app.get("/debug/reset-weekly-plan")
+def debug_reset_weekly_plan():
     db = get_db()
 
-    rows = db.conn.execute(
-        """
-        SELECT id, email, username, created_at
-        FROM users
-        ORDER BY id DESC
-        """
-    ).fetchall()
+    db.conn.execute("DROP TABLE IF EXISTS weekly_plan")
+    db.conn.commit()
 
-    return [dict(row) for row in rows]
+    db.init_schema()
+
+    return {"ok": True, "message": "weekly_plan wurde neu erstellt"}
 
 @app.get("/debug/users")
 def debug_users():
