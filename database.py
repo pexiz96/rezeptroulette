@@ -232,13 +232,14 @@ class Database:
         """
         PRAGMA foreign_keys = ON;
 
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            email TEXT NOT NULL UNIQUE,
-            username TEXT NOT NULL UNIQUE,
-            password_hash TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
+    CREATE TABLE IF NOT EXISTS weekly_plan (
+        user_id INTEGER NOT NULL,
+        day TEXT NOT NULL,
+        slot INTEGER NOT NULL,
+        recipe_id INTEGER REFERENCES recipes(id) ON DELETE SET NULL,
+        PRIMARY KEY(user_id, day, slot),
+        FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 
         CREATE TABLE IF NOT EXISTS favorites (
             user_id INTEGER NOT NULL,
