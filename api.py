@@ -400,14 +400,62 @@ def roulette():
 
     return daten
 
+DEMO_USER_ID = 1
+
+def ensure_demo_user(db):
+    db.conn.execute(
+        """
+        INSERT OR IGNORE INTO users(id, email, username, password_hash)
+        VALUES (?, ?, ?, ?)
+        """,
+        (DEMO_USER_ID, "demo@rezeptroulette.de", "Demo", "demo")
+    )
+    db.conn.commit()
 
 @app.get("/wochenplan")
 def wochenplan():
     db = get_db()
-    return db.weekly_plan(1)
+    ensure_demo_user(db)
+    return db.weekly_plan(DEMO_USER_ID)
+
+
+@app.post("/wochenplan/{day}/{slot}/{recipe_id}")
+def set_weekly_plan(day: str, slot: int, recipe_id: int):
+    db = get_db()
+    ensure_demo_user(db)
+
+    db.set_weekly_plan_slot(
+        DEMO_USER_ID,
+        day,
+        slot,
+        None if recipe_id == 0 else recipe_id
+    )
+
+    return {"ok": True}
+
+
+@app.post("/wochenplan/reset")
+def reset_wochenplan():
+    db = get_db()
+    ensure_demo_user(db)
+
+    for day in ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"]:
+        for slot in [1, 2, 3]:
+            db.set_weekly_plan_slot(DEMO_USER_ID, day, slot, None)
+
+    return {"message": "Wochenplan geleert"}
+
+
+@app.post("/wochenplan/clear/{day}")
+def loesche_tag(day: str):
+    db = get_db()
+    ensure_demo_user(db)
+
+    for slot in [1, 2, 3]:
+        db.set_weekly_plan_slot(DEMO_USER_ID, day, slot, None)
+
+    return {"message": f"{day} wurde gelöscht"}
     
-
-
 
 @app.post("/wochenplan/reset")
 def reset_wochenplan():
@@ -738,25 +786,6 @@ def shopping_list(recipes):
 @app.get("/einkaufsliste")
 def einkaufsliste():
     db = get_db()
-    plan = db.weekly_plan(1)
+    ensure_demo_user(db)
 
-    recipes = []
-
-    for day_slots in plan.values():
-        if isinstance(day_slots, dict):
-            for recipe_id in day_slots.values():
-                if recipe_id:
-                    recipe = db.get_recipe(int(recipe_id))
-                    if recipe:
-                        recipes.append(recipe)
-        elif day_slots:
-            recipe = db.get_recipe(int(day_slots))
-            if recipe:
-                recipes.append(recipe)
-
-    categories, pantry = shopping_list(recipes)
-
-    return {
-        "categories": categories,
-        "pantry": pantry,
-    }
+    plan = db.weekly_plan(DEMO_USER_ID)
