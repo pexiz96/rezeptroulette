@@ -406,14 +406,9 @@ def roulette():
 
 
 @app.get("/wochenplan")
-def wochenplan(authorization: str | None = Header(default=None, alias="Authorization")):
-    user = get_current_user(authorization)
-
-    if not user:
-        return {"error": "Nicht eingeloggt"}
-
+def wochenplan():
     db = get_db()
-    return db.weekly_plan(user["id"])
+    return db.weekly_plan(1)
     
 
 
@@ -475,19 +470,9 @@ def loesche_tag(
 
 
 @app.post("/wochenplan/{day}/{slot}/{recipe_id}")
-def set_weekly_plan(
-    day: str,
-    slot: int,
-    recipe_id: int,
-    authorization: str | None = Header(default=None, alias="Authorization")
-):
-    user = get_current_user(authorization)
-
-    if not user:
-        return {"error": "Nicht eingeloggt"}
-
+def set_weekly_plan(day: str, slot: int, recipe_id: int):
     db = get_db()
-    db.set_weekly_plan_slot(user["id"], day, slot, recipe_id)
+    db.set_weekly_plan_slot(1, day, slot, recipe_id)
     return {"ok": True}
 
 def parse_ingredient(text):
@@ -793,7 +778,7 @@ def shopping_list(recipes):
 @app.get("/einkaufsliste")
 def einkaufsliste():
     db = get_db()
-    plan = db.weekly_plan()
+    plan = db.weekly_plan(1)
 
     recipes = []
 
