@@ -651,9 +651,7 @@
   }
 }
 function authHeaders(){
-  return authToken
-    ? { "Authorization": `Bearer ${authToken}` }
-    : {};
+  return {};
 }
 
 function saveAuth(token, user){
