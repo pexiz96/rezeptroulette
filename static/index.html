@@ -1270,8 +1270,7 @@ function drawRouletteRecipe(){
   await ensureRecipesLoaded();
 
   const response = await fetch(`/wochenplan?t=${Date.now()}`, {
-  cache: "no-store",
-  headers: authHeaders()
+  cache: "no-store"
 });
   const plan = await response.json();
 
@@ -1355,13 +1354,15 @@ function drawRouletteRecipe(){
     </div>
   `;
 }
+function authHeaders() {
+  return {};
+}
 
     async function setDayRecipeSlot(day, slot, id){
   if(!id) return;
 
-  const response = await fetch(`/wochenplan/${encodeURIComponent(day)}/${slot}/${Number(id)}`, {
-  method: "POST",
-  headers: authHeaders()
+  const response = await fetch(`/wochenplan?t=${Date.now()}`, {
+  cache: "no-store"
 });
 
   showToast(response.ok ? "Zum Wochenplan hinzugefügt!" : "Fehler beim Speichern");
@@ -1369,9 +1370,8 @@ function drawRouletteRecipe(){
 }
 
      async function clearDaySlot(day, slot){
-  const response = await fetch(`/wochenplan/${encodeURIComponent(day)}/${slot}/0`, {
-  method: "POST",
-  headers: authHeaders()
+  const response = await fetch(`/wochenplan?t=${Date.now()}`, {
+  cache: "no-store"
 });
 
   showToast(response.ok ? "Slot entfernt" : "Fehler beim Entfernen");
@@ -1423,13 +1423,9 @@ function drawRouletteRecipe(){
 
       try{
 
-        const response = await fetch(
-          `/wochenplan/${encodeURIComponent(day)}/${slot.id}/${Number(recipe.id)}`,
-          {
-  method: "POST",
-  headers: authHeaders()
-}
-        );
+        const response = await fetch(`/wochenplan?t=${Date.now()}`, {
+  cache: "no-store"
+});
 
         if(!response.ok){
           console.error("Fehler:", day, slot.id);
@@ -1473,9 +1469,8 @@ function drawRouletteRecipe(){
   return false;
 }
     async function resetWeek(){
-  const response = await fetch("/wochenplan/reset", {
-  method: "POST",
-  headers: authHeaders()
+  const response = await fetch(`/wochenplan?t=${Date.now()}`, {
+  cache: "no-store"
 });
 
   if(!response.ok){
