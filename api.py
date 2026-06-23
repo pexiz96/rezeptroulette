@@ -230,13 +230,22 @@ def roulette():
 @app.get("/wochenplan")
 def wochenplan():
     db = get_db()
-    plan = db.weekly_plan(1)
+    plan = get_weekly_plan(db)
     result = {}
 
-    # Immer alle sieben Tage zurückgeben, auch wenn in der DB etwas fehlt.
-    for day in DAYS:
-        recipe_id = plan.get(day)
-        result[day] = recipe_to_dict(db.get_recipe(recipe_id)) if recipe_id else None
+    for day, value in plan.items():
+        recipe_id = None
+
+        if isinstance(value, dict):
+            recipe_id = value.get(1) or value.get("1")
+        else:
+            recipe_id = value
+
+        if recipe_id:
+            recipe = db.get_recipe(recipe_id)
+            result[day] = asdict(recipe) if recipe else None
+        else:
+            result[day] = None
 
     return result
 
