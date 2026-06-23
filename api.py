@@ -337,16 +337,19 @@ def einkaufsliste():
 
         for recipe_id in recipe_ids:
             if recipe_id:
-                recipe = db.get_recipe(recipe_id)
+                recipe = db.get_recipe(int(recipe_id))
                 if recipe:
                     recipes.append(recipe)
 
-    ingredients = []
-
-    for recipe in recipes:
-        ingredients.extend(recipe.zutaten)
+    categories, pantry = shopping_list(recipes)
 
     return {
-        "recipes": [asdict(recipe) for recipe in recipes],
-        "ingredients": sorted(set(ingredients)),
+        "recipes": [recipe_to_dict(recipe) for recipe in recipes],
+        "categories": categories,
+        "pantry": pantry,
+        "ingredients": [
+            item
+            for items in categories.values()
+            for item in items
+        ],
     }
