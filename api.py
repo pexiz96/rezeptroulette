@@ -300,19 +300,28 @@ def shopping_list(recipes: list[Rezept]):
 @app.get("/einkaufsliste")
 def einkaufsliste():
     db = get_db()
-    plan = db.weekly_plan(1)
+    plan = get_weekly_plan(db)
 
     recipes = []
-    for recipe_id in plan.values():
-        if recipe_id:
-            recipe = db.get_recipe(recipe_id)
-            if recipe:
-                recipes.append(recipe)
 
-    categories, pantry = shopping_list(recipes)
+    for day_plan in plan.values():
+        if isinstance(day_plan, dict):
+            recipe_ids = day_plan.values()
+        else:
+            recipe_ids = [day_plan]
+
+        for recipe_id in recipe_ids:
+            if recipe_id:
+                recipe = db.get_recipe(recipe_id)
+                if recipe:
+                    recipes.append(recipe)
+
+    ingredients = []
+
+    for recipe in recipes:
+        ingredients.extend(recipe.zutaten)
 
     return {
-        "recipes": [recipe_to_dict(recipe) for recipe in recipes],
-        "categories": categories,
-        "pantry": pantry,
+        "recipes": [asdict(recipe) for recipe in recipes],
+        "ingredients": sorted(set(ingredients)),
     }
