@@ -300,6 +300,30 @@ def setze_wochenplan(day: str, recipe_id: int):
         "recipe": recipe_to_dict(recipe),
     }
 
+def category_for_ingredient(text: str) -> str:
+    t = text.lower()
+
+    if any(w in t for w in ["apfel", "banane", "tomate", "gurke", "paprika", "zwiebel", "kartoffel", "salat", "zucchini", "karotte", "möhre", "knoblauch"]):
+        return "Obst & Gemüse"
+
+    if any(w in t for w in ["hack", "fleisch", "hähnchen", "huhn", "rind", "schwein", "lachs", "fisch", "speck", "schinken"]):
+        return "Fleisch & Fisch"
+
+    if any(w in t for w in ["milch", "sahne", "käse", "mozzarella", "joghurt", "quark", "butter", "ei"]):
+        return "Kühlregal"
+
+    if any(w in t for w in ["nudel", "pasta", "reis", "mehl", "zucker", "brot", "tortilla", "lasagne"]):
+        return "Trockenwaren & Backwaren"
+
+    if any(w in t for w in ["dose", "tomaten", "bohnen", "mais", "passata", "sauce", "brühe", "pesto"]):
+        return "Konserven & Saucen"
+
+    if any(w in t for w in ["salz", "pfeffer", "öl", "essig", "paprika", "oregano", "curry", "chili"]):
+        return "Gewürze & Vorrat"
+
+    return "Sonstiges"
+
+
 def shopping_list(recipes: list[Rezept]):
     categories: dict[str, list[str]] = {}
     pantry: list[str] = []
@@ -312,14 +336,30 @@ def shopping_list(recipes: list[Rezept]):
 
         for zutat in zutaten:
             zutat = str(zutat).strip()
-            if zutat:
-                categories.setdefault("Zutaten", []).append(zutat)
+            if not zutat:
+                continue
 
-    # Doppelte Zutaten entfernen, Reihenfolge beibehalten.
-    for category, items in categories.items():
-        categories[category] = list(dict.fromkeys(items))
+            category = category_for_ingredient(zutat)
+            categories.setdefault(category, []).append(zutat)
 
-    return categories, pantry
+    order = [
+        "Obst & Gemüse",
+        "Fleisch & Fisch",
+        "Kühlregal",
+        "Trockenwaren & Backwaren",
+        "Konserven & Saucen",
+        "Gewürze & Vorrat",
+        "Sonstiges",
+    ]
+
+    sorted_categories = {}
+
+    for category in order:
+        items = categories.get(category, [])
+        if items:
+            sorted_categories[category] = list(dict.fromkeys(items))
+
+    return sorted_categories, pantry
 
 
 @app.get("/einkaufsliste")
