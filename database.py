@@ -226,6 +226,30 @@ class Database:
         self.seed_if_empty()
         self.import_builtin_recipes()
         self.import_external_recipes()
+        self.ensure_weekly_plan_columns()
+
+    def ensure_weekly_plan_columns(self):
+        columns = [
+            row["name"]
+            for row in self.conn.execute("PRAGMA table_info(weekly_plan)").fetchall()
+        ]
+
+        if "user_id" not in columns:
+            self.conn.execute(
+                "ALTER TABLE weekly_plan ADD COLUMN user_id INTEGER DEFAULT 1"
+        )
+
+        if "slot" not in columns:
+            self.conn.execute(
+                "ALTER TABLE weekly_plan ADD COLUMN slot INTEGER DEFAULT 1"
+        )
+        self.conn.execute(
+            """
+            CREATE UNIQUE INDEX IF NOT EXISTS idx_weekly_plan_user_day_slot
+            ON weekly_plan(user_id, day, slot)
+            """
+        )
+        self.conn.commit()
 
     def init_schema(self) -> None:
         self.conn.executescript(
