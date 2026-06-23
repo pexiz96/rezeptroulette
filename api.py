@@ -299,6 +299,70 @@ def setze_wochenplan(day: str, recipe_id: int):
         "recipe_id": recipe_id,
         "recipe": recipe_to_dict(recipe),
     }
+@app.post("/wochenplan/auto")
+def wochenplan_auto():
+    db = get_db()
+    recipes = db.all_recipes()
+
+    if not recipes:
+        raise HTTPException(status_code=404, detail="Keine Rezepte vorhanden")
+
+    plan = get_weekly_plan(db)
+    used_ids = set()
+    used_tags = set()
+
+    # Bereits geplante Rezepte sammeln
+    for day_plan in plan.values():
+        if isinstance(day_plan, dict):
+            for recipe_id in day_plan.values():
+                if recipe_id:
+                    used_ids.add(recipe_id)
+        elif day_plan:
+            used_ids.add(day_plan)
+
+    # Tags der bereits geplanten Rezepte sammeln
+    for recipe in recipes:
+        if recipe.id in used_ids:
+            used_tags.update(recipe.tags or [])
+
+    available = [recipe for recipe in recipes if recipe.id not in used_ids]
+
+    for day in DAYS:
+        current = plan.get(day)
+
+        if isinstance(current, dict):
+            occupied = current.get(1) or current.get("1")
+        else:
+            occupied = current
+
+        if occupied:
+            continue
+
+        if not available:
+            available = recipes.copy()
+
+        preferred = [
+            recipe for recipe in available
+            if not any(tag in used_tags for tag in (recipe.tags or []))
+        ]
+
+        if preferred:
+            recipe = random.choice(preferred)
+        else:
+            recipe = random.choice(available)
+
+        db.set_weekly_plan_slot(
+            DEFAULT_USER_ID,
+            day,
+            DEFAULT_SLOT,
+            recipe.id
+        )
+
+        used_ids.add(recipe.id)
+        used_tags.update(recipe.tags or [])
+        available = [r for r in available if r.id != recipe.id]
+
+    return {"message": "Woche automatisch geplant"}
 
 def category_for_ingredient(text: str) -> str:
     t = text.lower()
