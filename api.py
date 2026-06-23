@@ -216,7 +216,7 @@ def roulette():
 @app.get("/wochenplan")
 def wochenplan():
     db = get_db()
-    plan = db.weekly_plan()
+    plan = db.weekly_plan(1)
     result = {}
 
     # Immer alle sieben Tage zurückgeben, auch wenn in der DB etwas fehlt.
@@ -286,7 +286,7 @@ def shopping_list(recipes: list[Rezept]):
 @app.get("/einkaufsliste")
 def einkaufsliste():
     db = get_db()
-    plan = db.weekly_plan()
+    plan = db.weekly_plan(1)
 
     recipes = []
     for recipe_id in plan.values():
