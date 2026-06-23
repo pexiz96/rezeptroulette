@@ -61,7 +61,6 @@
     textarea{width:100%;min-height:150px;resize:vertical}
     select{width:100%;margin-top:14px;background:var(--cream)}
 
-
     .primary{
       color:white;
       background:linear-gradient(135deg,var(--orange),var(--amber));
@@ -230,22 +229,7 @@
     }
 
     .card:hover{transform:translateY(-4px)}
-    .card img,
-.week-image,
-.detail img,
-.roulette-image-wrap img{
-  width:100%;
-  object-fit:cover;
-  object-position:center;
-  display:block;
-  background:var(--cream);
-}
-
-.card img{
-  height:280px;
-  aspect-ratio:4 / 3;
-}
-
+    .card img{width:100%;height:280px;object-fit:cover;object-position:center;display:block}
     .card-body{padding:24px}
     .card h3{margin:0;font-size:28px;line-height:1.12;min-height:64px;letter-spacing:-.04em}
 
@@ -268,14 +252,7 @@
     .placeholder{height:220px;background:linear-gradient(135deg,var(--orange),var(--amber));display:grid;place-items:center;color:white;font-weight:900}
 
     .detail{background:var(--white);border-radius:32px;overflow:hidden;box-shadow:var(--shadow);margin-top:22px}
-    .detail img{
-  width:100%;
-  aspect-ratio: 16 / 9;
-  height:auto;
-  object-fit:cover;
-  object-position:center center;
-  display:block;
-}
+    .detail img{width:100%;height:420px;object-fit:cover;object-position:center;display:block}
     .detail-body{padding:30px;display:flex;flex-direction:column;gap:18px}
     .columns{display:grid;grid-template-columns:.8fr 1.2fr;gap:28px}
 
@@ -292,15 +269,7 @@
     .chips{display:flex;flex-wrap:wrap;gap:12px}
     .shopping-item{display:flex;align-items:center;gap:12px}
     .shopping-item:has(input:checked){opacity:.55;text-decoration:line-through}
-    .week-image{
-  width:100%;
-  aspect-ratio: 16 / 10;
-  height:auto;
-  object-fit:cover;
-  object-position:center center;
-  border-radius:18px;
-  margin-bottom:14px;
-}
+    .week-image{width:100%;height:170px;object-fit:cover;border-radius:18px;margin-bottom:14px}
     .week-title{font-size:18px;font-weight:850}
 
     .rating{display:flex;gap:6px;flex-wrap:wrap}
@@ -370,12 +339,11 @@
     }
 
     .meal-filter-wrap{
-  display:grid;
-  grid-template-columns:repeat(5, 1fr);
-  gap:20px 22px;
-  align-items:start;
-  justify-items:center;
-}
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(82px,1fr));
+      gap:16px;
+      align-items:start;
+    }
 
     .meal-circle{
       all:unset;
@@ -447,14 +415,7 @@
     }
 
     .roulette-image-wrap{min-height:380px;background:var(--cream);overflow:hidden}
-    .roulette-image-wrap img,
-.roulette-image-wrap .placeholder{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  object-position:center center;
-  display:block;
-}
+    .roulette-image-wrap img,.roulette-image-wrap .placeholder{width:100%;height:100%;min-height:380px;object-fit:cover;display:block}
 
     .roulette-result-body{padding:48px;display:flex;flex-direction:column;justify-content:center;gap:4px}
     .roulette-result-body h2{font-size:42px;line-height:1.05;margin:18px 0;letter-spacing:-.05em}
@@ -516,49 +477,6 @@
       .meal-circle span{font-size:13px}
       h1{font-size:44px}
     }
-
-    .modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.45);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-
-.hidden {
-  display: none;
-}
-
-.modal-box {
-  background: white;
-  padding: 24px;
-  border-radius: 20px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-}
-
-.modal-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.modal-grid button {
-  padding: 12px;
-  border: none;
-  border-radius: 14px;
-  background: #f3f3f3;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.modal-grid button:hover {
-  background: #e5e5e5;
-}
   </style>
 </head>
 
@@ -584,7 +502,7 @@
     <div class="header-actions">
       <button class="secondary" onclick="showHome()">Startseite</button>
       <button class="secondary" onclick="toggleDarkMode()">🌙</button>
-<!-- Login deaktiviert -->    </div>
+    </div>
   </header>
 
   <main>
@@ -632,18 +550,6 @@
     let selectedMealType = "Alle";
     let cookIndex = 0;
     let rouletteHistory = JSON.parse(localStorage.getItem("rouletteHistory") || "[]").map(Number);
-    let selectedWeekSlotFilter = "Alle";
-    let currentUser = JSON.parse(localStorage.getItem("user") || "null");
-    let authToken = localStorage.getItem("token") || "";
-
-  
-function updateAuthButton(){
-  return;
-}
-function setWeekSlotFilter(slot){
-  selectedWeekSlotFilter = slot;
-  loadWeeklyPlan();
-}
 
     const ingredientAlternatives = {
       "mehl": ["Dinkelmehl", "Hafermehl", "Mandelmehl", "Vollkornmehl"],
@@ -814,54 +720,28 @@ function setWeekSlotFilter(slot){
     function updateStats(){}
 
     async function renderHomeSections(){
-    const c = document.getElementById("content");
-  try{
-    await ensureRecipesLoaded();
-
-    const todayKey = new Date().toISOString().slice(0, 10);
-    const savedKey = localStorage.getItem("recommendedDate");
-    let recommendedIds = JSON.parse(localStorage.getItem("recommendedIds") || "[]");
-
-    if(savedKey !== todayKey || !recommendedIds.length){
-      recommendedIds = [...allRecipes]
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 3)
-        .map(r => Number(r.id));
-
-      localStorage.setItem("recommendedDate", todayKey);
-      localStorage.setItem("recommendedIds", JSON.stringify(recommendedIds));
+      const c = document.getElementById("content");
+      try{
+        await ensureRecipesLoaded();
+        const recommended = allRecipes.slice(0,3);
+        c.innerHTML = `
+          <div class="home-sections">
+            <section>
+              <div class="section-head">
+                <div><h2>⭐ Heute empfohlen</h2><p class="muted">Drei leckere Ideen für heute.</p></div>
+                <button class="secondary" onclick="loadRecipes()">Alle ansehen →</button>
+              </div>
+              ${recommended.length ? `<div class="clean-recipe-grid">${recommended.map(simpleRecipeCard).join("")}</div>` : `<div class="empty-state">Noch keine Rezepte geladen.</div>`}
+            </section>
+            <section class="home-benefits">
+              <div>🌿 <strong>Einfach & schnell</strong><span>Für jeden Tag</span></div>
+              <div>❤️ <strong>Lieblingsrezepte</strong><span>Speichern & verwalten</span></div>
+              <div>📅 <strong>Planung leicht gemacht</strong><span>Deine Woche im Überblick</span></div>
+              <div>♻️ <strong>Lebensmittel retten</strong><span>Gut für dich & die Umwelt</span></div>
+            </section>
+          </div>`;
+      }catch(error){c.innerHTML = ""}
     }
-
-    let recommended = recommendedIds
-      .map(id => allRecipes.find(r => Number(r.id) === Number(id)))
-      .filter(Boolean);
-
-    if(recommended.length < 3){
-      recommended = [...allRecipes]
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 3);
-    }
-
-    c.innerHTML = `
-      <div class="home-sections">
-        <section>
-          <div class="section-head">
-            <div><h2>⭐ Heute empfohlen</h2><p class="muted">Drei leckere Ideen für heute.</p></div>
-            <button class="secondary" onclick="loadRecipes()">Alle ansehen →</button>
-          </div>
-          ${recommended.length ? `<div class="clean-recipe-grid">${recommended.map(simpleRecipeCard).join("")}</div>` : `<div class="empty-state">Noch keine Rezepte geladen.</div>`}
-        </section>
-        <section class="home-benefits">
-          <div>🌿 <strong>Einfach & schnell</strong><span>Für jeden Tag</span></div>
-          <div>❤️ <strong>Lieblingsrezepte</strong><span>Speichern & verwalten</span></div>
-          <div>📅 <strong>Planung leicht gemacht</strong><span>Deine Woche im Überblick</span></div>
-          <div>♻️ <strong>Lebensmittel retten</strong><span>Gut für dich & die Umwelt</span></div>
-        </section>
-      </div>`;
-  }catch(error){
-    c.innerHTML = "";
-  }
-}
 
     function simpleRecipeCard(recipe){
       const img = imageUrl(recipe);
@@ -886,169 +766,45 @@ function setWeekSlotFilter(slot){
         </div>`;
     }
 
-    let selectedRecipeFilter = "Alle";
+    async function loadRecipes(){
+      setActiveNav("recipes");
+      hideHome();
+      const c = document.getElementById("content");
+      showSkeleton(c);
+      await ensureRecipesLoaded();
+      c.innerHTML = `
+        <button class="secondary" onclick="showHome()">← Zurück</button>
+        <h2>🍲 Alle Rezepte</h2>
+        <div class="filters">
+          <button class="secondary" onclick="deleteImportedRecipes()">🗑️ Importierte Rezepte löschen</button>
+          <input id="searchInput" placeholder="Wonach hast du Hunger? Pasta, Reis, Käse..." oninput="renderRecipes()">
+          <label class="favorite-filter"><input type="checkbox" id="favoriteOnly" onchange="renderRecipes()"> Nur Favoriten</label>
+          <select id="kitchenFilter" onchange="renderRecipes()"><option value="">Alle Küchen</option></select>
+        </div>
+        <div class="grid" id="recipeGrid"></div>`;
+      fillKitchenFilter();
+      renderRecipes();
+    }
 
-async function loadRecipes(){
-  selectedRecipeFilter = "Alle";
-  setActiveNav("recipes");
-  hideHome();
+    function fillKitchenFilter(){
+      const s = document.getElementById("kitchenFilter");
+      const kitchens = [...new Set(allRecipes.map(r => r.kueche).filter(Boolean))].sort();
+      s.innerHTML = `<option value="">Alle Küchen</option>` + kitchens.map(k => `<option value="${k}">${k}</option>`).join("");
+    }
 
-  const c = document.getElementById("content");
-  showSkeleton(c);
-  await ensureRecipesLoaded();
-
-  c.innerHTML = `
-    <button class="secondary" onclick="showHome()">← Zurück</button>
-    <h2>🍲 Alle Rezepte</h2>
-    <div class="buttons" style="margin:18px 0;">
-      <button class="secondary" id="recipeFilterButton" onclick="toggleRecipeFilters()">
-      🔽 Filter anzeigen
-    </button>
-    </div>
-    <div id="recipeFilters" class="meal-filter-panel hidden" style="margin:18px 0 26px;">      <div class="meal-filter-title">
-        <span>Filter wählen</span>
-        <span>Rezepte</span>
-      </div>
-
-      <input
-        id="searchInput"
-        placeholder="Wonach hast du Hunger?"
-        oninput="renderRecipes()"
-        style="width:100%; margin-bottom:20px;"
-      >
-
-      <div class="meal-filter-wrap">
-        <button class="meal-circle active" onclick="filterRecipesByType('Alle', this)">
-          <div class="meal-icon">🍽️</div>
-          <span>Alle</span>
-        </button>
-
-        <button class="meal-circle" onclick="filterRecipesByType('Frühstück', this)">
-          <div class="meal-icon">🌅</div>
-          <span>Frühstück</span>
-        </button>
-
-        <button class="meal-circle" onclick="filterRecipesByType('Mittagessen', this)">
-          <div class="meal-icon">☀️</div>
-          <span>Mittag</span>
-        </button>
-
-        <button class="meal-circle" onclick="filterRecipesByType('Abendbrot', this)">
-          <div class="meal-icon">🌙</div>
-          <span>Abend</span>
-        </button>
-
-        <button class="meal-circle" onclick="filterRecipesByType('Nudeln', this)">
-          <div class="meal-icon">🍝</div>
-          <span>Nudeln</span>
-        </button>
-
-        <button class="meal-circle" onclick="filterRecipesByType('Auflauf', this)">
-          <div class="meal-icon">🥘</div>
-          <span>Auflauf</span>
-        </button>
-
-        <button class="meal-circle" onclick="filterRecipesByType('Suppe', this)">
-          <div class="meal-icon">🍲</div>
-          <span>Suppe</span>
-        </button>
-
-        <button class="meal-circle" onclick="filterRecipesByType('Vegetarisch', this)">
-          <div class="meal-icon">🥦</div>
-          <span>Veggie</span>
-        </button>
-
-        <button class="meal-circle" onclick="filterRecipesByType('Snack', this)">
-          <div class="meal-icon">🥪</div>
-          <span>Snack</span>
-        </button>
-
-        <button class="meal-circle" onclick="filterRecipesByType('Dessert', this)">
-          <div class="meal-icon">🍰</div>
-          <span>Dessert</span>
-        </button>
-      </div>
-    </div>
-
-    <div class="grid" id="recipeGrid"></div>
-  `;
-
-  renderRecipes();
-}
-
-function filterRecipesByType(type, button){
-  selectedRecipeFilter = type;
-
-  document.querySelectorAll(".meal-filter-panel .meal-circle").forEach(btn => {
-    btn.classList.remove("active");
-  });
-
-  button.classList.add("active");
-  renderRecipes();
-}
-
-function renderRecipes(){
-  const search = document.getElementById("searchInput")?.value.toLowerCase() || "";
-  const grid = document.getElementById("recipeGrid");
-  if(!grid) return;
-
-  const selected = selectedRecipeFilter;
-
-  const filtered = allRecipes.filter(r => {
-    const ingredientText = (r.zutaten || []).join(" ").toLowerCase();
-    const tagText = (r.tags || []).join(" ").toLowerCase();
-
-    const text = [
-  r.name || "",
-  r.kueche || "",
-  r.kategorie || "",
-  r.anleitung || "",
-  ...(r.tags || []),
-  ...(r.zutaten || [])
-].join(" ").toLowerCase();
-
-    let matchesCategory = true;
-
-  if(selected !== "Alle"){
-    matchesCategory = recipeMatchesRouletteFilter(r, selected);
-}
-
-
-    return (
-      (!search ||
-        String(r.name || "").toLowerCase().includes(search) ||
-        ingredientText.includes(search) ||
-        tagText.includes(search))
-      && matchesCategory
-    );
-  });
-
-  grid.innerHTML = filtered.length
-    ? filtered.map(recipeCard).join("")
-    : `<div class="empty-state"><h2>Keine Rezepte gefunden</h2><p>Versuche einen anderen Filter oder Suchbegriff.</p></div>`;
-}
-function toggleRecipeFilters(){
-  const box = document.getElementById("recipeFilters");
-  const btn = document.getElementById("recipeFilterButton");
-
-  if(!box || !btn) return;
-
-  box.classList.toggle("hidden");
-
-  btn.textContent = box.classList.contains("hidden")
-    ? "🔽 Filter anzeigen"
-    : "🔼 Filter ausblenden";
-}
-function formatSteps(anleitung){
-  return String(anleitung || "Keine Anleitung vorhanden.")
-    .replaceAll("\\n", "\n")
-    .split(/\n|(?=\d+\.\s)/)
-    .map(s => s.trim())
-    .filter(Boolean)
-    .map(s => `<div class="step">${s}</div>`)
-    .join("");
-}
-
+    function renderRecipes(){
+      const search = document.getElementById("searchInput")?.value.toLowerCase() || "";
+      const kitchen = document.getElementById("kitchenFilter")?.value || "";
+      const favoriteOnly = document.getElementById("favoriteOnly")?.checked;
+      const grid = document.getElementById("recipeGrid");
+      if(!grid) return;
+      const filtered = allRecipes.filter(r => {
+        const ingredientText = (r.zutaten || []).join(" ").toLowerCase();
+        const tagText = (r.tags || []).join(" ").toLowerCase();
+        return (!search || String(r.name || "").toLowerCase().includes(search) || ingredientText.includes(search) || tagText.includes(search)) && (!kitchen || r.kueche === kitchen) && (!favoriteOnly || isFavorite(r.id));
+      });
+      grid.innerHTML = filtered.length ? filtered.map(recipeCard).join("") : `<div class="empty-state"><h2>Keine Rezepte gefunden</h2><p>Versuche einen anderen Suchbegriff.</p></div>`;
+    }
 
     async function showRecipe(id){
       recipeScrollPosition = window.scrollY;
@@ -1068,132 +824,107 @@ function formatSteps(anleitung){
             ${ratingStars(recipe.id)}
             <div class="meta"><span>🌍 ${recipe.kueche || "Unbekannt"}</span><span>🍽️ ${recipe.portionen || "?"} Portionen</span><span>⏱️ ${recipe.kochzeit || "?"} Min</span><span>🔥 ${recipe.schwierigkeit || "Einfach"}</span></div>
             <div class="buttons"><button class="primary" onclick="startCookMode(${recipe.id})">👨‍🍳 Kochmodus</button><button class="secondary" onclick="quickAddToPlan(${recipe.id})">📅 Einplanen</button><button class="secondary" onclick="shareRecipe(${recipe.id})">📤 Teilen</button></div>
-            <div class="columns"><div><h2>Zutaten</h2><div class="ingredients">${(recipe.zutaten || []).map(renderIngredientBlock).join("")}</div></div><div><h2>Anleitung</h2><div class="steps">
-  ${formatSteps(recipe.anleitung || "Keine Anleitung vorhanden.")}
-</div></div></div>
+            <div class="columns"><div><h2>Zutaten</h2><div class="ingredients">${(recipe.zutaten || []).map(renderIngredientBlock).join("")}</div></div><div><h2>Anleitung</h2><div class="steps">${(recipe.anleitung || "Keine Anleitung vorhanden.").split("\n").filter(Boolean).map(s => `<div class="step">${s}</div>`).join("")}</div></div></div>
           </div>
         </div>`;
       window.scrollTo({top:0,behavior:"smooth"});
     }
 
-  function toggleRouletteFilters(){
-  const box = document.getElementById("rouletteFilters");
-  if(box) box.classList.toggle("hidden");
-}
-
-async function loadRoulette(){
-  setActiveNav("home");
-  hideHome();
-
-  const content = document.getElementById("content");
-
-  await ensureRecipesLoaded();
-
-  if(!allRecipes.length){
-    content.innerHTML = `<div class="empty-state">Keine Rezepte vorhanden.</div>`;
-    return;
-  }
-
-  selectedMealType = "Alle";
-
-  content.innerHTML = `
-    <section class="roulette-page">
-      <button class="secondary back-btn" onclick="showHome()">← Zurück</button>
-
-      <div class="roulette-header">
-        <span class="hero-badge">🎲 Rezept-Roulette</span>
-        <h1>Was darf es sein?</h1>
-        <p class="muted">Ziehe ein Rezept oder filtere vorher nach Kategorie.</p>
-      </div>
-
-      <div class="roulette-shell">
-        <div class="meal-filter-panel">
-          <div class="meal-filter-title">
-            <span>Filter</span>
-            <button class="secondary" onclick="toggleRouletteFilters()">Ein-/ausklappen</button>
+    async function loadRoulette(){
+      setActiveNav("home");
+      hideHome();
+      const content = document.getElementById("content");
+      await ensureRecipesLoaded();
+      if(!allRecipes.length){content.innerHTML = `<div class="empty-state">Keine Rezepte vorhanden.</div>`;return}
+      selectedMealType = "Alle";
+      content.innerHTML = `
+        <section class="roulette-page">
+          <button class="secondary back-btn" onclick="showHome()">← Zurück</button>
+          <div class="roulette-header">
+            <span class="hero-badge">🎲 Rezept-Roulette</span>
+            <h1>Was darf es sein?</h1>
+            <p class="muted">Wähle eine Richtung und lass dich inspirieren.</p>
           </div>
-
-          <div id="rouletteFilters" class="meal-filter-wrap hidden">
-            <button class="meal-circle active" onclick="selectMealType('Alle', this)"><div class="meal-icon">🍽️</div><span>Alle</span></button>
-            <button class="meal-circle" onclick="selectMealType('Frühstück', this)"><div class="meal-icon">🌅</div><span>Frühstück</span></button>
-            <button class="meal-circle" onclick="selectMealType('Mittagessen', this)"><div class="meal-icon">☀️</div><span>Mittag</span></button>
-            <button class="meal-circle" onclick="selectMealType('Abendbrot', this)"><div class="meal-icon">🌙</div><span>Abend</span></button>
-            <button class="meal-circle" onclick="selectMealType('Nudeln', this)"><div class="meal-icon">🍝</div><span>Nudeln</span></button>
-            <button class="meal-circle" onclick="selectMealType('Auflauf', this)"><div class="meal-icon">🥘</div><span>Auflauf</span></button>
-            <button class="meal-circle" onclick="selectMealType('Suppe', this)"><div class="meal-icon">🍲</div><span>Suppe</span></button>
-            <button class="meal-circle" onclick="selectMealType('Vegetarisch', this)"><div class="meal-icon">🥦</div><span>Veggie</span></button>
-            <button class="meal-circle" onclick="selectMealType('Snack', this)"><div class="meal-icon">🥪</div><span>Snack</span></button>
-            <button class="meal-circle" onclick="selectMealType('Dessert', this)"><div class="meal-icon">🍰</div><span>Dessert</span></button>
+          <div class="roulette-shell">
+            <div class="meal-filter-panel">
+              <div class="meal-filter-title"><span>Filter wählen</span><span>10 Kategorien</span></div>
+              <div class="meal-filter-wrap">
+                <button class="meal-circle active" onclick="selectMealType('Alle', this)"><div class="meal-icon">🍽️</div><span>Alle</span></button>
+                <button class="meal-circle" onclick="selectMealType('Frühstück', this)"><div class="meal-icon">🌅</div><span>Frühstück</span></button>
+                <button class="meal-circle" onclick="selectMealType('Mittagessen', this)"><div class="meal-icon">☀️</div><span>Mittag</span></button>
+                <button class="meal-circle" onclick="selectMealType('Abendbrot', this)"><div class="meal-icon">🌙</div><span>Abend</span></button>
+                <button class="meal-circle" onclick="selectMealType('Nudeln', this)"><div class="meal-icon">🍝</div><span>Nudeln</span></button>
+                <button class="meal-circle" onclick="selectMealType('Auflauf', this)"><div class="meal-icon">🥘</div><span>Auflauf</span></button>
+                <button class="meal-circle" onclick="selectMealType('Suppe', this)"><div class="meal-icon">🍲</div><span>Suppe</span></button>
+                <button class="meal-circle" onclick="selectMealType('Vegetarisch', this)"><div class="meal-icon">🥦</div><span>Veggie</span></button>
+                <button class="meal-circle" onclick="selectMealType('Snack', this)"><div class="meal-icon">🥪</div><span>Snack</span></button>
+                <button class="meal-circle" onclick="selectMealType('Dessert', this)"><div class="meal-icon">🍰</div><span>Dessert</span></button>
+              </div>
+            </div>
+            <button class="roulette-draw-btn" onclick="drawRouletteRecipe()"><div class="dice">🎲</div><span>Rezept<br>ziehen</span></button>
           </div>
-        </div>
-
-        <button class="roulette-draw-btn" onclick="drawRouletteRecipe()">
-          <div class="dice">🎲</div>
-          <span>Rezept<br>ziehen</span>
-        </button>
-      </div>
-
-      <div id="rouletteResult"></div>
-    </section>
-  `;
-
-  drawRouletteRecipe();
-}
-
-function recipeMatchesRouletteFilter(recipe, selected){
-  const text = [
-    recipe.name || "",
-    recipe.kueche || "",
-    recipe.kategorie || "",
-    recipe.anleitung || "",
-    ...(recipe.tags || []),
-    ...(recipe.zutaten || [])
-  ].join(" ").toLowerCase();
-
-  const isBreakfast = text.includes("frühstück") || text.includes("pancake") || text.includes("waffel") || text.includes("oats") || text.includes("bowl");
-  const isDessert = text.includes("dessert") || text.includes("kuchen") || text.includes("süß") || text.includes("schoko") || text.includes("himbeer") || text.includes("erdbeer");
-
-  if(selected === "Alle") return true;
-
-  if(selected === "Frühstück"){
-    return isBreakfast;
-  }
-
-  if(selected === "Mittagessen"){
-    if(isBreakfast || isDessert) return false;
-    return text.includes("mittag") || text.includes("hauptgericht") || text.includes("herzhaft") || text.includes("nudel") || text.includes("pasta") || text.includes("reis") || text.includes("hähnchen") || text.includes("auflauf") || text.includes("suppe");
-  }
-
-  if(selected === "Abendbrot"){
-    if(isBreakfast || isDessert) return false;
-    return text.includes("abend") || text.includes("brot") || text.includes("wrap") || text.includes("toast") || text.includes("burger") || text.includes("snack");
-  }
-
-  if(selected === "Nudeln") return text.includes("nudel") || text.includes("pasta") || text.includes("spaghetti") || text.includes("makkaroni") || text.includes("tortellini");
-  if(selected === "Auflauf") return text.includes("auflauf") || text.includes("gratin") || text.includes("überbacken");
-  if(selected === "Suppe") return text.includes("suppe") || text.includes("eintopf");
-  if(selected === "Vegetarisch") return text.includes("vegetarisch") || text.includes("veggie") || text.includes("gemüse");
-  if(selected === "Snack") return text.includes("snack") || text.includes("wrap") || text.includes("toast") || text.includes("burger");
-  if(selected === "Dessert") return isDessert;
-
-  return true;
-}
-
-function drawRouletteRecipe(){
+          <div id="rouletteResult"></div>
+        </section>`;
+      drawRouletteRecipe();
+    }
+    function drawRouletteRecipe(){
   const selected = selectedMealType;
   const result = document.getElementById("rouletteResult");
   if(!result) return;
 
-  let pool = allRecipes.filter(recipe => recipeMatchesRouletteFilter(recipe, selected));
+  let pool = allRecipes;
+
+  if(selected !== "Alle"){
+    pool = allRecipes.filter(recipe => {
+      const text = [
+        recipe.name || "",
+        recipe.kueche || "",
+        recipe.kategorie || "",
+        ...(recipe.tags || [])
+      ].join(" ").toLowerCase();
+
+      if(selected === "Frühstück"){
+        return text.includes("frühstück");
+      }
+
+      if(selected === "Mittagessen"){
+        return text.includes("mittag") || text.includes("herzhaft") || text.includes("hauptgericht");
+      }
+
+      if(selected === "Abendbrot"){
+        return text.includes("abend") || text.includes("brot") || text.includes("snack");
+      }
+
+      if(selected === "Nudeln"){
+        return text.includes("nudel") || text.includes("pasta");
+      }
+
+      if(selected === "Auflauf"){
+        return text.includes("auflauf");
+      }
+
+      if(selected === "Suppe"){
+        return text.includes("suppe");
+      }
+
+      if(selected === "Vegetarisch"){
+        return text.includes("vegetarisch");
+      }
+
+      if(selected === "Snack"){
+        return text.includes("snack");
+      }
+
+      if(selected === "Dessert"){
+        return text.includes("dessert") || text.includes("kuchen");
+      }
+
+      return true;
+    });
+  }
 
   if(!pool.length){
-    result.innerHTML = `
-      <div class="empty-state">
-        <h2>Keine Rezepte gefunden</h2>
-        <p>Für "${selected}" gibt es aktuell keine passenden Rezepte.</p>
-        <button class="primary" onclick="selectedMealType='Alle'; drawRouletteRecipe()">Alle Rezepte ziehen</button>
-      </div>
-    `;
+    result.innerHTML = `<div class="empty-state">Keine Rezepte für ${selected} gefunden.</div>`;
     return;
   }
 
@@ -1204,6 +935,7 @@ function drawRouletteRecipe(){
     availablePool = pool;
   }
 
+  // SPIN ANIMATION
   let spinCount = 0;
   const spinMax = 14;
 
@@ -1214,8 +946,9 @@ function drawRouletteRecipe(){
     result.innerHTML = `
       <div class="roulette-result-card">
         <div class="roulette-image-wrap">
-          ${tempImg ? `<img src="${tempImg}" alt="${cleanRecipeText(tempRecipe.name)}">` : `<div class="placeholder">Kein Bild</div>`}
+          ${tempImg ? `<img src="${tempImg}" alt="${tempRecipe.name}">` : `<div class="placeholder">Kein Bild</div>`}
         </div>
+
         <div class="roulette-result-body">
           <span class="badge">🎰 Dreht...</span>
           <h2>${cleanRecipeText(tempRecipe.name)}</h2>
@@ -1229,8 +962,10 @@ function drawRouletteRecipe(){
       clearInterval(spinner);
 
       const winner = availablePool[Math.floor(Math.random() * availablePool.length)];
+
       rouletteHistory.unshift(Number(winner.id));
-      rouletteHistory = rouletteHistory.slice(0, Math.min(12, Math.floor(pool.length * 0.7)));
+      const maxHistory = Math.min(12, Math.floor(pool.length * 0.7));
+      rouletteHistory = rouletteHistory.slice(0, maxHistory);
       localStorage.setItem("rouletteHistory", JSON.stringify(rouletteHistory));
 
       const img = imageUrl(winner);
@@ -1238,7 +973,7 @@ function drawRouletteRecipe(){
       result.innerHTML = `
         <div class="roulette-result-card">
           <div class="roulette-image-wrap">
-            ${img ? `<img src="${img}" alt="${cleanRecipeText(winner.name)}">` : `<div class="placeholder">Kein Bild</div>`}
+            ${img ? `<img src="${img}" alt="${winner.name}">` : `<div class="placeholder">Kein Bild</div>`}
           </div>
 
           <div class="roulette-result-body">
@@ -1246,14 +981,23 @@ function drawRouletteRecipe(){
             <h2>${cleanRecipeText(winner.name)}</h2>
 
             <div class="meta">
+              ${winner.kueche && winner.kueche !== "PDF Import"
+                ? `<span>🌍 ${winner.kueche}</span>`
+                : ""}
               <span>⏱️ ${winner.kochzeit || "?"} Min</span>
               <span>🔥 ${winner.schwierigkeit || "Einfach"}</span>
             </div>
 
             <div class="buttons">
               <button class="primary" onclick="showRecipe(${winner.id})">Rezept öffnen</button>
-              <button class="secondary" onclick="quickAddToPlan(${winner.id})">📅 Zum Wochenplan</button>
-              <button class="secondary" onclick="drawRouletteRecipe()">🔁 Nochmal ziehen</button>
+
+              <button class="secondary" onclick="quickAddToPlan(${winner.id})">
+                📅 Zum Wochenplan
+              </button>
+
+              <button class="secondary" onclick="drawRouletteRecipe()">
+                🔁 Nochmal ziehen
+              </button>
             </div>
           </div>
         </div>
@@ -1262,506 +1006,217 @@ function drawRouletteRecipe(){
   }, 120);
 }
 
-  async function loadWeeklyPlan(){
-  setActiveNav("plan");
-  hideHome();
+    function weekDays(){
+      return ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"];
+    }
 
-  const c = document.getElementById("content");
-  await ensureRecipesLoaded();
+    function recipeFromPlanEntry(entry){
+      if(!entry) return null;
+      if(typeof entry === "object") return entry;
+      const id = Number(entry);
+      return allRecipes.find(recipe => Number(recipe.id) === id) || null;
+    }
 
-  const response = await fetch(`/wochenplan?t=${Date.now()}`, {
-  cache: "no-store"
-});
-  const plan = await response.json();
-
-  if(plan.error){
-  showToast(plan.error);
-  return;
-}
-
-  const days = ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"];
-  const slots = [
-    {id: 1, name: "Frühstück"},
-    {id: 2, name: "Mittag"},
-    {id: 3, name: "Abend"}
-  ];
-
-  c.innerHTML = `
-    <button class="secondary" onclick="showHome()">← Zurück</button>
-    <h2>📅 Wochenplan</h2>
-
-    <div class="buttons">
-      <button class="primary" type="button" onclick="autoFillWeek()">✨ Woche automatisch planen</button>
-      <button class="secondary" type="button" onclick="resetWeek()">🗑️ Woche leeren</button>
-    </div>
-    <div class="buttons" style="margin-top:14px;">
-  <button class="secondary" onclick="setWeekSlotFilter('Alle')">🍽️ Alle</button>
-
-  <button class="secondary" onclick="setWeekSlotFilter('Frühstück')">
-    🌅 Frühstück
-  </button>
-
-  <button class="secondary" onclick="setWeekSlotFilter('Mittag')">
-    ☀️ Mittag
-  </button>
-
-  <button class="secondary" onclick="setWeekSlotFilter('Abend')">
-    🌙 Abendessen
-  </button>
-</div>
-
-    <div class="grid">
-      ${days.map(day => `
-        <div class="card">
-          <div class="card-body">
-            <h3>📅 ${day}</h3>
-
-            ${slots
-  .filter(slot =>
-    selectedWeekSlotFilter === "Alle" ||
-    slot.name === selectedWeekSlotFilter
-  )
-  .map(slot => {
-              const recipeId = plan?.[day]?.[slot.id] ?? plan?.[day]?.[String(slot.id)] ?? null;
-              const recipe = allRecipes.find(r => Number(r.id) === Number(recipeId));
-
-              return `
-                <div style="margin:14px 0;padding:14px;border-radius:18px;background:var(--cream);">
-                  <strong>${slot.name}</strong>
-
-                  ${recipe ? `
-                    ${imageUrl(recipe) ? `<img class="week-image" src="${imageUrl(recipe)}" alt="${cleanRecipeText(recipe.name)}">` : ""}
-                    <p class="week-title">${cleanRecipeText(recipe.name)}</p>
-
-                    <div class="card-actions">
-                      <button class="primary" type="button" onclick="event.stopPropagation(); showRecipe(${recipe.id})">Öffnen</button>
-                      <button class="secondary" type="button" onclick="event.stopPropagation(); clearDaySlot('${day}', ${slot.id})">❌ Entfernen</button>
-                    </div>
-                  ` : `<p class="week-empty">Noch kein Rezept gewählt</p>`}
-
-                  <select onclick="event.stopPropagation()" onchange="setDayRecipeSlot('${day}', ${slot.id}, this.value)">
-                    <option value="">Rezept auswählen</option>
-                    ${allRecipes
-  .filter(r => recipeMatchesSlot(r, slot))
-  .map(r => `<option value="${r.id}">${cleanRecipeText(r.name)}</option>`)
-  .join("")}                  </select>
-                </div>
-              `;
-            }).join("")}
-          </div>
-        </div>
-      `).join("")}
-    </div>
-  `;
-}
-function authHeaders() {
-  return {};
-}
-
-    async function setDayRecipeSlot(day, slot, id){
-  if(!id) return;
-
-  const response = await fetch(`/wochenplan?t=${Date.now()}`, {
-  cache: "no-store"
-});
-
-  showToast(response.ok ? "Zum Wochenplan hinzugefügt!" : "Fehler beim Speichern");
-  await loadWeeklyPlan();
-}
-
-     async function clearDaySlot(day, slot){
-  const response = await fetch(`/wochenplan?t=${Date.now()}`, {
-  cache: "no-store"
-});
-
-  showToast(response.ok ? "Slot entfernt" : "Fehler beim Entfernen");
-  await loadWeeklyPlan();
-}
-     async function autoFillWeek(){
-  showToast("Woche wird geplant...");
-
-  await ensureRecipesLoaded();
-
-  const days = ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"];
-
-  const slots = [
-    {id: 1, name: "Frühstück"},
-    {id: 2, name: "Mittag"},
-    {id: 3, name: "Abend"}
-  ];
-
-  const usedIds = [];
-
-  for(const day of days){
-
-    for(const slot of slots){
-
-      const pool = allRecipes.filter(recipe =>
-        recipeMatchesSlot(recipe, slot)
-      );
-
-      if(!pool.length){
-        continue;
+    async function fetchJson(url, options = {}){
+      const response = await fetch(url, options);
+      let data = null;
+      try{ data = await response.json(); }catch(_err){}
+      if(!response.ok){
+        const message = data?.detail || data?.error || "Serverfehler";
+        throw new Error(message);
       }
+      return data;
+    }
 
-      const available = pool.filter(recipe =>
-        !usedIds.includes(Number(recipe.id))
-      );
-
-      const finalPool = available.length
-        ? available
-        : pool;
-
-      const recipe =
-        finalPool[Math.floor(Math.random() * finalPool.length)];
-
-      if(!recipe){
-        continue;
-      }
-
-      usedIds.push(Number(recipe.id));
+    async function loadWeeklyPlan(){
+      setActiveNav("plan");
+      hideHome();
+      const c = document.getElementById("content");
+      c.innerHTML = `<div class="skeleton-grid"><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div></div>`;
 
       try{
+        await ensureRecipesLoaded();
+        const plan = await fetchJson("/wochenplan");
+        const days = weekDays();
 
-        const response = await fetch(`/wochenplan?t=${Date.now()}`, {
-  cache: "no-store"
-});
-
-        if(!response.ok){
-          console.error("Fehler:", day, slot.id);
-        }
-
-      }catch(err){
-        console.error(err);
+        c.innerHTML = `
+          <button class="secondary" onclick="showHome()">← Zurück</button>
+          <h2>📅 Wochenplan</h2>
+          <div class="buttons">
+            <button class="primary" onclick="autoFillWeek()">✨ Woche automatisch planen</button>
+            <button class="secondary" onclick="resetWeek()">🗑️ Woche leeren</button>
+            <button class="secondary" onclick="loadShoppingList()">🛒 Einkaufsliste</button>
+          </div>
+          <div class="grid">
+            ${days.map(day => {
+              const recipe = recipeFromPlanEntry(plan[day] || plan[day.toLowerCase()] || plan[day.toUpperCase()]);
+              const img = recipe ? imageUrl(recipe) : "";
+              return `
+                <div class="card" onclick="${recipe ? `showRecipe(${recipe.id})` : ""}">
+                  <div class="card-body">
+                    <h3>📅 ${day}</h3>
+                    ${recipe ? `
+                      ${img ? `<img class="week-image" src="${img}" alt="${cleanRecipeText(recipe.name)}">` : ""}
+                      <p class="week-title">${cleanRecipeText(recipe.name)}</p>
+                      <div class="card-actions">
+                        <button class="primary" onclick="event.stopPropagation(); showRecipe(${recipe.id})">Rezept ansehen</button>
+                        <button class="secondary" onclick="event.stopPropagation(); clearDay('${day}')">❌ Entfernen</button>
+                      </div>
+                    ` : `<p class="week-empty">Noch kein Rezept gewählt</p>`}
+                    <select onclick="event.stopPropagation()" onchange="setDayRecipe('${day}', this.value)">
+                      <option value="">Rezept auswählen</option>
+                      ${allRecipes.map(r => `<option value="${r.id}" ${recipe && Number(recipe.id) === Number(r.id) ? "selected" : ""}>${cleanRecipeText(r.name)}</option>`).join("")}
+                    </select>
+                  </div>
+                </div>`;
+            }).join("")}
+          </div>`;
+      }catch(error){
+        c.innerHTML = `<div class="error-box">❌ Wochenplan konnte nicht geladen werden: ${error.message}</div>`;
       }
     }
-  }
 
-  await new Promise(resolve => setTimeout(resolve, 500));
-
-  await loadWeeklyPlan();
-
-  showToast("Woche automatisch geplant!");
-}
-
-  function recipeMatchesSlot(recipe, slot){
-  const text = [
-    recipe.name || "",
-    recipe.kueche || "",
-    recipe.kategorie || "",
-    recipe.anleitung || "",
-    ...(recipe.tags || []),
-    ...(recipe.zutaten || [])
-  ].join(" ").toLowerCase();
-
-  if(slot.name === "Frühstück"){
-    return text.includes("frühstück") || text.includes("pancake") || text.includes("skyr") || text.includes("bowl") || text.includes("oats") || text.includes("porridge") || text.includes("waffel") || text.includes("bagel") || text.includes("joghurt") || text.includes("quark");
-  }
-
-  if(slot.name === "Mittag"){
-    return text.includes("mittag") || text.includes("hauptgericht") || text.includes("herzhaft") || text.includes("nudel") || text.includes("pasta") || text.includes("reis") || text.includes("hähnchen") || text.includes("auflauf") || text.includes("suppe") || text.includes("pfanne") || text.includes("kartoffel");
-  }
-
-  if(slot.name === "Abend"){
-    return text.includes("abend") || text.includes("abendbrot") || text.includes("brot") || text.includes("toast") || text.includes("wrap") || text.includes("burger") || text.includes("snack") || text.includes("salat") || text.includes("sandwich");
-  }
-
-  return false;
-}
-    async function resetWeek(){
-  const response = await fetch(`/wochenplan?t=${Date.now()}`, {
-  cache: "no-store"
-});
-
-  if(!response.ok){
-    return showToast("Woche konnte nicht geleert werden.");
-  }
-
-  showToast("Wochenplan geleert!");
-
-  await loadWeeklyPlan();
-}
-    async function loadShoppingList(){
-  setActiveNav("list");
-  hideHome();
-
-  const c = document.getElementById("content");
-
-  const response = await fetch(`/einkaufsliste?t=${Date.now()}`, {
-    cache: "no-store"
-  });
-
-  const data = await response.json();
-  const categories = data.categories || {};
-
-  const atHome = JSON.parse(localStorage.getItem("atHomeIngredients") || "[]")
-    .map(x => x.toLowerCase().trim())
-    .filter(Boolean);
-
-  const filteredCategories = {};
-
-  Object.entries(categories).forEach(([category, items]) => {
-    const filteredItems = items.filter(item => {
-      const itemText = item.toLowerCase();
-      return !atHome.some(homeItem => itemText.includes(homeItem));
-    });
-
-    if(filteredItems.length){
-      filteredCategories[category] = filteredItems;
+    async function setDayRecipe(day, id){
+      if(!id) return;
+      try{
+        await fetchJson(`/wochenplan/${encodeURIComponent(day)}/${Number(id)}`, {method:"POST"});
+        showToast("Zum Wochenplan hinzugefügt!");
+        loadWeeklyPlan();
+      }catch(error){
+        showToast(`Fehler beim Speichern: ${error.message}`);
+      }
     }
-  });
 
-  const hasItems = Object.keys(filteredCategories).length > 0;
+    async function clearDay(day){
+      try{
+        await fetchJson(`/wochenplan/clear/${encodeURIComponent(day)}`, {method:"POST"});
+        showToast("Rezept entfernt");
+        loadWeeklyPlan();
+      }catch(error){
+        showToast(`Fehler beim Entfernen: ${error.message}`);
+      }
+    }
 
-  c.innerHTML = `
-    <button class="secondary" onclick="showHome()">← Zurück</button>
-    <h2>🛒 Einkaufsliste</h2>
+    async function autoFillWeek(){
+      try{
+        await ensureRecipesLoaded();
+        const days = weekDays();
+        const shuffled = [...allRecipes].sort(() => Math.random() - .5).slice(0, days.length);
+        for(let i = 0; i < days.length && shuffled[i]; i++){
+          await fetchJson(`/wochenplan/${encodeURIComponent(days[i])}/${Number(shuffled[i].id)}`, {method:"POST"});
+        }
+        showToast("Woche automatisch geplant!");
+        loadWeeklyPlan();
+      }catch(error){
+        showToast(`Automatische Planung fehlgeschlagen: ${error.message}`);
+      }
+    }
 
-    <div class="panel" style="margin:18px 0;display:grid;gap:12px;">
-      <h3>🏠 Habe ich zuhause</h3>
-      <p class="muted">Trage Zutaten ein, die nicht auf die Einkaufsliste sollen.</p>
-      <textarea id="atHomeInput" placeholder="Milch&#10;Mehl&#10;Eier">${atHome.join("\n")}</textarea>
-      <button class="primary" onclick="saveAtHomeIngredients()">Liste neu berechnen</button>
-    </div>
+    async function resetWeek(){
+      try{
+        await fetchJson("/wochenplan/reset", {method:"POST"});
+        showToast("Wochenplan geleert!");
+        loadWeeklyPlan();
+      }catch(error){
+        showToast(`Fehler beim Leeren: ${error.message}`);
+      }
+    }
 
-    <button class="secondary" onclick="copyShoppingList()">Liste kopieren</button>
+    function normalizeShoppingItem(text){
+      return String(text || "").trim();
+    }
 
-    ${hasItems ? `
-      <div class="shopping-list">
-        ${Object.entries(filteredCategories).map(([category, items]) => `
-          <div class="panel" style="margin-top:18px;">
-            <h3>${category}</h3>
+    function readAtHomeIngredients(){
+      return JSON.parse(localStorage.getItem("atHomeIngredients") || "[]")
+        .map(item => String(item).toLowerCase().trim())
+        .filter(Boolean);
+    }
 
-            <div class="shopping-list">
-              ${items.map(i => `
-                <label class="shopping-item">
-                  <input type="checkbox">
-                  <span class="shopping-item-text">${i}</span>
-                </label>
-              `).join("")}
-            </div>
+    async function loadShoppingList(){
+      setActiveNav("list");
+      hideHome();
+      const c = document.getElementById("content");
+      c.innerHTML = `<div class="skeleton-grid"><div class="skeleton-card"></div><div class="skeleton-card"></div></div>`;
+
+      try{
+        const data = await fetchJson("/einkaufsliste");
+        const atHome = readAtHomeIngredients();
+        const categories = data.categories || {};
+        const allItems = [];
+
+        Object.entries(categories).forEach(([category, items]) => {
+          (items || []).forEach(item => {
+            const clean = normalizeShoppingItem(item);
+            if(clean) allItems.push({category, text: clean});
+          });
+        });
+
+        const seen = new Set();
+        const filtered = allItems.filter(item => {
+          const key = item.text.toLowerCase();
+          if(seen.has(key)) return false;
+          seen.add(key);
+          return !atHome.some(homeItem => key.includes(homeItem));
+        });
+
+        const grouped = filtered.reduce((acc, item) => {
+          (acc[item.category] ||= []).push(item.text);
+          return acc;
+        }, {});
+
+        const recipeNames = (data.recipes || []).map(recipe => cleanRecipeText(recipe.name));
+
+        c.innerHTML = `
+          <button class="secondary" onclick="showHome()">← Zurück</button>
+          <h2>🛒 Einkaufsliste</h2>
+          <div class="panel" style="margin:18px 0;display:grid;gap:12px;">
+            <h3>📅 Geplante Rezepte</h3>
+            ${recipeNames.length ? `<p>${recipeNames.join(" · ")}</p>` : `<p class="muted">Noch keine Rezepte im Wochenplan.</p>`}
           </div>
-        `).join("")}
-      </div>
-    ` : `
-      <div class="empty-state">
-        <h2>🛒 Nichts einzukaufen</h2>
-        <p>Entweder ist dein Wochenplan leer oder du hast alle Zutaten bereits zuhause.</p>
-        <button class="primary" onclick="loadWeeklyPlan()">Zum Wochenplan</button>
-      </div>
-    `}
-  `;
-}
+          <div class="panel" style="margin:18px 0;display:grid;gap:12px;">
+            <h3>🏠 Habe ich zuhause</h3>
+            <p class="muted">Trage Zutaten ein, die nicht auf die Einkaufsliste sollen.</p>
+            <textarea id="atHomeInput" placeholder="Milch&#10;Mehl&#10;Eier">${atHome.join("\n")}</textarea>
+            <button class="primary" onclick="saveAtHomeIngredients()">Liste neu berechnen</button>
+          </div>
+          <button class="secondary" onclick="copyShoppingList()">Liste kopieren</button>
+          ${filtered.length ? Object.entries(grouped).map(([category, items]) => `
+            <h3 style="margin-top:24px">${category}</h3>
+            <div class="shopping-list">
+              ${items.map(item => `<label class="shopping-item"><input type="checkbox"><span class="shopping-item-text">${item}</span></label>`).join("")}
+            </div>
+          `).join("") : `
+            <div class="empty-state">
+              <h2>🛒 Nichts einzukaufen</h2>
+              <p>Entweder ist dein Wochenplan leer oder du hast alle Zutaten bereits zuhause.</p>
+              <button class="primary" onclick="loadWeeklyPlan()">Zum Wochenplan</button>
+            </div>`}`;
+      }catch(error){
+        c.innerHTML = `<div class="error-box">❌ Einkaufsliste konnte nicht geladen werden: ${error.message}</div>`;
+      }
+    }
 
-function saveAtHomeIngredients(){const value=document.getElementById("atHomeInput")?.value||"";const items=value.split(/\n|,|;/).map(x=>x.trim()).filter(Boolean);localStorage.setItem("atHomeIngredients",JSON.stringify(items));showToast("Vorhandene Zutaten gespeichert!");loadShoppingList()}
+    function saveAtHomeIngredients(){
+      const value = document.getElementById("atHomeInput")?.value || "";
+      const items = value.split(/\n|,|;/).map(x => x.trim()).filter(Boolean);
+      localStorage.setItem("atHomeIngredients", JSON.stringify(items));
+      showToast("Vorhandene Zutaten gespeichert!");
+      loadShoppingList();
+    }
 
-
-function copyShoppingList(){
-  const items = [...document.querySelectorAll(".shopping-item-text")]
-    .map(el => el.textContent.trim())
-    .filter(Boolean);
-
-  if(!items.length){
-    showToast("Keine Zutaten zum Kopieren.");
-    return;
-  }
-
-  navigator.clipboard.writeText(items.join("\n"))
-    .then(() => showToast("Einkaufsliste kopiert!"))
-    .catch(() => showToast("Kopieren nicht möglich."));
-}
-
+    async function copyShoppingList(){
+      const items = [...document.querySelectorAll(".shopping-item-text")].map(el => el.textContent.trim()).filter(Boolean);
+      if(!items.length) return showToast("Keine Zutaten zum Kopieren.");
+      await navigator.clipboard.writeText(items.join("\n"));
+      showToast("Einkaufsliste kopiert!");
+    }
 
     function loadFoodRescue(){setActiveNav("rescue");hideHome();document.getElementById("content").innerHTML=`<button class="secondary" onclick="showHome()">← Zurück</button><div class="panel" style="display:grid;gap:16px;margin-top:20px;"><div><span class="hero-badge">♻️ Food Rescue</span><h1>Was hast du noch zuhause?</h1><p class="muted">Gib Lebensmittel ein, die du verwerten möchtest. Die App sucht passende Rezepte.</p></div><textarea id="rescueInput" placeholder="Zum Beispiel:&#10;Sahne&#10;Paprika&#10;Reis&#10;Eier&#10;Käse">${pantry.join("\n")}</textarea><div class="buttons"><button class="primary" onclick="findRescueRecipes()">Lebensmittel retten</button><button class="secondary" onclick="savePantry()">Vorrat speichern</button></div></div><div id="rescueResults" style="margin-top:28px;"></div>`}
     function savePantry(){pantry=document.getElementById("rescueInput").value.split(/\n|,|;/).map(x=>x.trim()).filter(Boolean);localStorage.setItem("pantry",JSON.stringify(pantry));showToast("Vorrat gespeichert!")}
 
-    async function findRescueRecipes(){
-  const input = document.getElementById("rescueInput").value;
+    async function findRescueRecipes(){const input=document.getElementById("rescueInput").value;const available=input.split(/\n|,|;/).map(x=>x.trim().toLowerCase()).filter(Boolean);if(!available.length)return showToast("Bitte Zutaten eingeben.");await ensureRecipesLoaded();const results=allRecipes.map(recipe=>{const ingredients=(recipe.zutaten||[]).map(z=>z.toLowerCase());const matches=available.filter(a=>ingredients.some(i=>i.includes(a)));return{recipe,matches,score:matches.length}}).filter(r=>r.score>0).sort((a,b)=>b.score-a.score).slice(0,8);document.getElementById("rescueResults").innerHTML=results.length?`<h2>Passende Rezepte</h2><div class="grid">${results.map(r=>recipeCard(r.recipe)).join("")}</div>`:`<div class="empty-state"><h2>Keine passenden Rezepte gefunden</h2><p>Versuche allgemeinere Zutaten wie Reis, Käse oder Tomaten.</p></div>`}
 
-  const available = input
-    .split(/\n|,|;/)
-    .map(x => x.trim().toLowerCase())
-    .filter(Boolean);
-
-  if(!available.length) return showToast("Bitte Zutaten eingeben.");
-
-  await ensureRecipesLoaded();
-
-  const existingResults = allRecipes.map(recipe => {
-    const recipeIngredients = (recipe.zutaten || [])
-      .map(z => String(z).toLowerCase());
-
-    const matches = available.filter(item =>
-      recipeIngredients.some(zutat => zutat.includes(item))
-    );
-
-    return { recipe, matches, score: matches.length };
-  })
-  .filter(r => r.score > 0)
-  .sort((a,b) => b.score - a.score);
-
-  const rescueIdeas = createRescueIdeasStrict(available);
-
-  document.getElementById("rescueResults").innerHTML = `
-    <h2>♻️ Food-Rescue-Ideen</h2>
-
-    ${rescueIdeas.length ? `
-      <div class="grid">
-        ${rescueIdeas.map(rescueIdeaCard).join("")}
-      </div>
-    ` : ""}
-
-    ${existingResults.length ? `
-      <h2 style="margin-top:34px;">📚 Rezepte mit deinen Lebensmitteln</h2>
-      <div class="grid">
-        ${existingResults.map(r => recipeCard(r.recipe)).join("")}
-      </div>
-    ` : `
-      <div class="empty-state" style="margin-top:24px;">
-        <h2>Keine gespeicherten Rezepte gefunden</h2>
-        <p>Ich habe aber oben passende Ideen aus deinen Zutaten erstellt.</p>
-      </div>
-    `}
-  `;
-}
-
-function createRescueIdeasStrict(items){
-  const text = items.join(" ");
-  const ideas = [];
-
-  if(items.length >= 2){
-    ideas.push({
-      name: "Restepfanne aus deinen Zutaten",
-      icon: "♻️",
-      ingredients: items,
-      steps: [
-        "Alle eingegebenen Lebensmittel prüfen und bei Bedarf waschen oder schälen.",
-        "Feste Zutaten klein schneiden, damit sie gleichmäßig garen.",
-        "Eine Pfanne mit etwas Öl erhitzen.",
-        "Die Zutaten nach Garzeit anbraten: harte Zutaten zuerst, weiche Zutaten später.",
-        "Alles mit Salz, Pfeffer und passenden Gewürzen abschmecken.",
-        "Kurz weiterbraten, bis alles heiß und gut vermengt ist.",
-        "Direkt servieren."
-      ]
-    });
-  }
-
-  if(text.includes("nudel") || text.includes("pasta")){
-    ideas.push({
-      name: "Nudelgericht aus deinen Resten",
-      icon: "🍝",
-      ingredients: items,
-      steps: [
-        "Nudeln in Salzwasser bissfest kochen.",
-        "Die restlichen eingegebenen Zutaten klein schneiden.",
-        "Alles in einer Pfanne kurz anbraten.",
-        "Etwas Nudelwasser dazugeben, damit eine leichte Soße entsteht.",
-        "Die Nudeln unterheben.",
-        "Mit Salz, Pfeffer und Gewürzen abschmecken.",
-        "Warm servieren."
-      ]
-    });
-  }
-
-  if(text.includes("sahne")){
-    ideas.push({
-      name: "Cremige Sahnepfanne",
-      icon: "🥘",
-      ingredients: items,
-      steps: [
-        "Alle eingegebenen Zutaten klein schneiden.",
-        "Eine Pfanne erhitzen und die festen Zutaten zuerst anbraten.",
-        "Sahne dazugeben und alles kurz einköcheln lassen.",
-        "Die Soße mit Salz, Pfeffer und Kräutern abschmecken.",
-        "Alles gut vermengen.",
-        "Heiß servieren."
-      ]
-    });
-  }
-
-  if(text.includes("ketchup") || text.includes("tomate")){
-    ideas.push({
-      name: "Tomatige Restepfanne",
-      icon: "🍅",
-      ingredients: items,
-      steps: [
-        "Die eingegebenen Zutaten klein schneiden.",
-        "Alles in einer Pfanne anbraten.",
-        "Ketchup, Tomaten oder Tomatenmark einrühren.",
-        "Bei Bedarf einen kleinen Schluck Wasser hinzufügen.",
-        "Kurz köcheln lassen.",
-        "Mit Salz, Pfeffer und Paprika abschmecken.",
-        "Warm servieren."
-      ]
-    });
-  }
-
-  return ideas;
-}
-
-
-function rescueIdeaCard(idea){
-  return `
-    <div class="card">
-      <div class="card-body">
-        <h3>${idea.icon} ${idea.name}</h3>
-        <div class="meta">Aus deinen Zutaten erstellt</div>
-
-        <h4>Zutaten-Idee</h4>
-        <div class="ingredients">
-          ${idea.ingredients.map(i => `<div class="ingredient">✓ ${i}</div>`).join("")}
-        </div>
-
-        <h4 style="margin-top:18px;">Anleitung</h4>
-        <div class="steps">
-          ${idea.steps.map((s, i) => `<div class="step">${i + 1}. ${s}</div>`).join("")}
-        </div>
-      </div>
-    </div>
-  `;
-}
-  let selectedRecipeId = null;
-  let selectedDay = null;
-
-  function quickAddToPlan(id){
-  selectedRecipeId = id;
-  selectedDay = null;
-
-  const days = ["Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag","Sonntag"];
-
-  document.getElementById("dayButtons").innerHTML = days.map(day => `
-    <button onclick="selectPlanDay('${day}')">${day}</button>
-  `).join("");
-
-  document.getElementById("planModal").classList.remove("hidden");
-}
-
-  function selectPlanDay(day){
-  selectedDay = day;
-  showToast(`${day} gewählt`);
-}
-
-  async function selectPlanSlot(slot){
-  if(!selectedRecipeId) return showToast("Kein Rezept gewählt");
-  if(!selectedDay) return showToast("Bitte zuerst einen Tag wählen");
-
-  const r = await fetch(`/wochenplan/${encodeURIComponent(selectedDay)}/${slot}/${Number(selectedRecipeId)}`, {
-  method: "POST"
-});
-
-  if(r.ok){
-    showToast("Zum Wochenplan hinzugefügt");
-    closePlanModal();
-    loadWeeklyPlan();
-  } else {
-    showToast("Fehler beim Speichern");
-  }
-}
-
-function closePlanModal(){
-  document.getElementById("planModal").classList.add("hidden");
-}
-  
+    async function quickAddToPlan(id){const day=prompt("Für welchen Tag?\n\nMontag, Dienstag, Mittwoch, Donnerstag, Freitag, Samstag oder Sonntag");if(!day)return;const r=await fetch(`/wochenplan/${encodeURIComponent(day)}/${Number(id)}`,{method:"POST"});showToast(r.ok?"Zum Wochenplan hinzugefügt!":"Konnte nicht einplanen.")}
 
     function toggleFavorite(id){id=Number(id);if(favorites.includes(id)){favorites=favorites.filter(f=>Number(f)!==id);showToast("Aus Favoriten entfernt")}else{favorites.push(id);showToast("Zu Favoriten hinzugefügt")}localStorage.setItem("favorites",JSON.stringify(favorites));if(document.getElementById("recipeGrid"))renderRecipes();if(!document.getElementById("home").classList.contains("hidden"))renderHomeSections()}
     function isFavorite(id){return favorites.includes(Number(id))}
@@ -1776,22 +1231,7 @@ function closePlanModal(){
 
     async function shareRecipe(id){await ensureRecipesLoaded();const recipe=allRecipes.find(r=>Number(r.id)===Number(id));if(!recipe)return;const text=`${cleanRecipeText(recipe.name)} auf Rezeptroulette`;if(navigator.share){navigator.share({title:cleanRecipeText(recipe.name),text,url:location.href})}else{navigator.clipboard.writeText(text);showToast("Rezept kopiert!")}}
 
-  async function startCookMode(id){
-  await ensureRecipesLoaded();
-  const recipe = allRecipes.find(r => Number(r.id) === Number(id));
-  if(!recipe) return;
-
-  cookSteps = String(recipe.anleitung || "Keine Anleitung vorhanden.")
-    .replaceAll("\\n", "\n")
-    .split(/\n|(?=\d+\.\s)/)
-    .map(s => s.trim())
-    .filter(Boolean);
-
-  cookIndex = 0;
-  document.getElementById("cookTitle").textContent = `👨‍🍳 ${cleanRecipeText(recipe.name)}`;
-  updateCookStep();
-  document.getElementById("cookDrawer").classList.add("show");
-}
+    async function startCookMode(id){await ensureRecipesLoaded();const recipe=allRecipes.find(r=>Number(r.id)===Number(id));if(!recipe)return;cookSteps=(recipe.anleitung||"Keine Anleitung vorhanden.").split("\n").filter(Boolean);cookIndex=0;document.getElementById("cookTitle").textContent=`👨‍🍳 ${cleanRecipeText(recipe.name)}`;updateCookStep();document.getElementById("cookDrawer").classList.add("show")}
     function updateCookStep(){document.getElementById("cookStep").textContent=cookSteps[cookIndex]||"Fertig!"}
     function nextCookStep(){if(cookIndex<cookSteps.length-1)cookIndex++;updateCookStep()}
     function previousCookStep(){if(cookIndex>0)cookIndex--;updateCookStep()}
@@ -1804,27 +1244,6 @@ function closePlanModal(){
     showHome();
 
     async function backToRecipes(){await loadRecipes();setTimeout(()=>{window.scrollTo({top:recipeScrollPosition,behavior:"auto"})},100)}
-  updateAuthButton();
-
   </script>
-  <div id="planModal" class="modal hidden">
-  <div class="modal-box">
-    <h3>📅 Rezept einplanen</h3>
-
-    <p>Tag wählen:</p>
-    <div id="dayButtons" class="modal-grid"></div>
-
-    <p>Mahlzeit wählen:</p>
-    <div class="modal-grid">
-      <button onclick="selectPlanSlot(1)">🌅 Frühstück</button>
-      <button onclick="selectPlanSlot(2)">🍝 Mittag</button>
-      <button onclick="selectPlanSlot(3)">🌙 Abend</button>
-    </div>
-
-    <div style="margin-top:20px;">
-      <button class="secondary" onclick="closePlanModal()">Abbrechen</button>
-    </div>
-  </div>
-</div>
 </body>
 </html>
