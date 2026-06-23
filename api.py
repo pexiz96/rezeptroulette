@@ -63,6 +63,20 @@ app.add_middleware(
 def get_db() -> Database:
     return Database()
 
+DEFAULT_USER_ID = 1
+
+def get_weekly_plan(db):
+    try:
+        return db.weekly_plan(DEFAULT_USER_ID)
+    except TypeError:
+        return get_weekly_plan(db)
+
+def save_weekly_plan(db, plan):
+    try:
+        return db.set_weekly_plan(DEFAULT_USER_ID, plan)
+    except TypeError:
+        return save_weekly_plan(db, plan)
+
 
 def clean_text(text):
     if not text:
