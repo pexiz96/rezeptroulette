@@ -250,10 +250,18 @@ def wochenplan():
     return result
 
 
+DEFAULT_USER_ID = 1
+DEFAULT_SLOT = 1
+
+
 @app.post("/wochenplan/reset")
 def reset_wochenplan():
     db = get_db()
-    db.set_weekly_plan({day: None for day in DAYS})
+
+    for day in DAYS:
+        for slot in [1, 2, 3]:
+            db.set_weekly_plan_slot(DEFAULT_USER_ID, day, slot, None)
+
     return {"message": "Wochenplan zurückgesetzt"}
 
 
@@ -262,7 +270,9 @@ def loesche_tag(day: str):
     db = get_db()
     valid_day = normalize_day(day)
 
-    db.set_weekly_plan({valid_day: None})
+    for slot in [1, 2, 3]:
+        db.set_weekly_plan_slot(DEFAULT_USER_ID, valid_day, slot, None)
+
     return {"message": f"{valid_day} wurde gelöscht", "day": valid_day}
 
 
@@ -275,14 +285,20 @@ def setze_wochenplan(day: str, recipe_id: int):
     if not recipe:
         raise HTTPException(status_code=404, detail="Rezept nicht gefunden")
 
-    db.set_weekly_plan({valid_day: recipe_id})
+    db.set_weekly_plan_slot(
+        DEFAULT_USER_ID,
+        valid_day,
+        DEFAULT_SLOT,
+        recipe_id
+    )
+
     return {
         "message": "Gespeichert",
         "day": valid_day,
+        "slot": DEFAULT_SLOT,
         "recipe_id": recipe_id,
         "recipe": recipe_to_dict(recipe),
     }
-
 
 def shopping_list(recipes: list[Rezept]):
     categories: dict[str, list[str]] = {}
