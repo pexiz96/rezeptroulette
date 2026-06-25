@@ -228,6 +228,17 @@
       transition:.25s ease;
     }
 
+    .dashboard-card{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      min-height:190px;
+}
+
+    .dashboard-card button{
+      margin-top:auto;
+    }
+
     .card:hover{transform:translateY(-4px)}
     .card img{width:100%;height:280px;object-fit:cover;object-position:center;display:block}
     .card-body{padding:24px}
@@ -507,22 +518,28 @@
 
   <main>
     <section class="hero" id="home">
-      <div class="hero-badge">🍽️ Rezeptroulette</div>
-      <h1>Was essen wir heute?</h1>
-      <p class="muted">Finde schnell ein Rezept, plane deine Woche oder rette Lebensmittel aus deinem Kühlschrank.</p>
+    <div class="hero-badge" id="homeGreeting">👋 Willkommen</div>
 
-      <div class="hero-action-grid">
-        <button class="hero-action primary" onclick="loadRoulette()">
-          🎲 <span><strong>Rezept ziehen</strong><small>Zufälliges Rezept entdecken</small></span>
-        </button>
-        <button class="hero-action secondary" onclick="loadRecipes()">
-          🍲 <span><strong>Alle Rezepte</strong><small>Alle Rezepte ansehen</small></span>
-        </button>
-        <button class="hero-action secondary" onclick="loadFoodRescue()">
-          ♻️ <span><strong>Food Rescue</strong><small>Rette Lebensmittel</small></span>
-        </button>
-      </div>
-    </section>
+    <h1>Was darf heute auf den Tisch?</h1>
+
+    <p class="muted">
+      Zieh ein Rezept, plane deine Woche oder öffne direkt deine Einkaufsliste.
+    </p>
+
+    <div class="hero-action-grid">
+      <button class="hero-action primary" onclick="loadRoulette()">
+        🎲 <span><strong>Rezept ziehen</strong><small>Lass dich überraschen</small></span>
+      </button>
+
+      <button class="hero-action secondary" onclick="loadWeeklyPlan()">
+        📅 <span><strong>Woche planen</strong><small>Gerichte organisieren</small></span>
+      </button>
+
+      <button class="hero-action secondary" onclick="loadShoppingList()">
+        🛒 <span><strong>Einkaufsliste</strong><small>Alles auf einen Blick</small></span>
+      </button>
+    </div>
+  </section>
 
     <section id="content"></section>
   </main>
@@ -666,6 +683,14 @@
 
     function showHome(){
       setActiveNav("home");
+      const hour = new Date().getHours();
+
+      let greeting = "👋 Willkommen";
+      if (hour < 11) greeting = "☀️ Guten Morgen";
+      else if (hour < 17) greeting = "🌞 Guten Tag";
+      else greeting = "🌙 Guten Abend";
+
+      document.getElementById("homeGreeting").textContent = greeting;
       document.getElementById("home").classList.remove("hidden");
       updateStats();
       renderHomeSections();
@@ -720,28 +745,134 @@
     function updateStats(){}
 
     async function renderHomeSections(){
-      const c = document.getElementById("content");
-      try{
-        await ensureRecipesLoaded();
-        const recommended = allRecipes.slice(0,3);
-        c.innerHTML = `
-          <div class="home-sections">
-            <section>
-              <div class="section-head">
-                <div><h2>⭐ Heute empfohlen</h2><p class="muted">Drei leckere Ideen für heute.</p></div>
-                <button class="secondary" onclick="loadRecipes()">Alle ansehen →</button>
-              </div>
-              ${recommended.length ? `<div class="clean-recipe-grid">${recommended.map(simpleRecipeCard).join("")}</div>` : `<div class="empty-state">Noch keine Rezepte geladen.</div>`}
-            </section>
-            <section class="home-benefits">
-              <div>🌿 <strong>Einfach & schnell</strong><span>Für jeden Tag</span></div>
-              <div>❤️ <strong>Lieblingsrezepte</strong><span>Speichern & verwalten</span></div>
-              <div>📅 <strong>Planung leicht gemacht</strong><span>Deine Woche im Überblick</span></div>
-              <div>♻️ <strong>Lebensmittel retten</strong><span>Gut für dich & die Umwelt</span></div>
-            </section>
-          </div>`;
-      }catch(error){c.innerHTML = ""}
+  const c = document.getElementById("content");
+
+  try{
+    await ensureRecipesLoaded();
+
+    let plan = {};
+    try{
+      plan = await fetchJson("/wochenplan");
+    }catch(_error){
+      plan = {};
     }
+
+    const days = weekDays();
+    const todayNames = ["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
+    const today = todayNames[new Date().getDay()];
+
+    const todayRecipe = recipeFromPlanEntry(
+      plan[today] || plan[today.toLowerCase()] || plan[today.toUpperCase()]
+    );
+    const tomorrow = todayNames[(new Date().getDay() + 1) % 7];
+
+    const tomorrowRecipe = recipeFromPlanEntry(
+      plan[tomorrow] || plan[tomorrow.toLowerCase()] || plan[tomorrow.toUpperCase()]
+    );
+    const plannedCount = days.filter(day =>
+      recipeFromPlanEntry(plan[day] || plan[day.toLowerCase()] || plan[day.toUpperCase()])
+    ).length;
+
+    const favoriteRecipes = allRecipes.filter(recipe => isFavorite(recipe.id));
+
+    const shuffledRecipes = [...allRecipes]
+      .sort(() => Math.random() - 0.5);
+
+    const recommended = [
+      ...favoriteRecipes,
+      ...shuffledRecipes
+    ]
+      .filter((recipe, index, self) =>
+        index === self.findIndex(r => Number(r.id) === Number(recipe.id))
+      )
+      .slice(0, 3);
+    c.innerHTML = `
+      <div class="home-sections">
+
+        <div class="grid" style="margin-bottom:34px;align-items:stretch;">
+          <div class="panel" style="display:flex;flex-direction:column;gap:12px;min-height:190px;">
+            <h3>🍳 Heute geplant</h3>
+            <p>${todayRecipe ? cleanRecipeText(todayRecipe.name) : "Noch nichts geplant"}</p>
+            ${todayRecipe ? `
+              <button class="primary" onclick="showRecipe(${todayRecipe.id})">Rezept öffnen</button>
+            ` : `
+              <button class="secondary" onclick="loadWeeklyPlan()">Wochenplan öffnen</button>
+            `}
+          </div>
+          <div class="panel dashboard-card">
+          <h3>🌅 Morgen geplant</h3>
+          <p>${tomorrowRecipe ? cleanRecipeText(tomorrowRecipe.name) : "Noch nichts geplant"}</p>
+          ${tomorrowRecipe ? `
+            <button class="secondary" onclick="showRecipe(${tomorrowRecipe.id})">Rezept öffnen</button>
+          ` : `
+            <button class="secondary" onclick="loadWeeklyPlan()">Morgen planen</button>
+          `}
+          </div>
+          <div class="panel dashboard-card">
+            <h3>📅 Diese Woche</h3>
+            <p>${plannedCount} von 7 Tagen geplant</p>
+            <div style="height:10px;background:var(--cream);border-radius:999px;overflow:hidden;margin:12px 0 18px;">
+              <div style="height:100%;width:${(plannedCount / 7) * 100}%;background:linear-gradient(135deg,var(--orange),var(--amber));border-radius:999px;"></div>
+            </div>
+            <button class="secondary" onclick="loadWeeklyPlan()">Plan öffnen</button>
+          </div>
+
+          <div class="panel dashboard-card">
+            <h3>❤️ Favoriten</h3>
+            <p>${favorites.length} Rezepte gespeichert</p>
+            <button class="secondary" onclick="loadFavorites()">Anzeigen</button>
+          </div>
+          <div class="panel dashboard-card">
+          <h3>🕘 Zuletzt angesehen</h3>
+          <p>${recentRecipes.length ? cleanRecipeText(recentRecipes[0].name) : "Noch kein Rezept geöffnet"}</p>
+
+          ${recentRecipes.length ? `
+            <button class="secondary" onclick="showRecipe(${recentRecipes[0].id})">
+              Wieder öffnen
+            </button>
+          ` : `
+            <button class="secondary" onclick="loadRecipes()">
+              Rezepte entdecken
+            </button>
+          `}
+          </div>
+            <div class="panel">
+            <h3>🛒 Einkaufsliste</h3>
+            <p>Aus deinem Wochenplan erstellt</p>
+            <button class="secondary" onclick="loadShoppingList()">Liste öffnen</button>
+          </div>
+        </div>
+
+        <section>
+          <div class="section-head">
+            <div>
+              <h2>✨ Für dich empfohlen</h2>
+              <p class="muted">Favoriten und frische Ideen für heute.</p>
+            </div>
+            <button class="secondary" onclick="loadRecipes()">Alle ansehen →</button>
+          </div>
+
+          ${recommended.length
+            ? `<div class="clean-recipe-grid">${recommended.map(simpleRecipeCard).join("")}</div>`
+            : `<div class="empty-state">Noch keine Rezepte geladen.</div>`
+          }
+        </section>
+
+        <section class="home-benefits">
+          <div>🌿 <strong>Einfach & schnell</strong><span>Für jeden Tag</span></div>
+          <div>❤️ <strong>Lieblingsrezepte</strong><span>Speichern & verwalten</span></div>
+          <div>📅 <strong>Planung leicht gemacht</strong><span>Deine Woche im Überblick</span></div>
+          <div>♻️ <strong>Lebensmittel retten</strong><span>Gut für dich & die Umwelt</span></div>
+        </section>
+
+      </div>
+    `;
+  }catch(error){
+    c.innerHTML = "";
+  }
+}
+
+
 
     function simpleRecipeCard(recipe){
       const img = imageUrl(recipe);
